@@ -346,7 +346,7 @@ This:
 
 Prints this:
 ``` 
-    <![CDATA[Some text &amp; others]]>
+  <![CDATA[Some text &amp; others]]>
 ```
 
 #### Text encoded
