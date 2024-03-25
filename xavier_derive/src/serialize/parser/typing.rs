@@ -1,28 +1,26 @@
 use syn::Data::{Enum, Struct, Union};
 use syn::{DataEnum, DataUnion, DeriveInput, Fields, FieldsNamed, FieldsUnnamed};
-use crate::serialize::parser::meta::AttributeMap;
 
 //Type of XML container being created
-pub enum ContainerType {
+pub enum Container {
     Complex,
     Enumeration,
     Tag,
-    EmptyTag,
-    Root
+    EmptyTag
 }
 
-pub fn container_type(input: &DeriveInput, attribute_map: &AttributeMap) -> Option<ContainerType> {
-    if let Some(_) = attribute_map.0.get("root") {
-        Some(ContainerType::Root)
-    } else {
+impl Container {
+    pub fn type_of(input: &DeriveInput) -> Option<Container> {
         return match &input.data {
             Struct(obj) => match &obj.fields {
-                Fields::Named(FieldsNamed { .. }) => { Some(ContainerType::Complex) },
-                Fields::Unnamed(FieldsUnnamed { .. }) => { Some(ContainerType::Tag) }
-                Fields::Unit => { Some(ContainerType::Tag) }
+                Fields::Named(FieldsNamed { .. }) => { Some(Container::Complex) },
+                Fields::Unnamed(FieldsUnnamed { .. }) => { Some(Container::Tag) }
+                Fields::Unit => { Some(Container::Tag) }
             },
-            Enum(DataEnum { .. }) => { Some(ContainerType::Enumeration) },
+            Enum(DataEnum { .. }) => { Some(Container::Enumeration) },
             Union(DataUnion { .. }) => { None }
         }
     }
 }
+
+

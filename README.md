@@ -22,7 +22,6 @@ This is the simplest example possible:
 
 ``` Rust
 #[derive(XMLSerializable)]
-#[xml(root)]
 struct XMLObject {
     pub some_string: String,
     pub some_int: i32,
@@ -49,7 +48,7 @@ Improving the names:
 
 ``` Rust
 #[derive(XMLSerializable)]
-#[xml(root, name="object", case="Camel", prefix="xml_", suffix="Item", obj_use_suffix="false", obj_use_prefix="true")]
+#[xml(name="object", case="Camel", prefix="xml_", suffix="Item", obj_use_suffix="false", obj_use_prefix="true")]
 struct XMLObject {
     #[xml(name="just_string")]
     pub some_string: String,
@@ -81,10 +80,10 @@ Working with namespaces:
 
 ``` Rust
 #[derive(XMLSerializable)]
-#[xml(root, ns="a", name="object", case="Camel")]
+#[xml(ns="a", name="object", case="Camel")]
 struct XMLObject {
     #[xmlns]
-    pub namespaces: String,
+    pub namespaces: Namespaces,
     #[xml(name="just_string")]
     pub some_string: String,
     pub some_int: i32,
@@ -121,7 +120,7 @@ Working with attributes:
 
 ``` Rust
 #[derive(XMLSerializable)]
-#[xml(root, ns="a", name="object", case="Camel")]
+#[xml(ns="a", name="object", case="Camel")]
 struct XMLObject {
     #[xml(attribute, name="just_string")]
     pub some_string: String,
@@ -162,7 +161,7 @@ impl Display for CustomEnum {
 }
 
 #[derive(XMLSerializable)]
-#[xml(root, name="object")]
+#[xml(name="object")]
 struct XMLObject {
     pub enum_field: CustomEnum,
 }
@@ -203,7 +202,7 @@ Using a unit struct like this:
 
 ``` Rust
 #[derive(XMLSerializable)]
-#[xml(root, name="object")]
+#[xml(name="object")]
 struct XMLObject;
 
 ```
@@ -228,7 +227,7 @@ struct Child {
 }
 
 #[derive(XMLSerializable)]
-#[xml(root, name="object", case="Camel")]
+#[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
     #[xml(complex)]
@@ -262,7 +261,7 @@ struct Child {
 }
 
 #[derive(XMLSerializable)]
-#[xml(root, name="object", case="Camel")]
+#[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
     #[xml(complex)]
@@ -293,7 +292,7 @@ struct XMLObject {
 }
 // or
 #[header]
-#[xml(root), name="xml"]
+#[xml(name="xml")]
 struct XMLObject {
     //...
 }
@@ -316,7 +315,7 @@ Using this:
 ```Rust
 #[header]
 #[dtd = "Note.dtd"]
-#[xml(root), name="xml"]
+#[xml(name="xml")]
 struct XMLObject {
     //...
 }
@@ -368,8 +367,10 @@ Prints this:
 
 
 
-
-
+TODO:
+- Flatten
+- attr_use_prefix, attr_use_suffix
+- Ignore Case
 
 
 

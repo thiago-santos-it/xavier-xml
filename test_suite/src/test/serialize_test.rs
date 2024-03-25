@@ -15,7 +15,7 @@ pub struct CustomElement {
 #[test]
 fn test_element() {
     let xml = CustomElement { field_a: xtext!("Some Text"), field_b: xtext!("Some Text") };
-    println!("Element XML: {}", xml.to_xml());
+    println!("Element XML: {}", xml.to_xml(true));
 }
 
 #[derive(XMLSerializable)]
@@ -36,6 +36,6 @@ impl Display for CustomEnum {
 #[test]
 fn test_enum() {
     let xml = CustomEnum::ValueA;
-    println!("Enum XML: {}", xml.to_xml());
+    println!("Enum XML: {}", xml.to_xml(true));
 }
 
