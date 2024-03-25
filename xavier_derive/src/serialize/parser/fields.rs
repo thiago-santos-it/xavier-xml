@@ -111,7 +111,7 @@ fn parse_tags(fields: &FieldsNamed, obj_meta_info: Option<&MetaInfo>) -> Vec<Tag
     parse_fields(fields, |field, meta| {
         if let Some(meta) = meta {
             if !meta.contains("attribute") {
-                if meta.contains("complex") || meta.contains("flatten") {
+                if meta.contains("complex") {
                     Some(TagElement::Complex(field))
                 } else {
                     let tag_name = tag_name(&field, obj_meta_info, Some(&meta));

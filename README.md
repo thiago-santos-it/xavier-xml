@@ -72,7 +72,9 @@ Should produce:
 
 > **Note 1:** Using camel config will produce to all elements use the same convention. 
 
-> **Note 2:** All cases supported by convert_case crate can be used. 
+> **Note 2:** All cases supported by convert_case crate can be used.
+
+> **Note 3:** ignore_case can be used to ignore case in an element.
 
 ### Namespace
 
@@ -140,6 +142,8 @@ Should produce:
     <a:someFloat>0.0</someFloat>
 </a:object>
 ```
+
+> Note: attr_use_suffix="false" or attr_use_prefix="true" can be used to avoid concatenations.
 
 ### Enum
 
@@ -359,18 +363,15 @@ Prints this:
    Some text &amp; others
 ```
 
+### Future:
 
+- Flatten feature to remove the root tag or a complex element
 
+### TODO
 
-
-
-
-
-
-TODO:
-- Flatten
-- attr_use_prefix, attr_use_suffix
-- Ignore Case
-
+[ ] Tests
+[ ] Encoding
+[ ] Create root functions
+[ ] Deserialize
 
 
