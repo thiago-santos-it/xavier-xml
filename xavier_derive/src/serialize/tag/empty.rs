@@ -1,12 +1,12 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::DeriveInput;
-use crate::serialize::parser::meta::{MetaInfo, MetaName};
-use crate::serialize::parser::naming::object_name;
+use crate::common::meta::{MetaInfo, MetaName};
+use crate::common::naming::names::XmlNames;
 
 pub fn stream(input: &DeriveInput) -> TokenStream {
     let meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
-    let tag = object_name(&input, meta_info.as_ref());
+    let tag = XmlNames::root(&input, meta_info.as_ref());
     return  quote! {
         format!("<{}></{}>", #tag, #tag).to_string()
     }

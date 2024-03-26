@@ -1,5 +1,3 @@
-mod test;
+mod tests;
 
-fn main() {
-
-}
+fn main() {}

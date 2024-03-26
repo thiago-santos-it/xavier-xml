@@ -1,36 +1,36 @@
-use crate::serialize::parser::XMLSerializable;
+use crate::serialize::macro_trait::XmlSerializable;
 
-impl XMLSerializable for i32 {
+impl XmlSerializable for i32 {
     fn to_xml(&self, _: bool) -> String {
         self.to_string()
     }
 }
 
-impl XMLSerializable for i64 {
+impl XmlSerializable for i64 {
     fn to_xml(&self, _: bool) -> String {
         self.to_string()
     }
 }
 
-impl XMLSerializable for f32 {
+impl XmlSerializable for f32 {
     fn to_xml(&self, _: bool) -> String {
         self.to_string()
     }
 }
 
-impl XMLSerializable for f64 {
+impl XmlSerializable for f64 {
     fn to_xml(&self, _: bool) -> String {
         self.to_string()
     }
 }
 
-impl XMLSerializable for bool {
+impl XmlSerializable for bool {
     fn to_xml(&self, _: bool) -> String {
         self.to_string()
     }
 }
 
-impl XMLSerializable for String {
+impl XmlSerializable for String {
     fn to_xml(&self, _: bool) -> String {
         self.to_string()
     }
@@ -38,18 +38,8 @@ impl XMLSerializable for String {
 
 pub struct XMLCData(pub String);
 
-impl XMLSerializable for XMLCData {
+impl XmlSerializable for XMLCData {
     fn to_xml(&self, _: bool) -> String {
         format!("<![CDATA[{}]]>", self.0)
     }
-}
-
-#[macro_export]
-macro_rules! xcdata {
-    ($expr:expr) => { XMLCData($expr.to_string()) };
-}
-
-#[macro_export]
-macro_rules! xtext {
-    ($expr:expr) => { $expr.to_string() };
 }

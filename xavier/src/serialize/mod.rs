@@ -1,3 +1,4 @@
 pub mod namespaces;
-mod types;
-pub mod parser;
+mod encoding;
+mod primitives;
+pub mod macro_trait;

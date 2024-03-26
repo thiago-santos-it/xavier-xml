@@ -6,7 +6,7 @@ macro_rules! namespaces {
         {
             let mut namespaces = String::new();
             $(
-                namespaces.push_str(&format!("xmlns:{}=\"{}\" ", stringify!($prefix), $uri));
+                namespaces.push_str(&format!(" xmlns:{}=\"{}\"", stringify!($prefix), $uri));
             )*
             namespaces
         }

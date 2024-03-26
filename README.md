@@ -21,7 +21,7 @@ Someone already did that, but I prefer to start from scratch. Besides, since Xav
 This is the simplest example possible:
 
 ``` Rust
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 struct XMLObject {
     pub some_string: String,
     pub some_int: i32,
@@ -47,8 +47,8 @@ Should produce:
 Improving the names:
 
 ``` Rust
-#[derive(XMLSerializable)]
-#[xml(name="object", case="Camel", prefix="xml_", suffix="Item", obj_use_suffix="false", obj_use_prefix="true")]
+#[derive(XmlSerializable)]
+#[xml(name="object", case="Camel", prefix="xml_", suffix="Item", no_suffix, no_prefix)]
 struct XMLObject {
     #[xml(name="just_string")]
     pub some_string: String,
@@ -72,7 +72,7 @@ Should produce:
 
 > **Note 1:** Using camel config will produce to all elements use the same convention. 
 
-> **Note 2:** All cases supported by convert_case crate can be used.
+> **Note 2:** All cases supported by convert_case crate can be used, except Randoms.
 
 > **Note 3:** ignore_case can be used to ignore case in an element.
 
@@ -81,10 +81,10 @@ Should produce:
 Working with namespaces:
 
 ``` Rust
-#[derive(XMLSerializable)]
-#[xml(ns="a", name="object", case="Camel")]
+#[derive(XmlSerializable)]
+#[xml(ns="xml", name="object", case="Camel")]
 struct XMLObject {
-    #[xmlns]
+    #[xml(xmlns)]
     pub namespaces: Namespaces,
     #[xml(name="just_string")]
     pub some_string: String,
@@ -93,11 +93,8 @@ struct XMLObject {
 }
 
 // ... 
-    let xmlns = namespaces!(
-        a: "https://...", 
-        b: "https://..."
-    )
-    XMLObject{ namespcaces: xmlns, ... }
+    let xmlns = namespaces!(xml = "http://www.w3.org/XML/1998/namespace", xhtml = "http://www.w3.org/1999/xhtml");
+    XMLObject{ namespaces: xmlns, ... }
     //...
     println!(from_obj(&instance));
     // ... 
@@ -105,23 +102,23 @@ struct XMLObject {
 
 Should produce:
 ``` xml
-<a:object 
-    xmlns:a = "https://..."
-    xmlns:b = "https://...">
-        <a:justString>Some Content A</justString>
-        <a:someInt>0</someInt>
-        <a:someFloat>0.0</someFloat>
-</a:object>
+<xml:object 
+   xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+   xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        <xml:justString>Some Content A</justString>
+        <xml:someInt>0</someInt>
+        <xml:someFloat>0.0</someFloat>
+</xml:object>
 ```
 
-> **Note:** ```#[xmlns]``` must be used only on root and only one time. 
+> **Note:** ```#[xml(xmlns)]``` must be used only on root and only one time. 
 
 ### Attributes
 
 Working with attributes:
 
 ``` Rust
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[xml(ns="a", name="object", case="Camel")]
 struct XMLObject {
     #[xml(attribute, name="just_string")]
@@ -137,19 +134,19 @@ struct XMLObject {
 
 Should produce:
 ``` xml
-<a:object justString="Content A">
-    <a:someInt>0</someInt>
-    <a:someFloat>0.0</someFloat>
-</a:object>
+<a:xmlObject justString="Some Text">
+    <a:someInt>0</a:someInt> 
+    <a:someFloat>0</a:someFloat> 
+</a:xmlObject>
 ```
 
-> Note: attr_use_suffix="false" or attr_use_prefix="true" can be used to avoid concatenations.
+> Note: use_suffix="false" or use_prefix="true" can be used to force suffix or prefix.
 
 ### Enum
 
 Working with enums:
 ``` Rust
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 enum CustomEnum {
     ValueA
 }
@@ -164,7 +161,7 @@ impl Display for CustomEnum {
     }
 }
 
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[xml(name="object")]
 struct XMLObject {
     pub enum_field: CustomEnum,
@@ -187,7 +184,7 @@ Should produce:
 Using a unit struct like this:
 
 ``` Rust
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[xml(ns="a", name="object")]
 pub struct XMLObject(String);
 ```
@@ -205,7 +202,7 @@ Should produce:
 Using a unit struct like this: 
 
 ``` Rust
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[xml(name="object")]
 struct XMLObject;
 
@@ -216,25 +213,25 @@ Should produce:
 <object></object>
 ```
 
-> Not so useful as root element... but think about using it as flag field in a more complex context. 
+> Not so useful as root element... but think about using it as flag field in a more tree context. 
 
-### Complex Data
+### Trees
 
 Composing structs like this: 
 
 ```Rust
 
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[xml(name="my_child")]
 struct Child {
     pub child_field_a: String,
 }
 
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
-    #[xml(complex)]
+    #[xml(tree)]
     pub child: Child
 }
 ```
@@ -255,7 +252,7 @@ Should produce:
 Configuring nested struct as this:
 ```Rust
 
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[xml(tag, name="child")]
 struct Child {
     #[xml(attribute, name="attr")]
@@ -264,11 +261,11 @@ struct Child {
     pub value: String,
 }
 
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
-    #[xml(complex)]
+    #[xml(tree)]
     pub child: Child
 }
 ```
@@ -288,13 +285,14 @@ Should produce:
 
 You can configure XML like this:
 ```Rust
-#[derive(XMLSerializable)]
+#[derive(XmlSerializable)]
 #[header(version="1.0" encoding="UTF-8" standaline = "no")]
-#[xml(root), name="xml"]
+#[xml(name="xml")]
 struct XMLObject {
     //...
 }
 // or
+#[derive(XmlSerializable)]
 #[header]
 #[xml(name="xml")]
 struct XMLObject {
@@ -317,6 +315,7 @@ Should produce:
 Using this:
 
 ```Rust
+#[derive(XmlSerializable)]
 #[header]
 #[dtd = "Note.dtd"]
 #[xml(name="xml")]
@@ -363,15 +362,9 @@ Prints this:
    Some text &amp; others
 ```
 
-### Future:
-
-- Flatten feature to remove the root tag or a complex element
-
 ### TODO
 
-[ ] Tests
 [ ] Encoding
-[ ] Create root functions
 [ ] Deserialize
 
 
