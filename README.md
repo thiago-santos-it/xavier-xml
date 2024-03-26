@@ -231,7 +231,7 @@ struct Child {
 #[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
-    #[xml(tree)]
+    #[xml(tree)] //Same effect of flatten
     pub child: Child
 }
 ```
@@ -251,13 +251,12 @@ Should produce:
 
 Configuring nested struct as this:
 ```Rust
-
 #[derive(XmlSerializable)]
 #[xml(tag, name="child")]
 struct Child {
     #[xml(attribute, name="attr")]
     pub attribute: String,
-    #[xml(value)]
+    #[xml(value)] //Same effect of flatten
     pub value: String,
 }
 
@@ -361,10 +360,4 @@ Prints this:
 ``` 
    Some text &amp; others
 ```
-
-### TODO
-
-[ ] Encoding
-[ ] Deserialize
-
 

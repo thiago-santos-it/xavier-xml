@@ -12,7 +12,6 @@ struct Child {
 #[derive(XmlSerializable)]
 #[xml(name="object", case="Camel")]
 struct XMLObject {
-
     pub field_a: String,
     #[xml(tree)]
     pub child: Child
@@ -21,7 +20,7 @@ struct XMLObject {
 #[test]
 fn serialize() {
     let should = r#"<object><fieldA>Some Text</fieldA><child attr="Attr Value">Other value</child></object>"#;
-    let xml = XMLObject { field_a: xtext!("Some Text"), child: Child { attribute: "attr".to_string(), value: xtext!("Attr Value")} };
+    let xml = XMLObject { field_a: xtext!("Some Text"), child: Child { attribute: "Attr Value".to_string(), value: xtext!("Other value")} };
     //println!("Element XML: {}", from_obj(&xml));
     assert_eq!(from_obj(&xml), should);
 }

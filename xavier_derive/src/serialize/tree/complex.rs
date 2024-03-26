@@ -24,7 +24,7 @@ pub fn stream(input: &DeriveInput) -> TokenStream {
             quote! { let namespace = ""; }
         };
 
-        let result = quote! {
+        quote! {
             #header_tokens
             #namespace_tokens
 
@@ -57,9 +57,7 @@ pub fn stream(input: &DeriveInput) -> TokenStream {
                xml.push_str(&format!("</{}>", tag));
             }
             xml
-        };
-        println!("{}", result.to_string());
-        result
+        }
 
     } else {
         quote! {

@@ -35,11 +35,3 @@ impl XmlSerializable for String {
         self.to_string()
     }
 }
-
-pub struct XMLCData(pub String);
-
-impl XmlSerializable for XMLCData {
-    fn to_xml(&self, _: bool) -> String {
-        format!("<![CDATA[{}]]>", self.0)
-    }
-}

@@ -1,4 +1,4 @@
 pub mod namespaces;
-mod encoding;
-mod primitives;
+pub mod encoding;
+pub mod primitives;
 pub mod macro_trait;

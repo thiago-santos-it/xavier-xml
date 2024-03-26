@@ -6,7 +6,8 @@ use crate::common::naming::names::XmlNames;
 
 pub enum XmlTagElement {
     Complex(Ident),
-    Simple(Ident, LitStr)
+    Simple(Ident, LitStr),
+    Value(Ident),
 }
 
 impl ToTokens for XmlTagElement {
@@ -18,6 +19,11 @@ impl ToTokens for XmlTagElement {
                 }
             },
             XmlTagElement::Complex(field) =>  {
+                quote! {
+                    self.#field.to_xml(false)
+                }
+            },
+            XmlTagElement::Value(field) =>  {
                 quote! {
                     self.#field.to_xml(false)
                 }
@@ -33,6 +39,8 @@ impl XmlTagElement {
             if !meta.contains("attribute") && !meta.contains("xmlns") {
                 return if meta.contains("tree") {
                     Some(XmlTagElement::Complex(field))
+                } else if meta.contains("flatten") || meta.contains("value") {
+                    Some(XmlTagElement::Value(field))
                 } else {
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
                     Some(XmlTagElement::Simple(field, tag_name))

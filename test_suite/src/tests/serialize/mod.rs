@@ -1,0 +1,12 @@
+mod simple_test;
+mod names_test;
+mod namespaces_test;
+mod attributes_test;
+mod enum_test;
+mod unnamed_test;
+mod unit_struct_test;
+mod tree_test;
+mod struct_tag_test;
+mod header_test;
+mod dtd_test;
+mod escaping_test;
