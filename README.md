@@ -335,6 +335,30 @@ Should produce:
 > Note 1: Inline DTD is not supported at the moment. However, I'm open to exploring alternative methods. Pull requests are welcome and appreciated.
 > Note 2: XML validation is out of scope of this project.
 
+
+### PI (processing instruction)
+
+Using this:
+
+```Rust
+#[derive(XmlSerializable)]
+#[header]
+#[pi(something key="value" flag)]
+#[xml(name="xml")]
+struct XMLObject {
+    //...
+}
+```
+
+Should produce:
+```xml
+<?xml version = "1.0" encoding = "UTF-8" standalone = "no" ?>
+<?something key="value" flag?>
+<xml>
+    ...
+</xml>
+```
+
 ### Convenience & security
 
 #### CDATA
@@ -361,3 +385,19 @@ Prints this:
    Some text &amp; others
 ```
 
+#### Comment
+
+This:
+
+``` Rust
+  println!(comment!("Some text & others"));  
+```
+
+Prints this:
+``` 
+  <!--Some text &amp; others-->
+```
+
+> UTF-16 is not supported yet. PR's are welcome just check the file ../streams.rs
+- Document collections
+- Create PI (Processing Instructions)

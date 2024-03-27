@@ -7,7 +7,7 @@ mod unnamed_test;
 mod unit_struct_test;
 mod tree_test;
 mod struct_tag_test;
-mod header_test;
+mod declaration_test;
 mod dtd_test;
 mod escaping_test;
 mod collection_test;

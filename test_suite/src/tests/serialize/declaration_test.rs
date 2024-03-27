@@ -2,7 +2,7 @@ use xavier::{from_obj, XmlSerializable};
 use xavier::xtext;
 
 #[derive(XmlSerializable)]
-#[header(version="1.0" encoding="UTF-8" standaline = "no")]
+#[header(version="1.0" encoding="UTF-8" standalone="no")]
 #[xml(name="xml")]
 struct XMLObject {
     pub some_string: String,

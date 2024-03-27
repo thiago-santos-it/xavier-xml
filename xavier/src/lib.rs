@@ -1,4 +1,5 @@
 pub mod serialize;
+mod deserialize;
 
 pub use xavier_derive::XmlSerializable;
 

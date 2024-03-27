@@ -4,30 +4,13 @@ use proc_macro2::Span;
 use syn::{DeriveInput, LitStr, Meta};
 use crate::common::meta::{MetaInfo, MetaName};
 
-pub struct XmlHeader;
+pub struct XmlDTD;
 
-impl XmlHeader {
+impl XmlDTD {
     pub fn parse(input: &DeriveInput, tag: &LitStr) -> TokenStream {
-        let xml_def = XmlHeader::xml_def(input);
-        let dtd_def = XmlHeader::dtd_def(input, tag);
+        let dtd_def = XmlDTD::dtd_def(input, tag);
         quote! {
-            let header = if root { #xml_def.to_string() } else { "".to_string() };
             let dtd = if root { #dtd_def.to_string() } else { "".to_string() };
-        }
-    }
-
-    fn xml_def(input: &DeriveInput) -> LitStr {
-        if let Some(header) = MetaInfo::from_name(&input.attrs, MetaName::Header) {
-            let version = header.get_or("version", "1.0".to_string());
-            let encoding = header.get_or("encoding", "UTF-8".to_string());
-            let standalone = header.get_or("standalone", "no".to_string());
-
-            let header_tag = format!("<?xml version=\"{}\" encoding=\"{}\" standalone=\"{}\"?>",
-                                     version, encoding, standalone);
-
-            LitStr::new(&header_tag, Span::call_site())
-        } else {
-            LitStr::new(&"", Span::call_site())
         }
     }
 

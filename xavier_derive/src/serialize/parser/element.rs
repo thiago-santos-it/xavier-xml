@@ -2,9 +2,9 @@ use syn::Data::Struct;
 use syn::{ DeriveInput, Fields, FieldsNamed };
 use proc_macro2::Ident;
 use crate::common::meta::{ MetaInfo, MetaName };
-use crate::serialize::tree::xml::attribute::XmlElementAttr;
-use crate::serialize::tree::xml::namespace::XmlNamespace;
-use crate::serialize::tree::xml::tag::XmlTagElement;
+use crate::serialize::parser::attribute::XmlElementAttr;
+use crate::serialize::parser::namespace::XmlNamespace;
+use crate::serialize::parser::tag::XmlTagElement;
 
 pub struct XmlElementDef {
     pub namespace: Option<Ident>,

@@ -1,12 +1,17 @@
 
 #[macro_export]
 macro_rules! xcdata {
-    ($expr:expr) => { format!("<![CDATA[{}]]>", xavier::serialize::encoding::escape_xml($expr)).to_string() };
+    ($expr:expr) => { format!("<![CDATA[{}]]>", xavier::serialize::escaping::escape_xml($expr)).to_string() };
 }
 
 #[macro_export]
 macro_rules! xtext {
-    ($expr:expr) => { xavier::serialize::encoding::escape_xml($expr).to_string() };
+    ($expr:expr) => { xavier::serialize::escaping::escape_xml($expr).to_string() };
+}
+
+#[macro_export]
+macro_rules! comment {
+    ($expr:expr) => { format!("<!--{}-->", xavier::serialize::escaping::escape_xml($expr)).to_string() };
 }
 
 pub fn escape_xml(input: &str) -> String {

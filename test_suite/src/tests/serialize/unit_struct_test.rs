@@ -6,7 +6,7 @@ struct XMLObject;
 
 #[test]
 fn serialize() {
-    let should = r#"<object></object>"#;
+    let should = r#"<object/>"#;
     let xml = XMLObject;
     assert_eq!(from_obj(&xml), should);
 }

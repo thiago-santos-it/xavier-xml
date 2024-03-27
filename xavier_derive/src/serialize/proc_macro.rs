@@ -5,10 +5,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::Data::{Enum, Struct, Union};
 use syn::parse_macro_input;
-use crate::serialize::tree::complex;
-use crate::serialize::tag::empty;
-use crate::serialize::tag::simple;
-use crate::serialize::value::enumeration;
+use crate::serialize::parser::streams::{StreamType, XmlStream};
 
 pub enum InputType {
     StructNamed,
@@ -38,10 +35,10 @@ pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
 
     if let Some(container_type) = InputType::type_of(&input) {
         let xml_code = match container_type {
-            InputType::StructNamed => { complex::stream(&input) },
-            InputType::StructUnnamed => { simple::stream(&input) },
-            InputType::StructUnit => { empty::stream(&input) },
-            InputType::Enumeration => { enumeration::stream(&input) }
+            InputType::StructNamed => { XmlStream::stream(&input, StreamType::Complex) },
+            InputType::StructUnnamed => { XmlStream::stream(&input, StreamType::Simple) },
+            InputType::StructUnit => { XmlStream::stream(&input, StreamType::Empty) },
+            InputType::Enumeration => { XmlStream::stream(&input, StreamType::Enum) }
         };
         let expanded = quote! {
             impl #impl_generics xavier::serialize::macro_trait::XmlSerializable for #object_name #ty_generics #where_clause {

@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 xavier = { path = "../xavier", features = ["derive"] }
+quick-xml = "0.31.0"
 
