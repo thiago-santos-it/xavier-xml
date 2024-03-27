@@ -34,10 +34,10 @@ pub fn stream(input: &DeriveInput) -> TokenStream {
             xml.push_str(&header);
             xml.push_str(&dtd);
 
-           let mut attributes = String::new();
+            let mut attributes = String::new();
             #(attributes.push_str(&#attributes);)*
 
-          if !#flatten {
+            if !#flatten {
                 xml.push_str("<");
                 xml.push_str(&tag);
                 if !namespace.is_empty() {
@@ -66,5 +66,4 @@ pub fn stream(input: &DeriveInput) -> TokenStream {
             format!("{}{}<{}></{}>", header, dtd, tag, tag).to_string()
         }
     }
-
 }

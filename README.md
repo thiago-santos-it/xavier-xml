@@ -231,7 +231,7 @@ struct Child {
 #[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
-    #[xml(tree)] //Same effect of flatten
+    #[xml(tree)] //Same as #[xml(flatten)] 
     pub child: Child
 }
 ```
@@ -256,7 +256,7 @@ Configuring nested struct as this:
 struct Child {
     #[xml(attribute, name="attr")]
     pub attribute: String,
-    #[xml(value)] //Same effect of flatten
+    #[xml(value)] //Same as #[xml(flatten)] 
     pub value: String,
 }
 
@@ -335,7 +335,7 @@ Should produce:
 > Note 1: Inline DTD is not supported at the moment. However, I'm open to exploring alternative methods. Pull requests are welcome and appreciated.
 > Note 2: XML validation is out of scope of this project.
 
-### Convenience
+### Convenience & security
 
 #### CDATA
 
