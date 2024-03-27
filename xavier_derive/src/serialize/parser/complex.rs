@@ -7,6 +7,7 @@ use crate::common::naming::names::XmlNames;
 use crate::serialize::parser::element::XmlElementDef;
 use crate::serialize::parser::declaration::XmlDeclaration;
 use crate::serialize::parser::dtd::XmlDTD;
+use crate::serialize::parser::instructions::XmlPI;
 
 pub(crate) struct XmlComplexTag;
 
@@ -16,6 +17,7 @@ impl XmlComplexTag {
         let elements = XmlElementDef::parse(&input, obj_meta_info.as_ref());
         let tag = LitStr::new(&XmlNames::root(&input, obj_meta_info.as_ref()), Span::call_site());
         let dtd_tokens = XmlDTD::parse(&input, &tag);
+        let pi_tokens = XmlPI::parse(&input);
         let declaration_tokens = XmlDeclaration::parse(&input, &tag);
 
         if let Some(elements) = elements {
@@ -30,46 +32,49 @@ impl XmlComplexTag {
             };
 
             quote! {
-            #declaration_tokens
-            #dtd_tokens
-            #namespace_tokens
+                #declaration_tokens
+                #pi_tokens
+                #dtd_tokens
+                #namespace_tokens
 
-            let mut xml = String::new();
-            let tag = #tag;
+                let mut xml = String::new();
+                let tag = #tag;
 
-            xml.push_str(&declaration);
-            xml.push_str(&dtd);
+                xml.push_str(&declaration);
+                xml.push_str(&pi);
+                xml.push_str(&dtd);
 
-            let mut attributes = String::new();
-            #(attributes.push_str(&#attributes);)*
+                let mut attributes = String::new();
+                #(attributes.push_str(&#attributes);)*
 
-            if !#flatten {
-                xml.push_str("<");
-                xml.push_str(&tag);
-                if !namespace.is_empty() {
-                    xml.push_str(&namespace);
+                if !#flatten {
+                    xml.push_str("<");
+                    xml.push_str(&tag);
+                    if !namespace.is_empty() {
+                        xml.push_str(&namespace);
+                    }
+                    if !attributes.is_empty() {
+                        xml.push_str(&attributes);
+                    }
+                    xml.push_str(">");
                 }
-                if !attributes.is_empty() {
-                    xml.push_str(&attributes);
+
+                let mut children = String::new();
+                #(children.push_str(&#children);)*
+                xml.push_str(&children);
+
+                if !#flatten {
+                   xml.push_str(&format!("</{}>", tag));
                 }
-                xml.push_str(">");
             }
-
-            let mut children = String::new();
-            #(children.push_str(&#children);)*
-            xml.push_str(&children);
-
-            if !#flatten {
-               xml.push_str(&format!("</{}>", tag));
-            }
-        }
         } else {
             quote! {
-            #declaration_tokens
-            #dtd_tokens
-            let tag = #tag;
-            let xml = format!("{}{}<{}></{}>", declaration, dtd, tag, tag).to_string();
-        }
+                #declaration_tokens
+                #pi_tokens
+                #dtd_tokens
+                let tag = #tag;
+                let xml = format!("{}{}{}<{}></{}>", declaration, pi, dtd, tag, tag).to_string();
+            }
         }
     }
 }

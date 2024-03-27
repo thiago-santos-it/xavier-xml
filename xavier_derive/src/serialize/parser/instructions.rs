@@ -1,32 +1,29 @@
 use proc_macro2::{Span, TokenStream};
-use quote::quote;
-use syn::{DeriveInput, LitStr, Meta};
+use quote::{quote, ToTokens};
+use syn::{DeriveInput, LitStr};
 use crate::common::meta::{MetaInfo, MetaName};
 
 pub struct XmlPI;
 
 impl XmlPI {
-    pub fn parse(input: &DeriveInput, tag: &LitStr) -> TokenStream {
-        let dtd_def = XmlPI::pi_defs(input, tag);
+    pub fn parse(input: &DeriveInput) -> TokenStream {
+        let pis_def = XmlPI::pi_defs(input);
         quote! {
-            //let pi = if root { #(pis_def.to_string())* } else { "".to_string() };
+            let mut pi = String::new();
+            if root {
+                #(pi.push_str(&#pis_def);)*
+            }
         }
     }
 
-    fn pi_defs(input: &DeriveInput, tag: &LitStr) -> Vec<LitStr> {
-        // let dtd = MetaInfo::attr_by_name(&input.attrs, MetaName::DTD);
-        //
-        // if let Some(dtd) = dtd {
-        //     if let Meta::NameValue(dtd) = &dtd.meta {
-        //         if let syn::Expr::Lit(lit) = &dtd.value {
-        //             if let syn::Lit::Str(dtd_str) = &lit.lit {
-        //                 return LitStr::new(&format!("<!DOCTYPE {} SYSTEM \"{}\">",
-        //                                             tag.value(), dtd_str.value()), Span::call_site());
-        //             }
-        //         }
-        //     }
-        // }
-        // LitStr::new(&"", Span::call_site())
-        vec![]
+    fn pi_defs(input: &DeriveInput) -> Vec<LitStr> {
+        let pi_attr_vec = MetaInfo::vec_attr_by_name(&input.attrs, MetaName::PI);
+        pi_attr_vec.iter().map(| attr | {
+            let pi_meta = &attr.meta.to_token_stream().to_string();
+            let mut pi_meta = pi_meta.replace("pi(", "<?");
+            pi_meta.pop();
+            pi_meta.push_str("?>");
+            LitStr::new(&pi_meta, Span::call_site())
+        }).collect()
     }
 }

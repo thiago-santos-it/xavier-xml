@@ -5,9 +5,7 @@ use syn::{Attribute, Error, Ident, LitStr, Meta, Token};
 use syn::parse::{Parse, ParseStream};
 
 pub enum MetaName {
-    XML,
-    Header,
-    DTD
+    XML, Header, DTD, PI
 }
 
 impl Display for MetaName {
@@ -16,6 +14,7 @@ impl Display for MetaName {
             MetaName::XML => { "xml".to_string() },
             MetaName::Header => { "header".to_string() },
             MetaName::DTD => { "dtd".to_string() },
+            MetaName::PI => { "pi".to_string() },
         };
         write!(f, "{}", str)
     }
@@ -72,6 +71,12 @@ impl MetaInfo {
         attrs.iter().find(|attr| { attr.path().is_ident(&name) })
     }
 
+    pub fn vec_attr_by_name(attrs: &Vec<Attribute>, meta_name: MetaName) -> Vec<&Attribute> {
+        let name = meta_name.to_string();
+        attrs.iter().filter_map(|attr| {
+            if attr.path().is_ident(&name) { Some(attr) } else { None } }).collect()
+    }
+
     pub fn empty() -> MetaInfo {
         MetaInfo(HashMap::new())
     }
@@ -82,7 +87,6 @@ impl MetaInfo {
         }
         MetaInfo(HashMap::new())
     }
-
 }
 
 

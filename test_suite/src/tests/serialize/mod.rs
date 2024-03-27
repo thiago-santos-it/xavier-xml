@@ -11,3 +11,4 @@ mod declaration_test;
 mod dtd_test;
 mod escaping_test;
 mod collection_test;
+mod pi_test;

@@ -63,11 +63,11 @@ struct XMLObject {
 
 Should produce:
 ``` xml
-<xmlObject>
+<object>
     <xmlJustStringItem>Some Content A</xmlJustStringItem>
     <xmlSomeIntItem>0</xmlSomeIntItem>
     <xmlSomeFloatItem>0.0</xmlSomeFloatItem>
-</xmlObject>
+</object>
 ```
 
 > **Note 1:** Using camel config will produce to all elements use the same convention. 
@@ -220,7 +220,6 @@ Should produce:
 Composing structs like this: 
 
 ```Rust
-
 #[derive(XmlSerializable)]
 #[xml(name="my_child")]
 struct Child {
@@ -246,6 +245,43 @@ Should produce:
 </object>
 ```
 > Note: Case has the scope of the element. Same for namespaces.
+
+
+### Trees
+
+Composing structs like this:
+
+```Rust
+#[derive(XmlSerializable)]
+#[xml(name="my_child")]
+struct Child {
+    pub child_field_a: String,
+}
+
+#[derive(XmlSerializable)]
+#[xml(name="object", case="Camel")]
+struct XMLObject {
+    pub field_a: String,
+    pub children: Vec<Child>
+}
+```
+Should produce:
+
+``` xml
+<object>
+	<fieldA>Some Text</fieldA>
+	<children>
+		<my_child>
+			<child_field_a>Child A</child_field_a>
+		</my_child>
+		<my_child>
+			<child_field_a>Child B</child_field_a>
+		</my_child>
+	</children>
+</object>
+```
+
+> Note: ```HashMap<String, T: XmlSerializable>``` is also supported but with no naming effect.
 
 ### Structs as tags
 
@@ -399,5 +435,3 @@ Prints this:
 ```
 
 > UTF-16 is not supported yet. PR's are welcome just check the file ../streams.rs
-- Document collections
-- Create PI (Processing Instructions)
