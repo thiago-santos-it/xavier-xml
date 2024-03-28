@@ -21,6 +21,5 @@ struct XMLObject {
 fn serialize() {
     let should = r#"<object><fieldA>Some Text</fieldA><child attr="Attr Value">Other value</child></object>"#;
     let xml = XMLObject { field_a: xtext!("Some Text"), child: Child { attribute: "Attr Value".to_string(), value: xtext!("Other value")} };
-    //println!("Element XML: {}", from_obj(&xml));
     assert_eq!(from_obj(&xml), should);
 }

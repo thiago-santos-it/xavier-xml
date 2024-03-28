@@ -5,5 +5,7 @@ pub mod doc_type;
 pub mod attribute;
 pub mod tag;
 pub mod empty_tag;
-pub mod q_name;
 pub mod values;
+mod error;
+mod instructions;
+mod comments;
