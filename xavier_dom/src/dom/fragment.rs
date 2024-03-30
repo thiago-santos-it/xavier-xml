@@ -1,7 +1,6 @@
 /*
 Interface DocumentFragment
 --
-
 DocumentFragment is a "lightweight" or "minimal" Document object. It is very common to want to be
 able to extract a portion of a document's tree or to create a new fragment of a document. Imagine
 implementing a user command like cut or rearranging a document by moving fragments around. It is
@@ -30,5 +29,8 @@ standard methods from the Node interface, such as insertBefore() and appendChild
 IDL Definition
 interface DocumentFragment : Node {
 };
+
+From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
+
 type DocumentFragment = Node;

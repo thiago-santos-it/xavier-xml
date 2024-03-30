@@ -434,4 +434,4 @@ Prints this:
   <!--Some text & others-->
 ```
 
-> UTF-16 is not supported yet. PR's are welcome just check the file ../streams.rs
+> UTF-16 is not supported yet. Hard work PR's are welcome.

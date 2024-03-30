@@ -35,6 +35,7 @@ interface Entity : Node {
   readonly attribute  DOMString            notationName;
 };
 
+From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 
 pub struct Entity {

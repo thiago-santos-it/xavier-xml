@@ -19,5 +19,7 @@ EntityReference node) are assumed to trigger the evaluation.
 IDL Definition
 interface EntityReference : Node {
 };
+
+From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 type EntityReference = Node;
