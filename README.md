@@ -407,7 +407,7 @@ This:
 
 Prints this:
 ``` 
-  <![CDATA[Some text &amp; others]]>
+  <![CDATA[Some text & others]]>
 ```
 
 #### Text encoded
@@ -431,7 +431,7 @@ This:
 
 Prints this:
 ``` 
-  <!--Some text &amp; others-->
+  <!--Some text & others-->
 ```
 
 > UTF-16 is not supported yet. PR's are welcome just check the file ../streams.rs

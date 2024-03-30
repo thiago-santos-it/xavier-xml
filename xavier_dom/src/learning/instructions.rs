@@ -2,16 +2,16 @@ use quick_xml::events::BytesText;
 use crate::deserialize::parser::error::XmlError;
 
 #[derive(Debug)]
-pub struct XmlPI {
+pub struct Instruction {
     pub name: String,
     pub params: Vec<(String, Option<String>)>
 }
 
-impl XmlPI {
-    pub fn parse(event: BytesText) -> Result<XmlPI, XmlError>{
+impl Instruction {
+    pub fn parse(event: BytesText) -> Result<Instruction, XmlError>{
         let doc_type = String::from_utf8(event.to_vec())?;
-        if let Some((name, params)) = XmlPI::parse_pi(&doc_type) {
-            Ok(XmlPI { name, params })
+        if let Some((name, params)) = Instruction::parse_pi(&doc_type) {
+            Ok(Instruction { name, params })
         } else {
             Err(XmlError::new(r#"Invalid PI check if it's composed by key = "value" or flags"#))
         }
@@ -33,7 +33,7 @@ impl XmlPI {
 
         let mut params = Vec::new();
         for part in parts.iter().skip(1) {
-            if let Some((key, value)) = XmlPI::parse_param(part) {
+            if let Some((key, value)) = Instruction::parse_param(part) {
                 params.push((key, value));
             } else {
                 return None;

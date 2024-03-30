@@ -9,26 +9,26 @@ use crate::deserialize::parser::instructions::XmlPI;
 use crate::deserialize::parser::tag::XmlTag;
 
 #[derive(Debug)]
-pub struct XmlRoot {
+pub struct Document {
     pub declaration: Option<XmlDeclaration>,
     pub doc_type: Option<XmlDocType>,
     pub pis: Vec<XmlPI>,
     pub element: XmlElement
 }
 
-impl XmlRoot {
-    pub fn parser(xml: &str) -> Result<XmlRoot, XmlError> {
+impl Document {
+    pub fn parser(xml: &str) -> Result<Document, XmlError> {
         let mut reader = Reader::from_str(xml);
         let mut declaration: Option<XmlDeclaration> = None;
         let mut doc_type: Option<XmlDocType> = None;
         let mut pis: Vec<XmlPI> = vec!();
         let mut element: Option<XmlElement> = None;
-        let mut root: Option<XmlRoot> = None;
+        let mut document: Option<Document> = None;
         loop {
             match reader.read_event() {
                 Err(error) => panic!("Error at position {}: {:?}", reader.buffer_position(), error),
                 Ok(Event::Eof) =>  {
-                    root = Some(XmlRoot { declaration, doc_type, pis, element: element.unwrap() });
+                    document = Some(Document { declaration, doc_type, pis, element: element.unwrap() });
                     break
                 },
                 Ok(Event::Start(event)) => element = Some(XmlElement::Tag(XmlTag::parser(&mut reader, event)?)),
@@ -42,8 +42,8 @@ impl XmlRoot {
                 Ok(Event::CData(event)) => {},
             };
         };
-        if let Some(root) = root  {
-            Ok(root)
+        if let Some(document) = document {
+            Ok(document)
         } else {
             Err(XmlError::new("Fail to parse XML root! No end found."))
         }

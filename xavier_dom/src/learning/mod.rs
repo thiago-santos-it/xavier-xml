@@ -1,5 +1,5 @@
 pub mod element;
-pub mod root;
+pub mod document;
 pub mod declaration;
 pub mod doc_type;
 pub mod attribute;

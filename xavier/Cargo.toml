@@ -6,7 +6,10 @@ edition = "2021"
 [dependencies]
 quick-xml = "0.31.0"
 xavier-derive = { path = "../xavier_derive", optional = true }
+xavier-dom = { path = "../xavier_dom", optional = true }
+xavier-internal = { path = "../xavier_internal", optional = true }
 
 [features]
 derive = ["xavier-derive"]
+dom = ["xavier-dom"]
 

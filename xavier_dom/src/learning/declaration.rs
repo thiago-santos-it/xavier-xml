@@ -2,14 +2,14 @@ use quick_xml::events::BytesDecl;
 use crate::deserialize::parser::error::XmlError;
 
 #[derive(Debug)]
-pub struct XmlDeclaration {
+pub struct Declaration {
     pub version: String,
     pub encoding: Option<String>,
     pub standalone: Option<String>
 }
 
-impl XmlDeclaration {
-    pub fn parse(event: BytesDecl) -> Result<XmlDeclaration, XmlError> {
+impl Declaration {
+    pub fn parse(event: BytesDecl) -> Result<Declaration, XmlError> {
 
         let version = String::from_utf8(event.version()?.to_vec())?;
 
@@ -25,6 +25,6 @@ impl XmlDeclaration {
             None
         };
 
-        Ok(XmlDeclaration { version, encoding, standalone })
+        Ok(Declaration { version, encoding, standalone })
     }
 }

@@ -1,7 +1,7 @@
 
 #[macro_export]
 macro_rules! xcdata {
-    ($expr:expr) => { format!("<![CDATA[{}]]>", xavier::serialize::escaping::escape_xml($expr)).to_string() };
+    ($expr:expr) => { format!("<![CDATA[{}]]>", $expr).to_string() };
 }
 
 #[macro_export]

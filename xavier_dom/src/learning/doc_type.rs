@@ -2,16 +2,16 @@ use quick_xml::events::BytesText;
 use crate::deserialize::parser::error::XmlError;
 
 #[derive(Debug)]
-pub struct XmlDocType {
+pub struct DocType {
     pub name: String,
     pub file: String
 }
 
-impl XmlDocType {
-    pub fn parse(event: BytesText) -> Result<Option<XmlDocType>, XmlError> {
+impl DocType {
+    pub fn parse(event: BytesText) -> Result<Option<DocType>, XmlError> {
         let doc_type = String::from_utf8(event.to_vec())?;
-        if let Some((name, file)) = XmlDocType::parse_doctype(&doc_type) {
-            Ok(Some(XmlDocType { name, file }))
+        if let Some((name, file)) = DocType::parse_doctype(&doc_type) {
+            Ok(Some(DocType { name, file }))
         } else {
             eprintln!("Parse of inline doc type is not implemented yet!");
             Ok(None)
