@@ -20,4 +20,6 @@ interface CDATASection : Text {
 
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
-type CDATASection = Text;
+use crate::dom::text::Text;
+
+pub type CDATASection = Text;

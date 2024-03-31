@@ -38,6 +38,7 @@ the implementation platform.
 
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
+use crate::dom::string::DOMString;
 
 pub struct CharacterData {
 
@@ -57,7 +58,7 @@ pub struct CharacterData {
 }
 
 
-trait CharacterDataTrait {
+pub trait CharacterDataTrait {
     /*
     Extracts a range of data from the node.
 
@@ -74,7 +75,9 @@ trait CharacterDataTrait {
     characters in data, or if the specified count is negative.
     - DOMSTRING_SIZE_ERR: Raised if the specified range of text does not fit into a DOMString.
      */
-    fn substring_data(offset: i32, count: i32) -> DOMString;
+    fn substring_data(&self, offset: i32, count: i32) -> DOMString {
+        unimplemented!()
+    }
 
     /*
     Append the string to the end of the character data of the node. Upon success, data provides
@@ -88,7 +91,9 @@ trait CharacterDataTrait {
 
     This method returns nothing.
      */
-    fn append_data(arg: DOMString);
+    fn append_data(&mut self, arg: DOMString) {
+        unimplemented!()
+    }
 
     /*
     Insert a string at the specified character offset.
@@ -104,7 +109,9 @@ trait CharacterDataTrait {
 
     This method returns nothing.
      */
-    fn insert_data(offset: i32, arg: DOMString);
+    fn insert_data(&mut self, offset: i32, arg: DOMString) {
+        unimplemented!()
+    }
 
     /*
     Remove a range of characters from the node. Upon success, data and length reflect the change.
@@ -119,7 +126,9 @@ trait CharacterDataTrait {
     - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 
      */
-    fn delete_data(offset: i32, count: i32);
+    fn delete_data(&mut self, offset: i32, count: i32) {
+        unimplemented!()
+    }
 
     /*
     Replace the characters starting at the specified character offset with the specified string.
@@ -137,32 +146,16 @@ trait CharacterDataTrait {
 
     This method returns nothing.
      */
-    fn replace_data(offset: i32, count: i32, arg: DOMString);
+    fn replace_data(&mut self, offset: i32, count: i32, arg: DOMString) {
+        unimplemented!()
+    }
+
+    fn inner(&mut self) -> &mut CharacterData;
 }
 
 impl CharacterDataTrait for CharacterData {
 
-    fn delete_data(offset: i32, count: i32) {
-        unimplemented!()
-    }
-
-    fn length(&self) -> i32 {
-        unimplemented!()
-    }
-
-    fn substring_data(offset: i32, count: i32) -> DOMString {
-        unimplemented!()
-    }
-
-    fn append_data(arg: DOMString) {
-        unimplemented!()
-    }
-
-    fn insert_data(offset: i32, arg: DOMString) {
-        unimplemented!()
-    }
-
-    fn replace_data(offset: i32, count: i32, arg: DOMString) {
-        unimplemented!()
+    fn inner(&mut self) -> &mut CharacterData {
+        self
     }
 }

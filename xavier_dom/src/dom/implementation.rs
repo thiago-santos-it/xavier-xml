@@ -1,6 +1,7 @@
 /*
 Interface DOMImplementation
 --
+
 The DOMImplementation interface provides a number of methods for performing operations that are
 independent of any particular instance of the document object model.
 
@@ -16,6 +17,8 @@ interface DOMImplementation {
 
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
+
+use crate::dom::string::DOMString;
 
 pub struct DOMImplementation;
 

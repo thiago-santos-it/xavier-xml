@@ -1,4 +1,4 @@
-use xavier::deserialize::parser::root::XmlRoot;
+
 
 
 #[test]
@@ -12,5 +12,5 @@ fn test() {
                     </tag2>
                     <tag2>Test 2</tag2>
              </tag1>"#;
-    println!("Root {:?}", XmlRoot::parser(xml));
+   // println!("Root {:?}", XmlRoot::parser(xml));
 }

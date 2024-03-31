@@ -33,4 +33,18 @@ interface DocumentFragment : Node {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 
-type DocumentFragment = Node;
+use crate::dom::node::{NodeImpl, NodeTrait};
+
+pub struct DocumentFragment<'a> {
+    /*
+    Inner state of node
+     */
+    inner: NodeImpl<'a>
+}
+
+impl NodeTrait for DocumentFragment<'_> {
+    fn inner(&mut self) -> &mut NodeImpl {
+        //&mut self.inner
+        unimplemented!()
+    }
+}

@@ -96,43 +96,58 @@ From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
 
  */
 
-enum Node {
-    Element(Element),
+use crate::dom::attr::Attr;
+use crate::dom::cdata::CDATASection;
+use crate::dom::comment::Comment;
+use crate::dom::doc_type::DocumentType;
+use crate::dom::document::Document;
+use crate::dom::element::Element;
+use crate::dom::entity_ref::EntityReference;
+use crate::dom::fragment::DocumentFragment;
+use crate::dom::instruction::ProcessingInstruction;
+use crate::dom::named_node_map::NamedNodeMap;
+use crate::dom::node_list::NodeList;
+use crate::dom::notation::Notation;
+use crate::dom::string::DOMString;
+use crate::dom::text::Text;
+
+pub enum Node<'a> {
+    Element(Element<'a>),
     Attribute(Attr),
     Text(Text),
     CDATA(CDATASection),
-    EntityRef(EntityReference),
-    Instruction(ProcessingInstruction),
+    EntityRef(EntityReference<'a>),
+    Instruction(ProcessingInstruction<'a>),
     Comment(Comment),
-    Document(Document),
-    DocumentType(DocumentType),
-    DocumentFragment(DocumentFragment),
-    Notation(Notation)
+    Document(Document<'a>),
+    DocumentType(DocumentType<'a>),
+    DocumentFragment(DocumentFragment<'a>),
+    Notation(Notation<'a>)
 }
 
-pub struct NodeImpl {
+pub struct NodeImpl<'a> {
 
     /*
     The name of this node, depending on its type; see the table above.
      */
-    node_name: DOMString,
+    pub node_name: DOMString,
 
     /*
     The value of this node, depending on its type; see the table above.
      */
-    node_value: DOMString,
+    pub node_value: DOMString,
 
     /*
     A code representing the type of the underlying object, as defined above.
      */
-    node_type: i32,
+    pub node_type: i32,
 
     /*
     The parent of this node. All nodes, except Document, DocumentFragment, and Attr may have a
     parent. However, if a node has just been created and not yet added to the tree, or if it has
     been removed from the tree, this is null.
      */
-    parent_node: Node,
+    pub parent_node: &'a Node<'a>,
 
     /*
     A NodeList that contains all children of this node. If there are no children, this is a NodeList
@@ -142,41 +157,41 @@ pub struct NodeImpl {
     content of the node. This is true for every NodeList, including the ones returned by the
     getElementsByTagName method.
      */
-    child_nodes: NodeList,
+    pub child_nodes: NodeList,
 
     /*
     The first child of this node. If there is no such node, this returns null.
      */
-    first_child: Node,
+    pub first_child: &'a Node<'a>,
 
     /*
     The last child of this node. If there is no such node, this returns null.
      */
-    last_child: Node,
+    pub last_child: &'a Node<'a>,
 
     /*
     The node immediately preceding this node. If there is no such node, this returns null.
      */
-    previous_sibling: Node,
+    pub previous_sibling: &'a Node<'a>,
 
     /*
     The node immediately following this node. If there is no such node, this returns null.
      */
-    next_sibling: Node,
+    pub next_sibling: &'a Node<'a>,
 
     /*
     A NamedNodeMap containing the attributes of this node (if it is an Element) or null otherwise.
      */
-    attributes: NamedNodeMap,
+    pub attributes: NamedNodeMap,
 
     /*
     The Document object associated with this node. This is also the Document object used to create
     new nodes. When this node is a Document this is null.
      */
-    owner_document: Document,
+    pub owner_document: &'a Document<'a>,
 }
 
-trait NodeTrait {
+pub trait NodeTrait {
     const ELEMENT_NODE: i32 = 1;
     const ATTRIBUTE_NODE: i32 = 2;
     const TEXT_NODE: i32 = 3;
@@ -212,7 +227,9 @@ trait NodeTrait {
     - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
     - NOT_FOUND_ERR: Raised if refChild is not a child of this node.
      */
-    fn insert_before(new_child: Node, ref_child: Node) -> Node;
+    fn insert_before(&self, new_child: Node, ref_child: Node) -> Node {
+        unimplemented!()
+    }
 
     /*
     Replaces the child node oldChild with newChild in the list of children, and returns the oldChild node. If the newChild is already in the tree, it is first removed.
@@ -231,7 +248,9 @@ trait NodeTrait {
     - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
     - NOT_FOUND_ERR: Raised if oldChild is not a child of this node.
      */
-    fn replace_child(new_child: Node, old_child: Node) -> Node;
+    fn replace_child(&self, new_child: Node, old_child: Node) -> Node {
+        unimplemented!()
+    }
 
     /*
     Removes the child node indicated by oldChild from the list of children, and returns it.
@@ -246,7 +265,9 @@ trait NodeTrait {
     - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
     - NOT_FOUND_ERR: Raised if oldChild is not a child of this node.
      */
-    fn remove_child(old_child: Node) -> Node;
+    fn remove_child(&self, old_child: Node) -> Node {
+        unimplemented!()
+    }
 
     /*
     Adds the node newChild to the end of the list of children of this node. If the newChild is
@@ -268,7 +289,9 @@ trait NodeTrait {
      created this node.
     - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
      */
-    fn append_child(new_child: Node) -> Node;
+    fn append_child(&self, new_child: Node) -> Node {
+        unimplemented!()
+    }
     /*
     This is a convenience method to allow easy determination of whether a node has any children.
     Return Value
@@ -277,7 +300,9 @@ trait NodeTrait {
     This method has no parameters.
     This method raises no exceptions.
      */
-    pub fn has_child_nodes() -> bool {}
+    fn has_child_nodes(&self) -> bool {
+        unimplemented!()
+    }
     /*
     Returns a duplicate of this node, i.e., serves as a generic copy constructor for nodes. The
     duplicate node has no parent (parentNode returns null.).
@@ -295,5 +320,9 @@ trait NodeTrait {
 
     This method raises no exceptions.
      */
-    fn clone_node(deep: bool) -> Node;
+    fn clone_node(&self, deep: bool) -> Node {
+        unimplemented!()
+    }
+
+    fn inner(&mut self) -> &mut NodeImpl;
 }

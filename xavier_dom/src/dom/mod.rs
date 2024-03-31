@@ -49,3 +49,6 @@ pub mod node_list;
 pub mod notation;
 pub mod text;
 pub mod error;
+pub mod string;
+pub mod node;
+pub mod cdata;

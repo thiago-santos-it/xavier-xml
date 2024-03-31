@@ -21,6 +21,9 @@ interface NamedNodeMap {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 
+use crate::dom::node::Node;
+use crate::dom::string::DOMString;
+
 pub struct NamedNodeMap {
     /*
     The number of nodes in the map. The range of valid child node indices is 0 to length-1 inclusive.
@@ -43,7 +46,7 @@ impl NamedNodeMap {
 
     This method raises no exceptions.
      */
-    pub fn get_named_item(name: DOMString) -> Node {
+    pub fn get_named_item(&self, name: DOMString) -> Node {
         unimplemented!();
     }
 
@@ -69,7 +72,7 @@ impl NamedNodeMap {
     - INUSE_ATTRIBUTE_ERR: Raised if arg is an Attr that is already an attribute of another Element
     object. The DOM user must explicitly clone Attr nodes to re-use them in other elements.
      */
-    pub fn set_named_item(arg: None) -> Node {
+    pub fn set_named_item(&mut self, arg: Node) -> Node {
         unimplemented!();
     }
 
@@ -86,7 +89,7 @@ impl NamedNodeMap {
     DOMException:
     - NOT_FOUND_ERR: Raised if there is no node named name in the map.
      */
-    pub fn remove_named_item(name: DOMString) -> Node {
+    pub fn remove_named_item(&mut self, name: DOMString) -> Node {
         unimplemented!();
     }
 
@@ -102,7 +105,7 @@ impl NamedNodeMap {
 
     This method raises no exceptions.
      */
-    pub fn item(index: i32) -> Node {
+    pub fn item(&self, index: i32) -> Node {
         unimplemented!();
     }
 }

@@ -15,7 +15,11 @@ interface DocumentType : Node {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
 */
 
-pub struct DocumentType {
+use crate::dom::named_node_map::NamedNodeMap;
+use crate::dom::node::{NodeImpl, NodeTrait};
+use crate::dom::string::DOMString;
+
+pub struct DocumentType<'a> {
     /*
     The name of DTD; i.e., the name immediately following the DOCTYPE keyword.
     */
@@ -44,5 +48,16 @@ pub struct DocumentType {
     The DOM Level 1 does not support editing notations, therefore notations cannot be altered in
     any way.
      */
-    pub notations: NamedNodeMap
+    pub notations: NamedNodeMap,
+    /*
+    Inner state of node
+     */
+    inner: NodeImpl<'a>
+}
+
+impl NodeTrait for DocumentType<'_> {
+    fn inner(&mut self) -> &mut NodeImpl {
+        //&mut self.inner
+        unimplemented!()
+    }
 }

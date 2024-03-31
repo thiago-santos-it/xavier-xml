@@ -17,7 +17,10 @@ interface Notation : Node {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
 */
 
-pub struct Notation {
+use crate::dom::node::{NodeImpl, NodeTrait};
+use crate::dom::string::DOMString;
+
+pub struct Notation<'a> {
     /*
     The public identifier of this notation. If the public identifier was not specified, this is null.
      */
@@ -25,5 +28,17 @@ pub struct Notation {
     /*
     The system identifier of this notation. If the system identifier was not specified, this is null.
      */
-    pub system_id: BOMString
+    pub system_id: DOMString,
+
+    /*
+    Inner state of node
+     */
+    inner: NodeImpl<'a>
+}
+
+impl NodeTrait for Notation<'_> {
+    fn inner(&mut self) -> &mut NodeImpl {
+        //&mut self.inner
+        unimplemented!()
+    }
 }

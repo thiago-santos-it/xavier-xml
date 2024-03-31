@@ -30,7 +30,21 @@ interface Document : Node {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 
-pub struct Document {
+use crate::dom::attr::Attr;
+use crate::dom::cdata::CDATASection;
+use crate::dom::comment::Comment;
+use crate::dom::doc_type::DocumentType;
+use crate::dom::element::Element;
+use crate::dom::entity_ref::EntityReference;
+use crate::dom::fragment::DocumentFragment;
+use crate::dom::implementation::DOMImplementation;
+use crate::dom::instruction::ProcessingInstruction;
+use crate::dom::node::{NodeImpl, NodeTrait};
+use crate::dom::node_list::NodeList;
+use crate::dom::string::DOMString;
+use crate::dom::text::Text;
+
+pub struct Document<'a> {
     /*
     The Document Type Declaration (see DocumentType) associated with this document. For HTML
     documents as well as XML documents without a document type declaration this returns null.
@@ -38,7 +52,7 @@ pub struct Document {
     The DOM Level 1 does not support editing the Document Type Declaration, therefore docType
     cannot be altered in any way.
      */
-    pub doctype: DocumentType,
+    pub doctype: DocumentType<'a>,
     /*
     The DOMImplementation object that handles this document. A DOM application may use objects
     from multiple implementations.
@@ -48,11 +62,14 @@ pub struct Document {
     This is a convenience attribute that allows direct access to the child node that is the root
     element of the document. For HTML documents, this is the element with the tagName "HTML".
      */
-    pub document_element: Element
+    pub document_element: Element<'a>,
+    /*
+    Inner state of node
+     */
+    inner: NodeImpl<'a>
 }
 
-
-impl Document {
+impl Document<'_> {
 
     /*
     Creates an element of the type specified. Note that the instance returned implements the Element
@@ -69,7 +86,7 @@ impl Document {
     DOMException:
     - INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
      */
-    fn create_element(tag_name: DOMString) -> Element {
+    fn create_element(tag_name: DOMString) -> Element<'static> {
         unimplemented!()
     }
 
@@ -82,7 +99,7 @@ impl Document {
     This method has no parameters.
     This method raises no exceptions.
      */
-    fn create_document_fragment() -> DocumentFragment {
+    fn create_document_fragment() -> DocumentFragment<'static> {
         unimplemented!()
     }
 
@@ -144,8 +161,8 @@ impl Document {
     - INVALID_CHARACTER_ERR: Raised if an invalid character is specified.
     - NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
     */
-    fn create_processing_instruction(target: DOMString, data: DOMString) -> ProcessingInstruction {
-        implemented!()
+    fn create_processing_instruction(target: DOMString, data: DOMString) -> ProcessingInstruction<'static> {
+        unimplemented!()
     }
     /*
     Creates an Attr of the given name. Note that the Attr instance can then be set on an Element
@@ -177,7 +194,7 @@ impl Document {
     - INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
     - NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
      */
-    fn create_entity_reference(name: DOMString) -> EntityReference {
+    fn create_entity_reference(name: DOMString) -> EntityReference<'static> {
         unimplemented!()
     }
     /*
@@ -193,6 +210,13 @@ impl Document {
     This method raises no exceptions.
      */
     fn get_elements_by_tag_name(tagname: DOMString) -> NodeList {
+        unimplemented!()
+    }
+}
+
+impl NodeTrait for Document<'_> {
+    fn inner(&mut self) -> &mut NodeImpl {
+        //&mut self.inner
         unimplemented!()
     }
 }

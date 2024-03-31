@@ -44,7 +44,12 @@ interface Element : Node {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 
-pub struct Element {
+use crate::dom::attr::Attr;
+use crate::dom::node::{NodeImpl, NodeTrait};
+use crate::dom::node_list::NodeList;
+use crate::dom::string::DOMString;
+
+pub struct Element<'a> {
     /*
     tagName: The name of the element. For example, in:
 
@@ -57,10 +62,14 @@ pub struct Element {
     the operations of the DOM. The HTML DOM returns the tagName of an HTML element in the canonical
     uppercase form, regardless of the case in the source HTML document.
     */
-    pub tag_name: DOMString
+    pub tag_name: DOMString,
+    /*
+    Inner state of node
+     */
+    inner: NodeImpl<'a>
 }
 
-impl Element {
+impl Element<'_> {
 
     /*
     Retrieves an attribute value by name.
@@ -198,6 +207,13 @@ impl Element {
     This method raises no exceptions.
      */
     pub fn normalize() {
+        unimplemented!()
+    }
+}
+
+impl NodeTrait for Element<'_> {
+    fn inner(&mut self) -> &mut NodeImpl {
+        //&mut self.inner
         unimplemented!()
     }
 }

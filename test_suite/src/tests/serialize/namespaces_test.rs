@@ -1,6 +1,5 @@
-use xavier::{from_obj, namespaces, XmlSerializable};
+use xavier::{from_obj, namespaces, xtext, XmlSerializable};
 use xavier::serialize::namespaces::Namespaces;
-use xavier::xtext;
 
 #[derive(XmlSerializable)]
 #[xml(ns="xml", name="object", case="Camel")]

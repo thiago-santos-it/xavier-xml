@@ -10,4 +10,7 @@ interface Comment : CharacterData { };
 
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
-type Comment = CharactedData;
+
+use crate::dom::character_data::CharacterData;
+
+pub type Comment = CharacterData;

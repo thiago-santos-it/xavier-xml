@@ -15,7 +15,10 @@ interface NodeList {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 
+use crate::dom::node::Node;
+
 pub struct NodeList {
+
     /*
     The number of nodes in the list. The range of valid child node indices is 0 to length-1 inclusive.
      */
@@ -34,7 +37,7 @@ impl NodeList {
 
     This method raises no exceptions.
      */
-    pub fn item(index: i32) -> Node {
+    pub fn item(&self, index: i32) -> Node {
         unimplemented!()
     }
 }

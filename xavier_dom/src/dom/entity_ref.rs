@@ -22,4 +22,18 @@ interface EntityReference : Node {
 
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
-type EntityReference = Node;
+use crate::dom::node::{NodeImpl, NodeTrait};
+
+pub struct EntityReference<'a> {
+    /*
+    Inner state of node
+     */
+    inner: NodeImpl<'a>
+}
+
+impl NodeTrait for EntityReference<'_> {
+    fn inner(&mut self) -> &mut NodeImpl {
+        //&mut self.inner
+        unimplemented!()
+    }
+}

@@ -36,6 +36,8 @@ interface Attr : Node {
 
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
+use crate::dom::string::DOMString;
+
 pub struct Attr {
     /*Returns the name of this attribute.*/
     pub name: DOMString,

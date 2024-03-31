@@ -38,7 +38,10 @@ interface Entity : Node {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 
-pub struct Entity {
+use crate::dom::node::{NodeImpl, NodeTrait};
+use crate::dom::string::DOMString;
+
+pub struct Entity<'a> {
     /*
     The public identifier associated with the entity, if specified. If the public identifier was not
     specified, this is null.
@@ -53,5 +56,16 @@ pub struct Entity {
     For unparsed entities, the name of the notation for the entity. For parsed entities, this is
     null.
      */
-    pub notation_name: DOMString
+    pub notation_name: DOMString,
+    /*
+    Inner state of node
+     */
+    inner: NodeImpl<'a>
+}
+
+impl NodeTrait for Entity<'_> {
+    fn inner(&mut self) -> &mut NodeImpl {
+        //&mut self.inner
+        unimplemented!()
+    }
 }
