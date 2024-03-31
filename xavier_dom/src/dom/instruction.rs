@@ -26,7 +26,7 @@ pub struct ProcessingInstruction {
 
     Exceptions on setting
     DOMException
-    NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
      */
     data: DOMString
 }

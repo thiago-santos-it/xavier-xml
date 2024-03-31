@@ -21,7 +21,12 @@ interface NamedNodeMap {
 From: https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html
  */
 
-pub struct NamedNodeMap;
+pub struct NamedNodeMap {
+    /*
+    The number of nodes in the map. The range of valid child node indices is 0 to length-1 inclusive.
+     */
+    pub length: i32
+}
 
 
 impl NamedNodeMap {
@@ -58,10 +63,10 @@ impl NamedNodeMap {
     returned, otherwise null is returned.
 
     DOMException:
-    WRONG_DOCUMENT_ERR: Raised if arg was created from a different document than the one that
+    - WRONG_DOCUMENT_ERR: Raised if arg was created from a different document than the one that
     created the NamedNodeMap.
-    NO_MODIFICATION_ALLOWED_ERR: Raised if this NamedNodeMap is readonly.
-    INUSE_ATTRIBUTE_ERR: Raised if arg is an Attr that is already an attribute of another Element
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this NamedNodeMap is readonly.
+    - INUSE_ATTRIBUTE_ERR: Raised if arg is an Attr that is already an attribute of another Element
     object. The DOM user must explicitly clone Attr nodes to re-use them in other elements.
      */
     pub fn set_named_item(arg: None) -> Node {
@@ -79,7 +84,7 @@ impl NamedNodeMap {
     The node removed from the map or null if no node with such a name exists.
 
     DOMException:
-    NOT_FOUND_ERR: Raised if there is no node named name in the map.
+    - NOT_FOUND_ERR: Raised if there is no node named name in the map.
      */
     pub fn remove_named_item(name: DOMString) -> Node {
         unimplemented!();
@@ -98,13 +103,6 @@ impl NamedNodeMap {
     This method raises no exceptions.
      */
     pub fn item(index: i32) -> Node {
-        unimplemented!();
-    }
-
-    /*
-    The number of nodes in the map. The range of valid child node indices is 0 to length-1 inclusive.
-     */
-    pub fn length() -> i32 {
         unimplemented!();
     }
 }

@@ -11,19 +11,48 @@ interface Text : CharacterData {
 };
 
 Methods
-splitText
-Breaks this Text node into two Text nodes at the specified offset, keeping both in the tree as siblings. This node then only contains all the content up to the offset point. And a new Text node, which is inserted as the next sibling of this node, contains all the content at and after the offset point.
-Parameters
-offset
-The offset at which to split, starting from 0.
-
-Return Value
-The new Text node.
-Exceptions
-DOMException
-INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of characters in data.
-
-NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
-
 
  */
+
+pub struct Text {
+    inner: CharacterData
+}
+
+impl CharacterDataTrait for Text {
+    /*
+    Breaks this Text node into two Text nodes at the specified offset, keeping both in the tree as
+    siblings. This node then only contains all the content up to the offset point. And a new Text
+    node, which is inserted as the next sibling of this node, contains all the content at and after
+    the offset point.
+
+    Parameters:
+    - offset: The offset at which to split, starting from 0.
+
+    Return Value:
+    The new Text node.
+
+    DOMException:
+    - INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of
+    characters in data.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+     */
+    fn split_text(&self, offset: i32) -> Text {
+
+    }
+
+    fn append_data(&self, arg: DOMString) {
+        self.inner.append_data(arg)
+    }
+
+    fn substring_data(&self,offset: i32, count: i32) -> DOMString {
+        self.inner.substring_data(offset, count)
+    }
+
+    fn insert_data(&self, offset: i32, arg: DOMString) {
+        self.inner.insert_data(offset, arg)
+    }
+
+    fn replace_data(&self, offset: i32, count: i32, arg: DOMString) {
+        self.inner.replace_data(offset, count, arg)
+    }
+}

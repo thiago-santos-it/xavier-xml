@@ -67,7 +67,7 @@ impl Document {
     A new Element object.
 
     DOMException:
-    INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
+    - INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
      */
     fn create_element(tag_name: DOMString) -> Element {
         unimplemented!()
@@ -125,7 +125,7 @@ impl Document {
     The new CDATASection object.
 
     DOMException:
-    NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
+    - NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
      */
     fn create_cdata_section(data: DOMString) -> CDATASection {
         unimplemented!()
@@ -141,9 +141,9 @@ impl Document {
     The new ProcessingInstruction object.
 
     DOMException:
-    INVALID_CHARACTER_ERR: Raised if an invalid character is specified.
-    NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
- */
+    - INVALID_CHARACTER_ERR: Raised if an invalid character is specified.
+    - NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
+    */
     fn create_processing_instruction(target: DOMString, data: DOMString) -> ProcessingInstruction {
         implemented!()
     }
@@ -158,7 +158,7 @@ impl Document {
     A new Attr object.
 
     DOMException:
-    INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
+    - INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
      */
     fn create_attribute(name: DOMString) -> Attr {
         unimplemented!()
@@ -174,8 +174,8 @@ impl Document {
     The new EntityReference object.
 
     DOMException:
-    INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
-    NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
+    - INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
+    - NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
      */
     fn create_entity_reference(name: DOMString) -> EntityReference {
         unimplemented!()

@@ -93,9 +93,8 @@ impl Element {
     - value: Value to set in string form.
 
     DOMException:
-    INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
-
-    NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+    - INVALID_CHARACTER_ERR: Raised if the specified name contains an invalid character.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 
     This method returns nothing.
      */
@@ -111,7 +110,7 @@ impl Element {
     - name: The name of the attribute to remove.
 
     DOMException:
-    NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 
     This method returns nothing.
      */
@@ -143,7 +142,7 @@ impl Element {
     existing Attr node is returned, otherwise null is returned.
 
     DOMException:
-    WRONG_DOCUMENT_ERR: Raised if newAttr was created from a different document than the one that
+    - WRONG_DOCUMENT_ERR: Raised if newAttr was created from a different document than the one that
     created the element.
 
     NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
@@ -165,8 +164,8 @@ impl Element {
     The Attr node that was removed.
 
     DOMException:
-    NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
-    NOT_FOUND_ERR: Raised if oldAttr is not an attribute of the element.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+    - NOT_FOUND_ERR: Raised if oldAttr is not an attribute of the element.
      */
     pub fn remove_attribute_node(old_attr: Attr) -> Attr {
         unimplemented!()

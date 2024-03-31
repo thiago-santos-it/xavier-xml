@@ -49,18 +49,15 @@ pub struct CharacterData {
     sized pieces.
      */
     pub data: DOMString,
-}
-
-impl CharacterData {
-
     /*
     The number of characters that are available through data and the substringData method below. This
     may have the value zero, i.e., CharacterData nodes may be empty.
      */
-    pub fn length(&self) -> i32 {
-        unimplemented!()
-    }
+    pub length: i32
+}
 
+
+trait CharacterDataTrait {
     /*
     Extracts a range of data from the node.
 
@@ -73,14 +70,11 @@ impl CharacterData {
     to the end of the data are returned.
 
     DOMException:
-    INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of
+    - INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of
     characters in data, or if the specified count is negative.
-
-    DOMSTRING_SIZE_ERR: Raised if the specified range of text does not fit into a DOMString.
+    - DOMSTRING_SIZE_ERR: Raised if the specified range of text does not fit into a DOMString.
      */
-    pub fn substring_data(offset: i32, count: i32) -> DOMString {
-        unimplemented!()
-    }
+    fn substring_data(offset: i32, count: i32) -> DOMString;
 
     /*
     Append the string to the end of the character data of the node. Upon success, data provides
@@ -90,13 +84,11 @@ impl CharacterData {
     - arg: The DOMString to append.
 
     DOMException:
-    NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 
     This method returns nothing.
      */
-    pub fn append_data(arg: DOMString) {
-        unimplemented!()
-    }
+    fn append_data(arg: DOMString);
 
     /*
     Insert a string at the specified character offset.
@@ -106,16 +98,13 @@ impl CharacterData {
     - arg: The DOMString to insert.
 
     DOMException:
-    INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of
+    - INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of
     characters in data.
-
-    NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 
     This method returns nothing.
      */
-    pub fn insert_data(offset: i32, arg: DOMString) {
-        unimplemented!()
-    }
+    fn insert_data(offset: i32, arg: DOMString);
 
     /*
     Remove a range of characters from the node. Upon success, data and length reflect the change.
@@ -125,14 +114,12 @@ impl CharacterData {
     all characters from offset to the end of the data are deleted.
 
     DOMException:
-    INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of characters in data, or if the specified count is negative.
-
-    NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+    - INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of
+    characters in data, or if the specified count is negative.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 
      */
-    pub fn delete_data(offset: i32, count: i32) {
-        unimplemented!()
-    }
+    fn delete_data(offset: i32, count: i32);
 
     /*
     Replace the characters starting at the specified character offset with the specified string.
@@ -144,13 +131,38 @@ impl CharacterData {
     - arg: The DOMString with which the range must be replaced.
 
     DOMException:
-    INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of
+    - INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of
     characters in data, or if the specified count is negative.
-    NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+    - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 
     This method returns nothing.
      */
-    pub fn replace_data(offset: i32, count: i32, arg: DOMString) {
+    fn replace_data(offset: i32, count: i32, arg: DOMString);
+}
+
+impl CharacterDataTrait for CharacterData {
+
+    fn delete_data(offset: i32, count: i32) {
+        unimplemented!()
+    }
+
+    fn length(&self) -> i32 {
+        unimplemented!()
+    }
+
+    fn substring_data(offset: i32, count: i32) -> DOMString {
+        unimplemented!()
+    }
+
+    fn append_data(arg: DOMString) {
+        unimplemented!()
+    }
+
+    fn insert_data(offset: i32, arg: DOMString) {
+        unimplemented!()
+    }
+
+    fn replace_data(offset: i32, count: i32, arg: DOMString) {
         unimplemented!()
     }
 }
