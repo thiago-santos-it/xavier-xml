@@ -1,5 +1,5 @@
 use xavier::{from_obj, XmlSerializable};
-use xavier::xtext;
+use xavier::encode;
 
 #[derive(XmlSerializable)]
 #[xml(name="my_child")]
@@ -18,7 +18,7 @@ struct XMLObject {
 #[test]
 fn serialize() {
     let should = r#"<object><fieldA>Some Text</fieldA><my_child><child_field_a>Other value</child_field_a></my_child></object>"#;
-    let xml = XMLObject { field_a: xtext!("Some Text"), child: Child { child_field_a: xtext!("Other value")} };
+    let xml = XMLObject { field_a: encode!("Some Text"), child: Child { child_field_a: encode!("Other value")} };
     assert_eq!(from_obj(&xml), should);
 }
 
@@ -36,6 +36,6 @@ struct XMLObjectValued {
 #[test]
 fn valued() {
     let should = r#"<object><fieldA>Some Text</fieldA><my_child><child_field_a>Other value</child_field_a></my_child>Value</object>"#;
-    let xml = XMLObjectValued { field_a: xtext!("Some Text"), child: Child { child_field_a: xtext!("Other value")}, value: xtext!("Value") };
+    let xml = XMLObjectValued { field_a: encode!("Some Text"), child: Child { child_field_a: encode!("Other value")}, value: encode!("Value") };
     assert_eq!(from_obj(&xml), should);
 }

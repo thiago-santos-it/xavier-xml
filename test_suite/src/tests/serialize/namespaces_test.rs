@@ -1,4 +1,4 @@
-use xavier::{from_obj, namespaces, xtext, XmlSerializable};
+use xavier::{from_obj, namespaces, encode, XmlSerializable};
 use xavier::serialize::namespaces::Namespaces;
 
 #[derive(XmlSerializable)]
@@ -15,6 +15,6 @@ struct XMLObject {
 fn serialize() {
     let should = r#"<xml:object xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xhtml="http://www.w3.org/1999/xhtml"><xml:justString>Some Text</xml:justString><xml:someInt>0</xml:someInt><xml:someFloat>0</xml:someFloat></xml:object>"#;
     let xmlns = namespaces!(xml = "http://www.w3.org/XML/1998/namespace", xhtml = "http://www.w3.org/1999/xhtml");
-    let xml = XMLObject { namespaces: xmlns, some_string: xtext!("Some Text"), some_int: 0, some_float: 0.0 };
+    let xml = XMLObject { namespaces: xmlns, some_string: encode!("Some Text"), some_int: 0, some_float: 0.0 };
     assert_eq!(from_obj(&xml), should);
 }

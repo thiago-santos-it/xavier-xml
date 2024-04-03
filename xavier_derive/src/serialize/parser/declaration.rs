@@ -15,7 +15,7 @@ impl XmlDeclaration {
     }
 
     fn xml_declaration(input: &DeriveInput) -> LitStr {
-        if let Some(declaration) = MetaInfo::from_name(&input.attrs, MetaName::Header) {
+        if let Some(declaration) = MetaInfo::from_name(&input.attrs, MetaName::Declaration) {
             let version = declaration.get_or("version", "1.0".to_string());
             let encoding = declaration.get_or("encoding", "UTF-8".to_string());
             let standalone = declaration.get_or("standalone", "no".to_string());

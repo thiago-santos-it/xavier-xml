@@ -8,6 +8,10 @@ While speed is a consideration in Xavier's design, it's important to emphasize t
 
 **It must be used in relatively small xml because it stores all data in memory.**
 
+> **Note 1:** UTF-16 is not supported yet. Hard work! PR's are welcome.
+
+> **Note 2:** Our DOM implementation aims to stick closely to the original specs, but achieving a perfect match is tough because of differences in how concepts are handled between the specs and Rust.
+
 # Why not extend Serde?
 
 Someone already did that, but I prefer to start from scratch. Besides, since Xavier focuses specifically on XML parsing, I believe it should be simpler and more tailored to that purpose.  
@@ -247,7 +251,7 @@ Should produce:
 > Note: Case has the scope of the element. Same for namespaces.
 
 
-### Trees
+### Collections
 
 Composing structs like this:
 
@@ -316,19 +320,19 @@ Should produce:
 > Note 1: You can have as many attribute as you want, but just one value!
 > Note 2: If not specified the default behaviour for a field is attribute, with empty value. 
 
-### XML header
+### XML declaration
 
 You can configure XML like this:
 ```Rust
 #[derive(XmlSerializable)]
-#[header(version="1.0" encoding="UTF-8" standaline = "no")]
+#[declaration(version="1.0" encoding="UTF-8" standaline = "no")]
 #[xml(name="xml")]
 struct XMLObject {
     //...
 }
 // or
 #[derive(XmlSerializable)]
-#[header]
+#[declaration]
 #[xml(name="xml")]
 struct XMLObject {
     //...
@@ -343,7 +347,7 @@ Should produce:
 </xml>
 ```
 
-> Note: If not specified the default header is used with ```version="1.0" encoding="UTF-8" standaline = "no"```
+> Note: If not specified the default declaration is used with ```version="1.0" encoding="UTF-8" standaline = "no"```
 
 ### DTD
 
@@ -351,7 +355,7 @@ Using this:
 
 ```Rust
 #[derive(XmlSerializable)]
-#[header]
+#[declaration]
 #[dtd = "Note.dtd"]
 #[xml(name="xml")]
 struct XMLObject {
@@ -378,7 +382,7 @@ Using this:
 
 ```Rust
 #[derive(XmlSerializable)]
-#[header]
+#[declaration]
 #[pi(something key="value" flag)]
 #[xml(name="xml")]
 struct XMLObject {
@@ -395,14 +399,14 @@ Should produce:
 </xml>
 ```
 
-### Convenience & security
+### Convenience
 
 #### CDATA
 
 This:
 
 ``` Rust
-  println!(xcdata!("Some text & others"));  
+  println!(cdata!("Some text & others"));  
 ```
 
 Prints this:
@@ -413,7 +417,7 @@ Prints this:
 #### Text encoded
 
 ``` Rust
-  println!(text!("Some text & others"));  
+  println!(encode!("Some text & others"));  
 ```
 
 Prints this:
@@ -434,4 +438,92 @@ Prints this:
   <!--Some text & others-->
 ```
 
-> UTF-16 is not supported yet. Hard work PR's are welcome.
+## Deserialize
+
+### Starting simple:
+
+This is the simplest example possible:
+
+``` Rust
+#[derive(XmlDeserializable)]
+struct XMLObject {
+    pub some_string: String,
+    pub some_int: i32,
+    pub some_float: f32
+}
+
+// ... 
+    let xml = r#"
+    <XMLObject>
+        <some_string>Some Content A</some_string>
+        <some_int>0</some_int>
+        <some_float>0.0</some_float>
+    </XMLObject>"#
+    
+    let instance = to_obj(&xml)
+    assert_eq!(instance.some_string, "Some Content A");
+    assert_eq!(instance.some_int, 0);
+    assert_eq!(instance.some_float, 0.0);
+// ... 
+```
+
+As you can see this is the same structure of tags as in serialize. 
+
+### Names, Attributes, Enum, Unnamed Struct, Unit Struct, Trees, Collections and Structs as tags
+
+Works exactly like serialize but in opposite direction. Same tags! 😊
+
+### Convenience
+
+#### XML declaration
+
+Declarations can be parsed using this macro!
+
+```Rust
+    let (version, encoding, standalone) = declaration!(&xml);
+```
+
+#### DTD
+
+DTD's can be parsed using this macro!
+
+```Rust
+    let (target, file) = dtd!(&xml);
+```
+
+#### PI (processing instruction)
+
+PI's can be parsed using this macro! 
+
+```Rust
+    let (target, data) = instructions!(&xml);
+```
+
+#### Text decode
+
+``` Rust
+  println!(decode!("Some text &amp; others"));  
+```
+
+Prints this:
+``` 
+   Some text & others
+```
+
+### Namespaces
+
+Will be available as a normal tag attribute.
+
+## DOM
+
+Specs from https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html.
+
+The DOM impl must be accessed as a Cargo feature called ```"dom"``` and can be used as follows: 
+
+``` Rust
+    //...
+    let doc = to_dom(&xml);
+    //...
+    let xml = from_dom(&xml);
+    //...        
+```

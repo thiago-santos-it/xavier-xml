@@ -5,14 +5,15 @@ use syn::{Attribute, Error, Ident, LitStr, Meta, Token};
 use syn::parse::{Parse, ParseStream};
 
 pub enum MetaName {
-    XML, Header, DTD, PI
+    XML,
+    Declaration, DTD, PI
 }
 
 impl Display for MetaName {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let str = match self {
             MetaName::XML => { "xml".to_string() },
-            MetaName::Header => { "header".to_string() },
+            MetaName::Declaration => { "declaration".to_string() },
             MetaName::DTD => { "dtd".to_string() },
             MetaName::PI => { "pi".to_string() },
         };

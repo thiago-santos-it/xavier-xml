@@ -6,19 +6,19 @@ use crate::serialize::parser::empty_tag::XmlEmptyTag;
 use crate::serialize::parser::enumeration::XmlEnumValue;
 use crate::serialize::parser::encoding::XmlEncoding;
 
-pub struct XmlStream;
+pub struct XmlSerStream;
 
-pub enum StreamType {
+pub enum SerStreamType {
     Complex, Simple, Empty, Enum
 }
 
-impl XmlStream {
-    pub(crate) fn stream(input: &DeriveInput, typed: StreamType) -> proc_macro2::TokenStream {
+impl XmlSerStream {
+    pub(crate) fn stream(input: &DeriveInput, typed: SerStreamType) -> proc_macro2::TokenStream {
         let mut xml_stream = match typed {
-            StreamType::Complex => XmlComplexTag::parse(input),
-            StreamType::Simple => XmlSimpleTag::parse(input),
-            StreamType::Empty => XmlEmptyTag::parse(input),
-            StreamType::Enum => XmlEnumValue::parse(input)
+            SerStreamType::Complex => XmlComplexTag::parse(input),
+            SerStreamType::Simple => XmlSimpleTag::parse(input),
+            SerStreamType::Empty => XmlEmptyTag::parse(input),
+            SerStreamType::Enum => XmlEnumValue::parse(input)
         };
 
         let encoding = XmlEncoding::parse(input);
