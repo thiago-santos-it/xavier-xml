@@ -16,7 +16,7 @@ struct XMLObject {
 #[test]
 fn deserialize() -> Result<(), PError> {
     let xml = from_obj(&XMLObject { some_string: encode!("Some Text"), some_int: 0, some_float: 0.0 });
-    instructions!(&xml, | tag, instruction, params | {
+    instructions!(&xml, | _tag, instruction, params | {
         assert_eq!("test=\"some\"", params);
         assert_eq!("instr", instruction);
     })?;
