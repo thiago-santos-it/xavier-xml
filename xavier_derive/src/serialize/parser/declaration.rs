@@ -10,7 +10,9 @@ impl XmlDeclaration {
     pub fn parse(input: &DeriveInput, _: &LitStr) -> TokenStream {
         let xml_declaration = XmlDeclaration::xml_declaration(input);
         quote! {
-            let declaration = if root { #xml_declaration.to_string() } else { "".to_string() };
+            {
+                if root { #xml_declaration.to_string() } else { "".to_string() }
+            }
         }
     }
 

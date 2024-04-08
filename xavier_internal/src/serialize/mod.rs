@@ -1,5 +1,5 @@
 pub mod namespaces;
-pub mod escaping;
+pub mod encode;
 pub mod primitives;
 pub mod macro_trait;
 mod collections;

@@ -10,7 +10,9 @@ impl XmlDTD {
     pub fn parse(input: &DeriveInput, tag: &LitStr) -> TokenStream {
         let dtd_def = XmlDTD::dtd_def(input, tag);
         quote! {
-            let dtd = if root { #dtd_def.to_string() } else { "".to_string() };
+            {
+                if root { #dtd_def.to_string() } else { "".to_string() }
+            }
         }
     }
 

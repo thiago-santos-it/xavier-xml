@@ -6,7 +6,7 @@ macro_rules! cdata {
 
 #[macro_export]
 macro_rules! encode {
-    ($expr:expr) => { xavier::serialize::escaping::escape_xml($expr).to_string() };
+    ($expr:expr) => { xavier::serialize::encode::escape_xml($expr).to_string() };
 }
 
 #[macro_export]

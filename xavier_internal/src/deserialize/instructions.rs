@@ -1,60 +1,56 @@
-use quick_xml::events::BytesText;
-use crate::deserialize::error::XmlError;
+use quick_xml::events::{BytesText, Event};
+use quick_xml::Reader;
+use crate::deserialize::error::PError;
 
 #[macro_export]
 macro_rules! instructions {
-    ($expr:expr) => { xavier::deserialize::instructions::parse($expr) };
+    ($expr:expr, $tag:expr) => { xavier::deserialize::instructions::parse($expr, $tag) };
 }
 
-pub fn parse(event: BytesText) -> Result<(String, Vec<(String, Option<String>)>), XmlError>{
-    let doc_type = String::from_utf8(event.to_vec())?;
-    if let Some(result) = pi_obj(&doc_type) {
-        Ok(result)
-    } else {
-        Err(XmlError::new(r#"Invalid PI check if it's composed by key = "value" or flags"#))
-    }
+pub fn parse(xml: &str, tag: Option<String>) -> Result<Vec<(String, String)>, PError> {
+    let mut reader = Reader::from_str(xml);
+    let mut result = vec![];
+    let mut current_tag = None;
+    loop {
+        match reader.read_event() {
+            Err(error) => { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
+            Ok(Event::Eof) => { break },
+            Ok(Event::Start(event)) => {
+                current_tag = Some(String::from_utf8(event.name().0.to_vec())?);
+                continue
+            },
+            Ok(Event::End(_)) => {},
+            Ok(Event::Empty(_)) => {},
+            Ok(Event::Decl(_)) => {},
+            Ok(Event::PI(event)) => {
+                if current_tag != tag { continue }
+                let pi_xml = String::from_utf8(event.to_vec())?;
+                if let Some((name, params)) = pi_obj(&pi_xml) {
+                    result.push((name, params));
+                } else {
+                    eprintln!(r#"Invalid PI check if it's composed by key = "value" or flags"#);
+                     return Err(PError::new("Unsupported content"))
+                }},
+            Ok(Event::DocType(_)) => {},
+            Ok(Event::Text(_)) => {},
+            Ok(Event::Comment(_)) => {},
+            Ok(Event::CData(_)) => {},
+        };
+    };
+    Ok(result)
 }
 
-fn pi_obj(input: &str) -> Option<(String, Vec<(String, Option<String>)>)> {
-    let input = input.trim();
-    if !input.starts_with("<?") || !input.ends_with("?>") {
-        return None;
-    }
-    let content = &input[2..input.len() - 2];
-    let parts: Vec<&str> = content.split_whitespace().collect();
+fn pi_obj(input: &str) -> Option<(String, String)> {
 
-    if parts.is_empty() {
-        return None;
-    }
-
-    let name = parts[0].to_string();
-
-    let mut params = Vec::new();
-    for part in parts.iter().skip(1) {
-        if let Some((key, value)) = key_value(part) {
-            params.push((key, value));
-        } else {
+    let start_index = match input.find(' ') {
+        Some(idx) => idx,
+        None => {
             return None;
         }
-    }
-
-    Some((name, params))
-}
-
-fn key_value(param: &str) -> Option<(String, Option<String>)> {
-    let mut parts = param.splitn(2, '=');
-
-    if let Some(key) = parts.next() {
-        let value = if let Some(value) = parts.next() {
-            let value = value.trim_matches('"');
-            Some(value.to_string())
-        } else {
-            None
-        };
-        Some((key.to_string(), value))
-    } else {
-        None
-    }
+    };
+    let name = &input[0..start_index];
+    let params = &input[start_index + 1..input.len()];
+    Some((name.to_string(), params.to_string()))
 }
 
 

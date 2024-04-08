@@ -1,17 +1,17 @@
 use quick_xml::events::Event;
 use quick_xml::Reader;
-use crate::deserialize::error::XmlError;
+use crate::deserialize::error::PError;
 
 #[macro_export]
 macro_rules! doctype {
     ($expr:expr) => { xavier::deserialize::doctype::parse($expr) };
 }
 
-pub fn parse(xml: &str) -> Result<Option<(String, String)>, XmlError> {
+pub fn parse(xml: &str) -> Result<(String, String), PError> {
     let mut reader = Reader::from_str(xml);
     loop {
         match reader.read_event() {
-            Err(error) => { return Err(XmlError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
+            Err(error) => { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
             Ok(Event::Eof) => { break },
             Ok(Event::Start(_)) => { break },
             Ok(Event::End(_)) => {},
@@ -20,11 +20,11 @@ pub fn parse(xml: &str) -> Result<Option<(String, String)>, XmlError> {
             Ok(Event::PI(_)) => {},
             Ok(Event::DocType(event)) => {
                 let doc_type = String::from_utf8(event.to_vec())?;
-                if let Some((name, file)) = doctype_obj(&doc_type) {
-                    return Ok(Some((name, file)))
+                return if let Some((name, file)) = doctype_obj(&doc_type) {
+                    Ok((name, file))
                 } else {
                     eprintln!("Parse of inline doc type is not implemented yet!");
-                    return Ok(None)
+                    Err(PError::new("Unsupported content"))
                 }
             },
             Ok(Event::Text(_)) => {},
@@ -32,25 +32,16 @@ pub fn parse(xml: &str) -> Result<Option<(String, String)>, XmlError> {
             Ok(Event::CData(_)) => {},
         };
     };
-    Ok(None)
+    Err(PError::new("Doctype not found!"))
 }
 
 fn doctype_obj(input: &str) -> Option<(String, String)> {
-    let input = input.trim();
-    if !input.starts_with("<!DOCTYPE") || !input.ends_with('>') {
-        return None;
-    }
-    let content = &input[9..input.len() - 1];
 
-    let parts: Vec<&str> = content.split_whitespace().collect();
+    let parts: Vec<&str> = input.trim().split_whitespace().collect();
 
-    if parts.is_empty() {
-        return None;
-    }
+    if parts.is_empty() { return None; }
 
     let tag_name = parts[0].to_string();
-
-    // Find file
     let file = parts.iter().find(|&&part| part.starts_with("\""));
 
     match file {

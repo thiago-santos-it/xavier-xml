@@ -1,6 +1,6 @@
 #[macro_export]
 macro_rules! decode {
-    ($expr:expr) => { xavier::deserialize::escaping::decode($expr).to_string() };
+    ($expr:expr) => { xavier::deserialize::decode::decode($expr).to_string() };
 }
 
 pub fn decode(input: &str) -> String {

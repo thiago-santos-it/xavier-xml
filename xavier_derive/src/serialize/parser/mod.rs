@@ -11,4 +11,5 @@ mod instructions;
 mod dtd;
 mod encoding;
 pub mod streams;
+mod extension;
 

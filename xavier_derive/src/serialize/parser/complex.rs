@@ -16,9 +16,9 @@ impl XmlComplexTag {
         let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
         let elements = XmlElementDef::parse(&input, obj_meta_info.as_ref());
         let tag = LitStr::new(&XmlNames::root(&input, obj_meta_info.as_ref()), Span::call_site());
-        let dtd_tokens = XmlDTD::parse(&input, &tag);
-        let pi_tokens = XmlPI::parse(&input);
-        let declaration_tokens = XmlDeclaration::parse(&input, &tag);
+        let dtd = XmlDTD::parse(&input, &tag);
+        let pi = XmlPI::parse(&input);
+        let declaration = XmlDeclaration::parse(&input, &tag);
 
         if let Some(elements) = elements {
             let attributes = elements.attributes;
@@ -32,17 +32,14 @@ impl XmlComplexTag {
             };
 
             quote! {
-                #declaration_tokens
-                #pi_tokens
-                #dtd_tokens
                 #namespace_tokens
 
                 let mut xml = String::new();
                 let tag = #tag;
 
-                xml.push_str(&declaration);
-                xml.push_str(&pi);
-                xml.push_str(&dtd);
+                xml.push_str(&#declaration);
+                xml.push_str(&#pi);
+                xml.push_str(&#dtd);
 
                 let mut attributes = String::new();
                 #(attributes.push_str(&#attributes);)*
@@ -69,11 +66,8 @@ impl XmlComplexTag {
             }
         } else {
             quote! {
-                #declaration_tokens
-                #pi_tokens
-                #dtd_tokens
                 let tag = #tag;
-                let xml = format!("{}{}{}<{}></{}>", declaration, pi, dtd, tag, tag).to_string();
+                let xml = format!("{}{}{}<{}></{}>", #declaration, #pi, #dtd, tag, tag).to_string();
             }
         }
     }

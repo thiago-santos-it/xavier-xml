@@ -3,40 +3,40 @@ use std::string::FromUtf8Error;
 use quick_xml::events::attributes::AttrError;
 
 #[derive(Debug)]
-pub struct XmlError {
+pub struct PError {
     message: String,
 }
 
-impl XmlError {
+impl PError {
     pub(crate) fn new(message: &str) -> Self {
-        XmlError {
+        PError {
             message: message.to_string(),
         }
     }
 }
 
-impl fmt::Display for XmlError {
+impl fmt::Display for PError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.message)
     }
 }
 
-impl error::Error for XmlError {}
+impl error::Error for PError {}
 
-impl From<FromUtf8Error> for XmlError {
+impl From<FromUtf8Error> for PError {
     fn from(value: FromUtf8Error) -> Self {
-        XmlError { message: value.to_string() }
+        PError { message: value.to_string() }
     }
 }
 
-impl From<quick_xml::Error> for XmlError {
+impl From<quick_xml::Error> for PError {
     fn from(value: quick_xml::Error) -> Self {
-        XmlError { message: value.to_string() }
+        PError { message: value.to_string() }
     }
 }
 
-impl From<AttrError> for XmlError {
+impl From<AttrError> for PError {
     fn from(value: AttrError) -> Self {
-        XmlError { message: value.to_string() }
+        PError { message: value.to_string() }
     }
 }
