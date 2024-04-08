@@ -1,4 +1,4 @@
-use xavier::{doctype, encode, from_obj, instructions, XmlSerializable};
+use xavier::{encode, from_obj, instructions, XmlSerializable};
 use xavier::deserialize::error::PError;
 
 #[derive(XmlSerializable)]

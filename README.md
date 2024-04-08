@@ -520,7 +520,7 @@ Will be available as a normal tag attribute.
 
 # Backlog:
 
-1 -  Implement DOM (branch feature/dom)
+1 -  Implement DOM (```branch feature/dom```)
 
 ### Description:
 

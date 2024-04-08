@@ -1,4 +1,4 @@
-use quick_xml::events::{BytesStart, BytesText, Event};
+use quick_xml::events::Event;
 use quick_xml::Reader;
 use crate::deserialize::error::PError;
 
