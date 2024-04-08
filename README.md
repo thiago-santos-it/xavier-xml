@@ -496,7 +496,9 @@ DTD's can be parsed using this macro!
 PI's can be parsed using this macro! 
 
 ```Rust
-    let (target, data) = instructions!(&xml);
+    instructions!(&xml, | tag, instruction, params | {
+        // DO something related with the instruction itself
+    });
 ```
 
 #### Text decode
@@ -514,7 +516,13 @@ Prints this:
 
 Will be available as a normal tag attribute.
 
-## DOM
+
+
+# Backlog:
+
+1 -  Implement DOM (branch feature/dom)
+
+### Description:
 
 Specs from https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html.
 
