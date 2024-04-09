@@ -2,17 +2,12 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{DeriveInput, LitStr};
 
-use crate::common::meta::{MetaInfo, MetaName};
-use crate::common::naming::names::XmlNames;
 use crate::deserialize::parser::fields::FieldMapping;
 
 pub(crate) struct XmlComplexTag;
 
 impl XmlComplexTag {
     pub fn parse(input: &DeriveInput) -> TokenStream {
-        let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
-        let tag = LitStr::new(&XmlNames::root(&input, obj_meta_info.as_ref()), Span::call_site());
-
         let field_mapping = FieldMapping::field_mapping(input);
         let declarations = field_mapping.declarations;
         let attributions = field_mapping.attributions;

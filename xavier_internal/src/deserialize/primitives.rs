@@ -1,4 +1,3 @@
-use std::io::Read;
 use std::str::FromStr;
 use quick_xml::events::{BytesStart, Event};
 use quick_xml::Reader;
@@ -11,10 +10,10 @@ impl <T: FromStr> XmlDeserializable for T where PError: From<<T as FromStr>::Err
             match reader.read_event() {
                 Err(error) => panic!("Error at position {}: {:?}", reader.buffer_position(), error),
                 Ok(Event::Eof) => { },
-                Ok(Event::Start(event)) => {},
-                Ok(Event::End(event)) => {},
-                Ok(Event::Empty(event)) => {},
-                Ok(Event::Comment(event)) => {},
+                Ok(Event::Start(_)) => {},
+                Ok(Event::End(_)) => {},
+                Ok(Event::Empty(_)) => {},
+                Ok(Event::Comment(_)) => {},
                 Ok(Event::Text(event)) => { return Ok(String::from_utf8(event.to_vec())?.parse()?) },
                 Ok(Event::CData(event)) => { return Ok(String::from_utf8(event.to_vec())?.parse()?) },
                 Ok(Event::Decl(_)) => {},
@@ -23,6 +22,5 @@ impl <T: FromStr> XmlDeserializable for T where PError: From<<T as FromStr>::Err
 
             }
         }
-        Err(PError::new("Primitive type not found"))
     }
 }
