@@ -10,7 +10,7 @@ While speed is a consideration in Xavier's design, it's important to emphasize t
 
 > **Note 1:** UTF-16 is not supported yet. Hard work! PR's are welcome.
 
-> **Note 2:** Our DOM implementation aims to stick closely to the original specs, but achieving a perfect match is tough because of differences in how concepts are handled between the specs and Rust.
+> **Note 2:** Our DOM implementation (WIP) aims to stick closely to the original specs, but achieving a perfect match is tough because of differences in how concepts are handled between the specs and Rust.
 
 # Why not extend Serde?
 

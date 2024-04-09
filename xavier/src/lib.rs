@@ -2,6 +2,8 @@ pub use xavier_derive::XmlSerializable;
 pub use xavier_derive::XmlDeserializable;
 
 pub use xavier_internal::serialize::macro_trait::XmlSerializable;
+pub use xavier_internal::deserialize::macro_trait::XmlDeserializable;
+pub use xavier_internal::deserialize::error::PError;
 pub use xavier_internal::encode;
 pub use xavier_internal::namespaces;
 pub use xavier_internal::cdata;

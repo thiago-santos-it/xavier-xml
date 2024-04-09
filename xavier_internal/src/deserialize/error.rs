@@ -1,4 +1,6 @@
 use std::{error, fmt};
+use std::convert::Infallible;
+use std::num::{ParseFloatError, ParseIntError};
 use std::string::FromUtf8Error;
 use quick_xml::events::attributes::AttrError;
 
@@ -8,7 +10,7 @@ pub struct PError {
 }
 
 impl PError {
-    pub(crate) fn new(message: &str) -> Self {
+    pub fn new(message: &str) -> Self {
         PError {
             message: message.to_string(),
         }
@@ -37,6 +39,24 @@ impl From<quick_xml::Error> for PError {
 
 impl From<AttrError> for PError {
     fn from(value: AttrError) -> Self {
+        PError { message: value.to_string() }
+    }
+}
+
+impl From<ParseIntError> for PError {
+    fn from(value: ParseIntError) -> Self {
+        PError { message: value.to_string() }
+    }
+}
+
+impl From<ParseFloatError> for PError {
+    fn from(value: ParseFloatError) -> Self {
+        PError { message: value.to_string() }
+    }
+}
+
+impl From<Infallible> for PError {
+    fn from(value: Infallible) -> Self {
         PError { message: value.to_string() }
     }
 }
