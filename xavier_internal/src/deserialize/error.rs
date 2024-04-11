@@ -1,6 +1,8 @@
 use std::{error, fmt};
+use std::char::ParseCharError;
 use std::convert::Infallible;
 use std::num::{ParseFloatError, ParseIntError};
+use std::str::ParseBoolError;
 use std::string::FromUtf8Error;
 use quick_xml::events::attributes::AttrError;
 
@@ -55,8 +57,26 @@ impl From<ParseFloatError> for PError {
     }
 }
 
+impl From<ParseBoolError> for PError {
+    fn from(value: ParseBoolError) -> Self {
+        PError { message: value.to_string() }
+    }
+}
+
+impl From<ParseCharError> for PError {
+    fn from(value: ParseCharError) -> Self {
+        PError { message: value.to_string() }
+    }
+}
+
 impl From<Infallible> for PError {
     fn from(value: Infallible) -> Self {
         PError { message: value.to_string() }
+    }
+}
+
+impl From<&AttrError> for PError {
+    fn from(attr_error: &AttrError) -> Self {
+        PError { message: attr_error.to_string() }
     }
 }

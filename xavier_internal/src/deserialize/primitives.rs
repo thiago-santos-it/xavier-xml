@@ -19,7 +19,6 @@ impl <T: FromStr> XmlDeserializable for T where PError: From<<T as FromStr>::Err
                 Ok(Event::Decl(_)) => {},
                 Ok(Event::PI(_)) => {},
                 Ok(Event::DocType(_)) => {},
-
             }
         }
     }

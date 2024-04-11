@@ -2,26 +2,35 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{DeriveInput, LitStr};
 
-use crate::deserialize::parser::fields::FieldMapping;
+use crate::deserialize::parser::mapping::FieldMapping;
 
-pub(crate) struct XmlComplexTag;
+pub(crate) struct ParserLoop;
 
-impl XmlComplexTag {
+impl ParserLoop {
     pub fn parse(input: &DeriveInput) -> TokenStream {
+
         let field_mapping = FieldMapping::field_mapping(input);
         let declarations = field_mapping.declarations;
-        let attributions = field_mapping.attributions;
+        let attribute_setter = field_mapping.attribute_setter;
+        let field_setter = field_mapping.field_setter;
         let constructor =  field_mapping.constructor;
 
         let mut result = quote! {
                 #(#declarations)*
+
                 loop {
                     match reader.read_event() {
                         Err(error) => { return Err(xavier::PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                         Ok(quick_xml::events::Event::Eof) => { break },
                         Ok(quick_xml::events::Event::Start(event)) => {
                             let tag_name = String::from_utf8(event.name().0.to_vec())?;
-                            #(#attributions)*
+                            #(#field_setter)*
+
+                            for attribute in event.attributes() {
+                                let attr_name = String::from_utf8(attribute.as_ref()?.key.0.to_vec())?;
+                                let attr_value = String::from_utf8(attribute.as_ref()?.value.to_vec())?;
+                                #(#attribute_setter)*
+                            }
                         },
                         Ok(quick_xml::events::Event::End(_)) => {},
                         Ok(quick_xml::events::Event::Empty(_)) => {},
@@ -30,15 +39,15 @@ impl XmlComplexTag {
                         Ok(quick_xml::events::Event::DocType(_)) => {},
                         Ok(quick_xml::events::Event::Text(_)) => {},
                         Ok(quick_xml::events::Event::Comment(_)) => {},
-                        Ok(quick_xml::events::Event::CData(_)) => {},
+                        Ok(quick_xml::events::Event::CData(_)) => {}
                     };
                 };
-            #constructor
         };
         let debug =  LitStr::new(&result.to_string(), Span::call_site());
         result.extend(quote! {
-            println!("Generated Code: \n\n {}", #debug);
-            Err(xavier::PError::new("Declaration not found!"))
+            let _ = #debug;
+          //  println!("Generated Code: \n\n {}", #debug);
+            #constructor
         });
         result
     }

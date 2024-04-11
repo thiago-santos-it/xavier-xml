@@ -535,3 +535,13 @@ The DOM impl must be accessed as a Cargo feature called ```"dom"``` and can be u
     let xml = from_dom(&xml);
     //...        
 ```
+
+
+** TODO: **
+- Panic like non option value without XML reference, and other panics!
+- ```[xml(xmlns)]```
+- Collections
+- ```<main><tag>Hi</tag>value</main> e flatten```
+- ```[xml(tree)]```
+- Validate root name
+- Configure . or , for float values  
