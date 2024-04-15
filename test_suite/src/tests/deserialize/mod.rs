@@ -8,4 +8,5 @@ mod attributes_test;
 mod types_test;
 mod names_test;
 mod namespaces_test;
+mod xmlns_test;
 

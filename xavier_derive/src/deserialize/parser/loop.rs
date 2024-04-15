@@ -13,6 +13,7 @@ impl ParserLoop {
         let declarations = field_mapping.declarations;
         let attribute_setter = field_mapping.attribute_setter;
         let field_setter = field_mapping.field_setter;
+        let xmlns_setter = field_mapping.xmlns_setter;
         let constructor =  field_mapping.constructor;
 
         let mut result = quote! {
@@ -30,7 +31,9 @@ impl ParserLoop {
                                 let attr_name = String::from_utf8(attribute.as_ref()?.key.0.to_vec())?;
                                 let attr_value = String::from_utf8(attribute.as_ref()?.value.to_vec())?;
                                 #(#attribute_setter)*
+                                #xmlns_setter
                             }
+
                         },
                         Ok(quick_xml::events::Event::End(_)) => {},
                         Ok(quick_xml::events::Event::Empty(_)) => {},
@@ -46,7 +49,7 @@ impl ParserLoop {
         let debug =  LitStr::new(&result.to_string(), Span::call_site());
         result.extend(quote! {
             let _ = #debug;
-          //  println!("Generated Code: \n\n {}", #debug);
+            //println!("Generated Code: \n\n {}", #debug);
             #constructor
         });
         result

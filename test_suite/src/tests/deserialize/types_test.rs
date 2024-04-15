@@ -38,7 +38,7 @@ fn deserialize() -> Result<(), PError> {
                           <type_usize>42</type_usize>
                           <type_string>Hello, XML!</type_string>
                           <type_f32>3.14</type_f32>
-                          <type_f64>3.14159265359</type_f64>
+                          <type_f64>3.14159265358979323846264338327950288</type_f64>
                           <type_bool>true</type_bool>
                           <type_char>A</type_char>
                         </XMLObject>
@@ -59,7 +59,7 @@ fn deserialize() -> Result<(), PError> {
     assert_eq!(obj.type_usize, 42);
     assert_eq!(obj.type_string, "Hello, XML!".to_string());
     assert_eq!(obj.type_f32, 3.14);
-    assert_eq!(obj.type_f64, 3.14159265359);
+    assert_eq!(obj.type_f64, std::f64::consts::PI);
     assert_eq!(obj.type_bool, true);
     assert_eq!(obj.type_char, 'A');
 

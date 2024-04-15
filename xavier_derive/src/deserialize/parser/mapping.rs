@@ -6,12 +6,13 @@ use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
 use crate::deserialize::parser::constructor::Constructor;
 use crate::deserialize::parser::declaration::FieldDecl;
-use crate::deserialize::parser::setters::{AttributeSetter, FieldSetter};
+use crate::deserialize::parser::setters::{AttributeSetter, FieldSetter, XmlnsSetter};
 
 pub struct FieldMapping {
     pub declarations: Vec<FieldDecl>,
     pub attribute_setter: Vec<AttributeSetter>,
     pub field_setter: Vec<FieldSetter>,
+    pub xmlns_setter: Option<XmlnsSetter>,
     pub constructor: Constructor
 }
 
@@ -23,6 +24,7 @@ impl FieldMapping {
         let mut declarations: Vec<FieldDecl> = vec![];
         let mut field_setter: Vec<FieldSetter> = vec![];
         let mut attribute_setter: Vec<AttributeSetter> = vec![];
+        let mut xmlns_setter: Option<XmlnsSetter> = None;
         let mut constructors: Vec<TokenStream> = vec![];
         let mut field_names: Vec<Ident> = vec![];
 
@@ -49,6 +51,8 @@ impl FieldMapping {
                                 name: ident.clone(),
                                 attr_name: field_attr_name
                             });
+                        } else if field_meta.contains("xmlns") {
+                            xmlns_setter = Some(XmlnsSetter { field: ident.clone() })
                         } else {
                             let field_tag_name = XmlNames::tag(&ident, obj_meta_info.as_ref(), Some(&field_meta));
                             field_setter.push(FieldSetter {
@@ -64,7 +68,7 @@ impl FieldMapping {
                 }
             }
         }
-        FieldMapping { declarations, field_setter, attribute_setter, constructor: Constructor { values: constructors} }
+        FieldMapping { declarations, field_setter, attribute_setter, xmlns_setter, constructor: Constructor { values: constructors} }
     }
 
     fn is_option_type(ty: &Type) -> bool {
