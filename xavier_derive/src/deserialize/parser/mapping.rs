@@ -18,8 +18,7 @@ pub struct FieldMapping {
 
 impl FieldMapping {
 
-    pub fn field_mapping(input: &DeriveInput) -> FieldMapping {
-        let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
+    pub fn field_mapping(input: &DeriveInput, obj_meta_info: Option<&MetaInfo>) -> FieldMapping {
 
         let mut declarations: Vec<FieldDecl> = vec![];
         let mut field_setter: Vec<FieldSetter> = vec![];
@@ -45,7 +44,7 @@ impl FieldMapping {
                         });
 
                         if field_meta.contains("attribute") {
-                            let field_attr_name = XmlNames::attribute(&ident, obj_meta_info.as_ref(), &field_meta);
+                            let field_attr_name = XmlNames::attribute(&ident, obj_meta_info, &field_meta);
                             attribute_setter.push(AttributeSetter {
                                 is_string: FieldMapping::is_string_type(&FieldMapping::unwrapped_type(&ty)),
                                 name: ident.clone(),
@@ -54,7 +53,7 @@ impl FieldMapping {
                         } else if field_meta.contains("xmlns") {
                             xmlns_setter = Some(XmlnsSetter { field: ident.clone() })
                         } else {
-                            let field_tag_name = XmlNames::tag(&ident, obj_meta_info.as_ref(), Some(&field_meta));
+                            let field_tag_name = XmlNames::tag(&ident, obj_meta_info, Some(&field_meta));
                             field_setter.push(FieldSetter {
                                 name: ident.clone(),
                                 tag_name: field_tag_name,
