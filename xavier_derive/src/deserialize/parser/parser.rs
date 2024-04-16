@@ -20,7 +20,6 @@ impl ParserLoop {
         let xmlns_setter = field_mapping.xmlns_setter;
         let constructor =  field_mapping.constructor;
 
-
         let gen = quote! {
             let mut name = String::new();
             #(#declarations)*
@@ -57,7 +56,7 @@ impl ParserLoop {
         let debug =  LitStr::new(&gen.to_string(), Span::call_site());
         let mut result = quote! {};
         result.extend(quote! {
-            let _ = #debug;
+            let _ = #debug; // Avoid unused warning when commented
             //println!("Generated Code: \n\n {}", #debug);
         });
         result.extend(gen);

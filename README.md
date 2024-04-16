@@ -542,5 +542,6 @@ The DOM impl must be accessed as a Cargo feature called ```"dom"``` and can be u
 - Collections
 - ```<main><tag>Hi</tag>value</main> e flatten```
 - ```[xml(tree)]```
-- Validate root name
+- Enum
+- Considerar Lifetime e Box
   

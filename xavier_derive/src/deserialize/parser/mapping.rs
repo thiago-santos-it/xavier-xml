@@ -6,7 +6,9 @@ use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
 use crate::deserialize::parser::constructor::Constructor;
 use crate::deserialize::parser::declaration::FieldDecl;
-use crate::deserialize::parser::setters::{AttributeSetter, FieldSetter, XmlnsSetter};
+use crate::deserialize::parser::setters::attribute::AttributeSetter;
+use crate::deserialize::parser::setters::field::FieldSetter;
+use crate::deserialize::parser::setters::xmlns::XmlnsSetter;
 
 pub struct FieldMapping {
     pub declarations: Vec<FieldDecl>,
@@ -55,6 +57,7 @@ impl FieldMapping {
                         } else {
                             let field_tag_name = XmlNames::tag(&ident, obj_meta_info, Some(&field_meta));
                             field_setter.push(FieldSetter {
+                                is_flatten: field_meta.contains("tree") || field_meta.contains("flatten"),
                                 name: ident.clone(),
                                 tag_name: field_tag_name,
                                 unwrapped_type: FieldMapping::unwrapped_type(&field.ty),

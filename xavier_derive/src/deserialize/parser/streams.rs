@@ -2,7 +2,7 @@ use quote::quote;
 use syn::DeriveInput;
 use proc_macro2::TokenStream;
 
-use crate::deserialize::parser::r#loop::ParserLoop;
+use crate::deserialize::parser::parser::ParserLoop;
 
 pub struct XmlDeStream;
 
