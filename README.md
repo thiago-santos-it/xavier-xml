@@ -516,11 +516,18 @@ Prints this:
 
 Will be available as a normal tag attribute.
 
+### Errors
 
+Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier DeSer tiene un PError"* ```ʕ•ᴥ•ʔ ```  
 
 # Backlog:
 
-1 -  Implement DOM (```branch feature/dom```)
+- Panic like non option value without XML reference, and other panics!
+- Collections
+- Value e flatten
+- Enum
+- Lifetime e Boxes
+- Implement DOM (```branch feature/dom```)
 
 ### Description:
 
@@ -537,11 +544,5 @@ The DOM impl must be accessed as a Cargo feature called ```"dom"``` and can be u
 ```
 
 
-** TODO: **
-- Panic like non option value without XML reference, and other panics!
-- Collections
-- ```<main><tag>Hi</tag>value</main> e flatten```
-- ```[xml(tree)]```
-- Enum
-- Considerar Lifetime e Box
+
   
