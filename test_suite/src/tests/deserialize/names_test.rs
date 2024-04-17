@@ -11,7 +11,12 @@ struct XMLObject {
 
 #[test]
 fn deserialize() -> Result<(), PError> {
-    let xml = r#"<object><xmlJustStringItem>Some Text</xmlJustStringItem><xmlSomeIntItem>10</xmlSomeIntItem><xmlSomeFloatItem>11</xmlSomeFloatItem></object>"#;
+    let xml = r#"
+    <object>
+        <xmlJustStringItem>Some Text</xmlJustStringItem>
+        <xmlSomeIntItem>10</xmlSomeIntItem>
+        <xmlSomeFloatItem>11</xmlSomeFloatItem>
+    </object>"#;
     let mut reader = quick_xml::Reader::from_str(&xml);
     let obj =  XMLObject::from_xml(&mut reader, None)?;
     assert_eq!(obj.some_string, "Some Text");
@@ -31,7 +36,11 @@ struct XMLObjectIgnoreCase {
 
 #[test]
 fn ignore_case() -> Result<(), PError> {
-    let xml = r#"<object><xml_just_stringItem>Some Text</xml_just_stringItem><xmlSomeIntItem>10</xmlSomeIntItem><xmlSomeFloatItem>11</xmlSomeFloatItem></object>"#;
+    let xml = r#"
+    <object>
+        <xml_just_stringItem>Some Text</xml_just_stringItem>
+        <xmlSomeIntItem>10</xmlSomeIntItem><xmlSomeFloatItem>11</xmlSomeFloatItem>
+    </object>"#;
 
     let mut reader = quick_xml::Reader::from_str(&xml);
     let obj =  XMLObjectIgnoreCase::from_xml(&mut reader, None)?;

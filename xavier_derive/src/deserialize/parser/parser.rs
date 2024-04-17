@@ -25,7 +25,7 @@ impl ParserLoop {
             #(#declarations)*
             loop {
                 match reader.read_event() {
-                    Err(error) => { return Err(xavier::PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
+                    Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                     Ok(quick_xml::events::Event::Eof) => { break },
                     Ok(quick_xml::events::Event::Start(event)) => {
                         let tag_name = String::from_utf8(event.name().0.to_vec())?;
@@ -57,7 +57,7 @@ impl ParserLoop {
         let mut result = quote! {};
         result.extend(quote! {
             let _ = #debug; // Avoid unused warning when commented
-            //println!("Generated Code: \n\n {}", #debug);
+            println!("Generated Code: \n\n {}", #debug);
         });
         result.extend(gen);
         result

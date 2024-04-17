@@ -4,11 +4,31 @@ use quick_xml::Reader;
 use crate::deserialize::error::PError;
 use crate::deserialize::macro_trait::XmlDeserializable;
 
-impl <T: FromStr> XmlDeserializable for T where PError: From<<T as FromStr>::Err> {
+trait Primitive {}
+impl Primitive for i8 {}
+impl Primitive for i16 {}
+impl Primitive for i32 {}
+impl Primitive for i64 {}
+impl Primitive for i128 {}
+impl Primitive for u8 {}
+impl Primitive for u16 {}
+impl Primitive for u32 {}
+impl Primitive for u64 {}
+impl Primitive for u128 {}
+impl Primitive for isize {}
+impl Primitive for usize {}
+impl Primitive for String {}
+impl Primitive for f32 {}
+impl Primitive for f64  {}
+impl Primitive for bool {}
+impl Primitive for char {}
+
+impl <T: FromStr + Primitive> XmlDeserializable for T
+    where PError: From<<T as FromStr>::Err> {
     fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>)  -> Result<Self, PError> {
         loop {
             match reader.read_event() {
-                Err(error) => panic!("Error at position {}: {:?}", reader.buffer_position(), error),
+                Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                 Ok(Event::Eof) => { },
                 Ok(Event::Start(_)) => {},
                 Ok(Event::End(_)) => {},

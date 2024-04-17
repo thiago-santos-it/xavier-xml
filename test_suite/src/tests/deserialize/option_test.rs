@@ -21,14 +21,15 @@ struct XMLObject {
 
 #[test]
 fn deserialize() -> Result<(), PError> {
-    let xml = r#"<XMLObject attr_string="Hi!" opt_attr_string="Some(Hi!)">
-                            <some_string>Some String</some_string>
-                            <some_int>11</some_int>
-                            <some_float>10</some_float>
-                            <opt_some_string>Some String</opt_some_string>
-                            <opt_some_int>11</opt_some_int>
-                            <opt_some_float>10</opt_some_float>
-                      </XMLObject>"#;
+    let xml = r#"
+    <XMLObject attr_string="Hi!" opt_attr_string="Some(Hi!)">
+        <some_string>Some String</some_string>
+        <some_int>11</some_int>
+        <some_float>10</some_float>
+        <opt_some_string>Some String</opt_some_string>
+        <opt_some_int>11</opt_some_int>
+        <opt_some_float>10</opt_some_float>
+    </XMLObject>"#;
     let mut reader = quick_xml::Reader::from_str(&xml);
     let obj = XMLObject::from_xml(&mut reader, None)?;
     assert_eq!(obj.some_string, "Some String");

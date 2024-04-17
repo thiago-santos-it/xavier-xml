@@ -36,7 +36,17 @@ struct XMLObjectTree {
 
 #[test]
 fn deserialize_tree() -> Result<(), PError> {
-    let xml = r#"<object><fieldA>Some Text</fieldA><my_child><child_field_a>Other value A</child_field_a></my_child><my_child><child_field_a>Other value B</child_field_a></my_child></object>"#;
+    let xml = r#"
+    <object>
+        <fieldA>Some Text</fieldA>
+        <my_child>
+            <child_field_a>Other value A</child_field_a>
+        </my_child>
+        <my_child>
+            <child_field_a>Other value B</child_field_a>
+        </my_child>
+    </object>"#;
+
     let mut reader = quick_xml::Reader::from_str(&xml);
     let obj =  XMLObjectTree::from_xml(&mut reader, None)?;
     assert_eq!(obj.child_a.child_field_a, "Other value A");

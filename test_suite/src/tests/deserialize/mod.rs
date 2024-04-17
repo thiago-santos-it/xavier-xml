@@ -10,4 +10,5 @@ mod names_test;
 mod namespaces_test;
 mod xmlns_test;
 mod tree_test;
+mod collection_test;
 

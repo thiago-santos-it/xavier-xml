@@ -518,12 +518,12 @@ Will be available as a normal tag attribute.
 
 ### Errors
 
-Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier DeSer tiene un PError"* ```ʕ•ᴥ•ʔ ```  
+Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier DeSer tiene un PError"* ```ʕ•ᴥ•ʔ```  
 
 # Backlog:
 
 - Panic like non option value without XML reference, and other panics!
-- Collections
+- Collections  remove the need of :: 
 - Value e flatten
 - Enum
 - Lifetime e Boxes
