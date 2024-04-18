@@ -1,11 +1,11 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::{quote, ToTokens};
 
-pub struct XmlnsSetter {
+pub struct FieldXmlnsSetter {
     pub field: Ident
 }
 
-impl ToTokens for XmlnsSetter {
+impl ToTokens for FieldXmlnsSetter {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let field = &self.field;
         tokens.extend(quote! {

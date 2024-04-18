@@ -16,4 +16,5 @@ mod unnamed_test;
 mod struct_tag_test;
 mod enum_test;
 mod panic_test;
+mod value_test;
 

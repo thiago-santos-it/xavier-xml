@@ -296,7 +296,7 @@ Configuring nested struct as this:
 struct Child {
     #[xml(attribute, name="attr")]
     pub attribute: String,
-    #[xml(value)] //Same as #[xml(flatten)] 
+    #[xml(value)]  
     pub value: String,
 }
 
@@ -521,8 +521,6 @@ Will be available as a normal tag attribute.
 Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier DeSer tiene un PError"* ```ʕ•ᴥ•ʔ```  
 
 # Backlog:
-
-- Value e flatten
 
 ### Structs with Lifetime, Boxes and Others
 

@@ -14,8 +14,9 @@ impl XmlComplex {
 
         let tokens = TokenSegments::tokens_from(input, obj_meta_info.as_ref());
         let declarations = tokens.declarations;
-        let attribute_setter = tokens.attribute_setter;
-        let field_setter = tokens.field_setter;
+        let attribute_setters = tokens.attribute_setters;
+        let field_setters = tokens.field_setters;
+        let value_setters = tokens.value_setters;
         let xmlns_setter = tokens.xmlns_setter;
         let constructor =  tokens.constructor;
 
@@ -29,13 +30,13 @@ impl XmlComplex {
                     Ok(quick_xml::events::Event::Start(event)) => {
                         //Fields
                         let tag_name = String::from_utf8(event.name().0.to_vec())?;
-                        #(#field_setter)*
+                        #(#field_setters)*
 
                         //Attributes
                         for attribute in event.attributes() {
                             let attr_name = String::from_utf8(attribute.as_ref()?.key.0.to_vec())?;
                             let attr_value = String::from_utf8(attribute.as_ref()?.value.to_vec())?;
-                            #(#attribute_setter)*
+                            #(#attribute_setters)*
                             #xmlns_setter
                         }
                     },
@@ -46,15 +47,17 @@ impl XmlComplex {
                     },
                     Ok(quick_xml::events::Event::Empty(event)) => {
                         let tag_name = String::from_utf8(event.name().0.to_vec())?;
-                        #(#field_setter)*
+                        #(#field_setters)*
                     },
                     Ok(quick_xml::events::Event::Decl(_)) => {},
                     Ok(quick_xml::events::Event::PI(_)) => {},
                     Ok(quick_xml::events::Event::DocType(_)) => {},
                     Ok(quick_xml::events::Event::Text(event)) => {
-
+                        #(#value_setters)*
                     },
-                    Ok(quick_xml::events::Event::CData(event)) => {}
+                    Ok(quick_xml::events::Event::CData(event)) => {
+                        #(#value_setters)*
+                    }
                     Ok(quick_xml::events::Event::Comment(_)) => {},
                 };
             };
