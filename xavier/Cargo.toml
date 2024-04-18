@@ -13,8 +13,8 @@ keywords = ["xml"]
 
 [dependencies]
 quick-xml = "0.31.0"
-xavier-derive = { path = "../xavier_derive", optional = true }
-xavier-internal = { path = "../xavier_internal", optional = false }
+xavier-derive = { path = "../xavier_derive", optional = true, version = "0.1.1" }
+xavier-internal = { path = "../xavier_internal", optional = false, version = "0.1.1" }
 
 [features]
 derive = ["xavier-derive"]
