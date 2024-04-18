@@ -4,8 +4,7 @@ use syn::DeriveInput;
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
 
-
-pub(crate) struct XmlEmptyTag;
+pub struct XmlEmptyTag;
 
 impl XmlEmptyTag {
     pub fn parse(input: &DeriveInput) -> TokenStream {

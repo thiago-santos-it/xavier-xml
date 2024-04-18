@@ -4,11 +4,11 @@ use syn::Data::Struct;
 use syn::{DeriveInput, Fields, Type};
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
-use crate::deserialize::parser::complex::constructor::Constructor;
-use crate::deserialize::parser::complex::declaration::FieldDecl;
-use crate::deserialize::parser::complex::setters::attribute::AttributeSetter;
-use crate::deserialize::parser::complex::setters::field::FieldSetter;
-use crate::deserialize::parser::complex::setters::xmlns::XmlnsSetter;
+use crate::deserialize::parser::complex::tokens::constructor::Constructor;
+use crate::deserialize::parser::complex::tokens::declaration::FieldDecl;
+use crate::deserialize::parser::complex::tokens::setters::attribute::AttributeSetter;
+use crate::deserialize::parser::complex::tokens::setters::field::FieldSetter;
+use crate::deserialize::parser::complex::tokens::setters::xmlns::XmlnsSetter;
 
 pub struct TokenSegments {
     pub declarations: Vec<FieldDecl>,

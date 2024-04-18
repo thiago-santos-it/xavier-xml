@@ -3,9 +3,9 @@ use quote::quote;
 use syn::{DeriveInput, LitStr};
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
-use crate::deserialize::parser::complex::segments::TokenSegments;
+use crate::deserialize::parser::complex::tokens::segments::TokenSegments;
 
-pub(crate) struct XmlComplex;
+pub struct XmlComplex;
 
 impl XmlComplex {
     pub fn parse(input: &DeriveInput) -> TokenStream {
@@ -27,8 +27,11 @@ impl XmlComplex {
                     Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                     Ok(quick_xml::events::Event::Eof) => { break },
                     Ok(quick_xml::events::Event::Start(event)) => {
+                        //Fields
                         let tag_name = String::from_utf8(event.name().0.to_vec())?;
                         #(#field_setter)*
+
+                        //Attributes
                         for attribute in event.attributes() {
                             let attr_name = String::from_utf8(attribute.as_ref()?.key.0.to_vec())?;
                             let attr_value = String::from_utf8(attribute.as_ref()?.value.to_vec())?;
@@ -41,13 +44,18 @@ impl XmlComplex {
                             #constructor
                         }
                     },
-                    Ok(quick_xml::events::Event::Empty(_)) => {},
+                    Ok(quick_xml::events::Event::Empty(event)) => {
+                        let tag_name = String::from_utf8(event.name().0.to_vec())?;
+                        #(#field_setter)*
+                    },
                     Ok(quick_xml::events::Event::Decl(_)) => {},
                     Ok(quick_xml::events::Event::PI(_)) => {},
                     Ok(quick_xml::events::Event::DocType(_)) => {},
-                    Ok(quick_xml::events::Event::Text(_)) => {},
+                    Ok(quick_xml::events::Event::Text(event)) => {
+
+                    },
+                    Ok(quick_xml::events::Event::CData(event)) => {}
                     Ok(quick_xml::events::Event::Comment(_)) => {},
-                    Ok(quick_xml::events::Event::CData(_)) => {}
                 };
             };
             Err(xavier::PError::new("Error root not found"))
