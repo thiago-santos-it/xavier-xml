@@ -42,7 +42,7 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
         return Ok::<T, PError>(T::from_xml(&mut reader, None)?)
     });
 
-    return if let Err(error) = result {
+    return if let Err(_error) = result {
         Err(PError::new(&format!("Some error occurred in XML parser. Cause: {}", panic_info.lock().unwrap())))
     } else if let Ok(result) = result {
         Ok(result?)

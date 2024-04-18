@@ -10,7 +10,7 @@ struct Child {
 #[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
-    pub children: Vec::<Child>
+    pub children: Vec<Child>
 }
 
 #[test]
@@ -40,7 +40,7 @@ fn deserialize() -> Result<(), PError> {
 #[xml(name="object", case="Camel")]
 struct XMLObjectOption {
     pub field_a: String,
-    pub children: Option<Vec::<Child>>
+    pub children: Option<Vec<Child>>
 }
 
 #[test]

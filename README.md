@@ -522,13 +522,19 @@ Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier
 
 # Backlog:
 
-- Collections
 - Value e flatten
 
-- Test Lifetime e Boxes, this was not tested properly. Again PR's are welcome.
-- Implement DOM (```branch feature/dom```)
+### Structs with Lifetime, Boxes and Others
 
-### Description:
+**Difficult: Easy**
+
+The functions within TypeParser from ```deserialize::parser::complex::tokens::types``` handle type parsing in a statically structured manner, expecting elements to follow a predefined order. While effective for simpler Rust elements, this approach may require additional time and effort when dealing with more intricate Rust constructs. Nonetheless, the task is manageable, and with careful attention, we can effectively navigate through these complexities.   
+
+### Implement DOM:
+
+**Difficult: Medium**
+
+(```branch feature/dom```)
 
 Specs from https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html.
 

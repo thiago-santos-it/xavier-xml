@@ -15,8 +15,8 @@ fn deserialize() -> Result<(), PError> {
                     <_some_float>11.1</_some_float>
                </XMLObject>"#;
     let result: Result<XMLObject, PError> = from_xml(&xml);
-    if let Err(error) = result {
-        println!("{:?}", error);
+    if let Err(_error) = result {
+        //println!("{:?}", _error);
         assert!(true)
     } else {
         assert!(false)
