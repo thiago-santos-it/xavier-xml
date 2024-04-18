@@ -1,10 +1,10 @@
-use proc_macro2::{Ident, TokenStream};
+use proc_macro2::Ident;
 use quote::quote;
 use syn::Data::Struct;
 use syn::{DeriveInput, Fields};
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
-use crate::deserialize::parser::complex::tokens::constructor::Constructor;
+use crate::deserialize::parser::complex::tokens::constructor::{Constructor, ConstructorField};
 use crate::deserialize::parser::complex::tokens::declaration::FieldDecl;
 use crate::deserialize::parser::complex::tokens::setters::attribute::FieldAttributeSetter;
 use crate::deserialize::parser::complex::tokens::setters::field::FieldSetter;
@@ -32,7 +32,7 @@ impl TokenSegments {
         let mut value_setters: Vec<ValueSetter> = vec![];
         let mut xmlns_setter: Option<FieldXmlnsSetter> = None;
 
-        let mut constructors: Vec<TokenStream> = vec![];
+        let mut constructors: Vec<ConstructorField> = vec![];
         let mut field_names: Vec<Ident> = vec![];
 
         if let Struct(struct_item) = &input.data {
@@ -43,18 +43,17 @@ impl TokenSegments {
                     if let Some(ident) = &field.ident {
 
                         let field_meta = MetaInfo::from_name(&field.attrs, MetaName::XML).unwrap_or(MetaInfo::empty());
-                        let field_is_option = TypeParser::is_option_type(&field.ty);
-                        let ty = field.ty.clone();
+                        let inner_type = TypeParser::unbox_and_unwrap_type(&field.ty);
 
                         declarations.push(FieldDecl {
                             name: ident.clone(),
-                            optional_type: if field_is_option { quote! { #ty } } else { quote! { Option<#ty> }},
+                            optional_type: quote! { Option<#inner_type> },
                         });
 
                         if field_meta.contains("attribute") {
                             let field_attr_name = XmlNames::attribute(&ident, obj_meta_info, &field_meta);
                             attribute_setters.push(FieldAttributeSetter {
-                                is_string: TypeParser::is_string_type(&TypeParser::unwrapped_type(&ty)),
+                                is_string: TypeParser::is_string_type(&inner_type),
                                 name: ident.clone(),
                                 attr_name: field_attr_name
                             });
@@ -68,16 +67,20 @@ impl TokenSegments {
                                 is_flatten: field_meta.contains("tree") || field_meta.contains("flatten"),
                                 name: ident.clone(),
                                 tag_name: field_tag_name,
-                                unwrapped_type: TypeParser::unwrapped_type(&field.ty),
+                                inner_type: TypeParser::unbox_and_unwrap_type(&field.ty),
                             });
                         }
 
                         field_names.push(ident.clone());
-                        constructors.push(if field_is_option { quote! { #ident } } else { quote! { #ident: #ident.unwrap() }})
+                        constructors.push(ConstructorField {
+                            is_option: TypeParser::is_option_type(&field.ty),
+                            is_box: TypeParser::is_box_type(&field.ty),
+                            field: ident.clone(),
+                        })
                     }
                 }
             }
         }
-        Self { declarations, field_setters, attribute_setters, value_setters, xmlns_setter, constructor: Constructor { values: constructors} }
+        Self { declarations, field_setters, attribute_setters, value_setters, xmlns_setter, constructor: Constructor { values: constructors } }
     }
 }

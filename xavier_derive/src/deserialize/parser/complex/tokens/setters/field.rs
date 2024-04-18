@@ -8,7 +8,7 @@ pub struct FieldSetter {
     pub is_flatten: bool,
     pub name: Ident,
     pub tag_name: LitStr,
-    pub unwrapped_type: Type
+    pub inner_type: Type,
 }
 
 impl ToTokens for FieldSetter {
@@ -16,18 +16,18 @@ impl ToTokens for FieldSetter {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let tag_name = &self.tag_name;
         let field = &self.name;
-        let ty = &self.unwrapped_type;
+        let ty = &self.inner_type;
         if self.is_flatten {
             tokens.extend(quote! {
                 let should_parse = if let Some(inner_name) = #ty::inner_name() {
-                    tag_name == inner_name
+                    xa_tag_name == inner_name && #field.is_none()
                 } else {
                     false
                 };
             });
         } else {
             tokens.extend(quote! {
-                let should_parse = (tag_name == #tag_name);
+                let should_parse = (xa_tag_name == #tag_name);
             });
         }
 
@@ -35,7 +35,7 @@ impl ToTokens for FieldSetter {
             if should_parse {
                 let result = #ty::from_xml(&mut reader, Some(&event));
                 match result {
-                    Ok(value) => { #field = Some(value); }
+                    Ok(value) => { #field = Some(value); continue; }
                     Err(error) => { return Err(error); }
                 }
             }

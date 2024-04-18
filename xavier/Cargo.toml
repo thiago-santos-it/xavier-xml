@@ -1,6 +1,7 @@
 [package]
 name = "xavier"
-version = "0.1.0"
+version = "0.1.1"
+authors = ["Thiago Medeiros dos Santos <thiago.santos.it@gmail.com>"]
 edition = "2021"
 
 [dependencies]
@@ -10,4 +11,3 @@ xavier-internal = { path = "../xavier_internal", optional = false }
 
 [features]
 derive = ["xavier-derive"]
-

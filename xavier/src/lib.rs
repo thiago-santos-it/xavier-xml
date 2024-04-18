@@ -1,6 +1,7 @@
 use std::panic;
 use std::panic::PanicInfo;
 use std::sync::{Arc, Mutex};
+use quick_xml::events::Event;
 pub use xavier_derive::XmlSerializable;
 pub use xavier_derive::XmlDeserializable;
 
@@ -39,7 +40,23 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
 
     let result = panic::catch_unwind(|| {
         let mut reader = quick_xml::Reader::from_str(&xml);
-        return Ok::<T, PError>(T::from_xml(&mut reader, None)?)
+        loop {
+            match reader.read_event() {
+                Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
+                Ok(Event::Eof) => { },
+                Ok(Event::Start(event)) => {
+                    return Ok::<T, PError>(T::from_xml(&mut reader, Some(&event))?)
+                },
+                Ok(Event::End(_)) => {},
+                Ok(Event::Empty(_)) => { return Ok::<T, PError>(T::from_xml(&mut reader, None)?)},
+                Ok(Event::Comment(_)) => {},
+                Ok(Event::Text(_)) => {},
+                Ok(Event::CData(_)) => {},
+                Ok(Event::Decl(_)) => {},
+                Ok(Event::PI(_)) => {},
+                Ok(Event::DocType(_)) => {},
+            }
+        }
     });
 
     return if let Err(_error) = result {

@@ -14,14 +14,14 @@ impl ToTokens for FieldAttributeSetter {
         let field = &self.name;
         if self.is_string {
             tokens.extend(quote! {
-                if attr_name == #attr_name {
-                     #field = Some(attr_value.clone());
+                if xa_attr_name == #attr_name {
+                     #field = Some(xa_attr_value.clone());
                 }
             })
         } else {
             tokens.extend(quote! {
-                if attr_name == #attr_name {
-                    #field = Some(attr_value.parse()?);
+                if xa_attr_name == #attr_name {
+                    #field = Some(xa_attr_value.parse()?);
                 }
             })
         }
