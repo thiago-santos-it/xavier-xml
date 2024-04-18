@@ -80,3 +80,9 @@ impl From<&AttrError> for PError {
         PError { message: attr_error.to_string() }
     }
 }
+
+impl From<()> for PError {
+    fn from(_error: ()) -> Self {
+        PError { message: "Unit Error".to_string() }
+    }
+}

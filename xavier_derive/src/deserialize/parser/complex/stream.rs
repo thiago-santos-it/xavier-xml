@@ -64,7 +64,7 @@ impl XmlComplex {
         let mut result = quote! {};
         result.extend(quote! {
             let _ = #debug; // Avoid unused warning when commented
-            println!("Generated Code: \n\n {}", #debug);
+            //println!("Generated Code: \n\n {}", #debug);
         });
         result.extend(gen);
         result

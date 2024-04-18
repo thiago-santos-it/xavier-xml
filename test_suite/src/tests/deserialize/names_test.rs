@@ -1,4 +1,4 @@
-use xavier::{ PError, XmlDeserializable };
+use xavier::{from_xml, PError, XmlDeserializable};
 
 #[derive(XmlDeserializable, Debug)]
 #[xml(name="object", case="Camel", prefix="xml_", suffix="Item", no_suffix, no_prefix)]
@@ -17,8 +17,7 @@ fn deserialize() -> Result<(), PError> {
         <xmlSomeIntItem>10</xmlSomeIntItem>
         <xmlSomeFloatItem>11</xmlSomeFloatItem>
     </object>"#;
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let obj =  XMLObject::from_xml(&mut reader, None)?;
+    let obj: XMLObject = from_xml(&xml)?;
     assert_eq!(obj.some_string, "Some Text");
     assert_eq!(obj.some_int, 10);
     assert_eq!(obj.some_float, 11.0);
@@ -42,8 +41,7 @@ fn ignore_case() -> Result<(), PError> {
         <xmlSomeIntItem>10</xmlSomeIntItem><xmlSomeFloatItem>11</xmlSomeFloatItem>
     </object>"#;
 
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let obj =  XMLObjectIgnoreCase::from_xml(&mut reader, None)?;
+    let obj: XMLObjectIgnoreCase = from_xml(&xml)?;
     assert_eq!(obj.some_string, "Some Text");
     assert_eq!(obj.some_int, 10);
     assert_eq!(obj.some_float, 11.0);

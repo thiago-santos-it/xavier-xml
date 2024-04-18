@@ -1,4 +1,4 @@
-use xavier::{PError, XmlDeserializable};
+use xavier::{from_xml, PError, XmlDeserializable};
 
 #[derive(XmlDeserializable, Debug)]
 #[xml(name="my_child")]
@@ -28,8 +28,7 @@ fn deserialize() -> Result<(), PError> {
         </children>
     </object>"#;
 
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let obj =  XMLObject::from_xml(&mut reader, None)?;
+    let obj: XMLObject = from_xml(&xml)?;
     assert_eq!(obj.field_a, "Some Text");
     assert_eq!(obj.children[0].child_field_a, "Other value A");
     assert_eq!(obj.children[1].child_field_a, "Other value B");
@@ -59,8 +58,7 @@ fn deserialize_option() -> Result<(), PError> {
         </children>
     </object>"#;
 
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let obj =  XMLObjectOption::from_xml(&mut reader, None)?;
+    let obj: XMLObjectOption = from_xml(&xml)?;
     assert_eq!(obj.field_a, "Some Text");
     let children = obj.children.unwrap();
     assert_eq!(children[0].child_field_a, "Other value A");

@@ -522,11 +522,10 @@ Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier
 
 # Backlog:
 
-- Panic like non option value without XML reference, and other panics!
 - Collections
 - Value e flatten
-- Lifetime e Boxes
-- DeStreamType::{ Simple, Empty, Enum }
+
+- Test Lifetime e Boxes, this was not tested properly. Again PR's are welcome.
 - Implement DOM (```branch feature/dom```)
 
 ### Description:

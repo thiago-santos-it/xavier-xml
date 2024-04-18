@@ -14,4 +14,6 @@ mod collection_test;
 mod unit_struct_test;
 mod unnamed_test;
 mod struct_tag_test;
+mod enum_test;
+mod panic_test;
 

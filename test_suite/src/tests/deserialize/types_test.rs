@@ -1,4 +1,4 @@
-use xavier::{PError, XmlDeserializable};
+use xavier::{from_xml, PError, XmlDeserializable};
 
 #[derive(XmlDeserializable, Debug)]
 struct XMLObject {
@@ -43,8 +43,7 @@ fn deserialize() -> Result<(), PError> {
         <type_bool>true</type_bool>
         <type_char>A</type_char>
     </XMLObject>"#;
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let obj =  XMLObject::from_xml(&mut reader, None)?;
+    let obj: XMLObject = from_xml(&xml)?;
     assert_eq!(obj.type_i8, 42);
     assert_eq!(obj.type_i16, -100);
     assert_eq!(obj.type_i32, 1000);

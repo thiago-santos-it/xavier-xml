@@ -1,14 +1,13 @@
-use xavier::{PError, XmlDeserializable};
+use xavier::{from_xml, PError, XmlDeserializable};
 
-#[derive(XmlDeserializable)]
+#[derive(XmlDeserializable, Debug, PartialEq)]
 #[xml(name="object")]
 struct XMLObject;
 
 #[test]
 fn deserialize() -> Result<(), PError> {
     let xml = r#"<object/>"#;
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let _ =  XMLObject::from_xml(&mut reader, None)?;
+    let _: XMLObject = from_xml(&xml)?;
     Ok(())
 }
 
@@ -16,13 +15,13 @@ fn deserialize() -> Result<(), PError> {
 #[xml(name="outer")]
 struct XMLObjectWithEmptyTag {
     #[xml(flatten)]
-    pub empty: XMLObject
+    pub empty: Option<XMLObject>
 }
 
 #[test]
 fn deserialize_inner() -> Result<(), PError> {
     let xml = r#"<outer><object/></outer>"#;
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let _ =  XMLObjectWithEmptyTag::from_xml(&mut reader, None)?;
+    let obj: XMLObjectWithEmptyTag = from_xml(&xml)?;
+    assert_ne!(obj.empty, None);
     Ok(())
 }

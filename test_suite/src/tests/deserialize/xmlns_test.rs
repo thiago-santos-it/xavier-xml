@@ -1,4 +1,4 @@
-use xavier::{PError, XmlDeserializable};
+use xavier::{from_xml, PError, XmlDeserializable};
 use xavier::serialize::namespaces::Namespaces;
 
 #[derive(XmlDeserializable, Debug)]
@@ -22,8 +22,7 @@ fn deserialize() -> Result<(), PError> {
             some_int="11">
         <some_float>10</some_float>
     </XMLObject>"#;
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let obj = XMLObject::from_xml(&mut reader, None)?;
+    let obj: XMLObject = from_xml(&xml)?;
     assert_eq!(obj.some_string, "Some text");
     assert_eq!(obj.some_int, 11);
     assert_eq!(obj.some_float, 10.0);
