@@ -3,22 +3,21 @@ use quote::quote;
 use syn::{DeriveInput, LitStr};
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
+use crate::deserialize::parser::complex::segments::TokenSegments;
 
-use crate::deserialize::parser::mapping::FieldMapping;
+pub(crate) struct XmlComplex;
 
-pub(crate) struct ParserLoop;
-
-impl ParserLoop {
+impl XmlComplex {
     pub fn parse(input: &DeriveInput) -> TokenStream {
         let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
         let xml_tag_name = LitStr::new(&XmlNames::root(&input, obj_meta_info.as_ref()), Span::call_site());
 
-        let field_mapping = FieldMapping::field_mapping(input, obj_meta_info.as_ref());
-        let declarations = field_mapping.declarations;
-        let attribute_setter = field_mapping.attribute_setter;
-        let field_setter = field_mapping.field_setter;
-        let xmlns_setter = field_mapping.xmlns_setter;
-        let constructor =  field_mapping.constructor;
+        let tokens = TokenSegments::tokens_from(input, obj_meta_info.as_ref());
+        let declarations = tokens.declarations;
+        let attribute_setter = tokens.attribute_setter;
+        let field_setter = tokens.field_setter;
+        let xmlns_setter = tokens.xmlns_setter;
+        let constructor =  tokens.constructor;
 
         let gen = quote! {
             let mut name = String::new();

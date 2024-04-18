@@ -4,13 +4,13 @@ use syn::Data::Struct;
 use syn::{DeriveInput, Fields, Type};
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
-use crate::deserialize::parser::constructor::Constructor;
-use crate::deserialize::parser::declaration::FieldDecl;
-use crate::deserialize::parser::setters::attribute::AttributeSetter;
-use crate::deserialize::parser::setters::field::FieldSetter;
-use crate::deserialize::parser::setters::xmlns::XmlnsSetter;
+use crate::deserialize::parser::complex::constructor::Constructor;
+use crate::deserialize::parser::complex::declaration::FieldDecl;
+use crate::deserialize::parser::complex::setters::attribute::AttributeSetter;
+use crate::deserialize::parser::complex::setters::field::FieldSetter;
+use crate::deserialize::parser::complex::setters::xmlns::XmlnsSetter;
 
-pub struct FieldMapping {
+pub struct TokenSegments {
     pub declarations: Vec<FieldDecl>,
     pub attribute_setter: Vec<AttributeSetter>,
     pub field_setter: Vec<FieldSetter>,
@@ -18,9 +18,9 @@ pub struct FieldMapping {
     pub constructor: Constructor
 }
 
-impl FieldMapping {
+impl TokenSegments {
 
-    pub fn field_mapping(input: &DeriveInput, obj_meta_info: Option<&MetaInfo>) -> FieldMapping {
+    pub fn tokens_from(input: &DeriveInput, obj_meta_info: Option<&MetaInfo>) -> TokenSegments {
 
         let mut declarations: Vec<FieldDecl> = vec![];
         let mut field_setter: Vec<FieldSetter> = vec![];
@@ -37,7 +37,7 @@ impl FieldMapping {
                     if let Some(ident) = &field.ident {
 
                         let field_meta = MetaInfo::from_name(&field.attrs, MetaName::XML).unwrap_or(MetaInfo::empty());
-                        let field_is_option = FieldMapping::is_option_type(&field.ty);
+                        let field_is_option = Self::is_option_type(&field.ty);
                         let ty = field.ty.clone();
 
                         declarations.push(FieldDecl {
@@ -48,7 +48,7 @@ impl FieldMapping {
                         if field_meta.contains("attribute") {
                             let field_attr_name = XmlNames::attribute(&ident, obj_meta_info, &field_meta);
                             attribute_setter.push(AttributeSetter {
-                                is_string: FieldMapping::is_string_type(&FieldMapping::unwrapped_type(&ty)),
+                                is_string: Self::is_string_type(&Self::unwrapped_type(&ty)),
                                 name: ident.clone(),
                                 attr_name: field_attr_name
                             });
@@ -60,7 +60,7 @@ impl FieldMapping {
                                 is_flatten: field_meta.contains("tree") || field_meta.contains("flatten"),
                                 name: ident.clone(),
                                 tag_name: field_tag_name,
-                                unwrapped_type: FieldMapping::unwrapped_type(&field.ty),
+                                unwrapped_type: Self::unwrapped_type(&field.ty),
                             });
                         }
 
@@ -70,7 +70,7 @@ impl FieldMapping {
                 }
             }
         }
-        FieldMapping { declarations, field_setter, attribute_setter, xmlns_setter, constructor: Constructor { values: constructors} }
+        Self { declarations, field_setter, attribute_setter, xmlns_setter, constructor: Constructor { values: constructors} }
     }
 
     fn is_option_type(ty: &Type) -> bool {
