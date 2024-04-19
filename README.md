@@ -520,37 +520,16 @@ Will be available as a normal tag attribute.
 
 Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier DeSer tiene un PError"* ```ʕ•ᴥ•ʔ```  
 
+
 # Backlog:
 
-### Structs with Lifetime, References and Others
+### Structs with Lifetime and Others
 
 **Difficult: Easy**
 
 The functions within TypeParser from ```deserialize::parser::complex::tokens::types``` handle type parsing in a statically structured manner, expecting elements to follow a predefined order. While effective for simpler Rust elements, this approach may require additional time and effort when dealing with more intricate Rust constructs. Nonetheless, the task is manageable, and with careful attention, we can effectively navigate through these complexities.
 
 If necessary, you can modify the object creation process in ```constructors.rs``` or adjust the structure field assignments in ```setters/```.
-
-Also is important to say that Box is supported from the first day due to the need of self assignments [example](https://github.com/thiago-santos-it/xavier-xml/blob/main/test_suite/src/tests/deserialize/tree_test.rs). Here you can se the parsing of structs like:
-
-```Rust
-#[derive(XmlDeserializable, Debug)]
-#[xml(name="my_child")]
-struct Child {
-    #[xml(attribute, name="attr")]
-    pub attribute: String,
-    pub child_field_a: String,
-    #[xml(tree)]
-    pub inner: Option<Box<Child>>
-}
-
-#[derive(XmlDeserializable, Debug)]
-#[xml(name="object", case="Camel")]
-struct XMLObject {
-    pub field_a: String,
-    #[xml(tree)]
-    pub child: Child
-} 
-```
 
 ### Implement DOM:
 
