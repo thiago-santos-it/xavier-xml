@@ -30,6 +30,11 @@ pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
                 #xml_code
             }
         }
+        impl xavier::serialize::macro_trait::XmlSerializable for Box<#object_name> {
+            fn to_xml(&self, root: bool) -> String {
+                #xml_code
+            }
+        }
     };
     return TokenStream::from(expanded)
 

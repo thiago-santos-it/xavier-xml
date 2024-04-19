@@ -12,3 +12,4 @@ mod doctype_test;
 mod encode_test;
 mod collection_test;
 mod instructions_test;
+mod option_test;

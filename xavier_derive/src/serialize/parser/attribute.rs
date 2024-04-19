@@ -15,7 +15,7 @@ impl ToTokens for XmlElementAttr {
         let field = &self.field;
         let name = &self.name;
         let attr_tokens = quote! {
-            format!(" {}=\"{}\"", #name, self.#field)
+            format!(" {}=\"{}\"", #name, self.#field.to_xml(false))
         };
         tokens.extend(attr_tokens);
     }
