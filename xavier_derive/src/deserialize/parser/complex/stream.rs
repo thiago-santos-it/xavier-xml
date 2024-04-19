@@ -21,7 +21,7 @@ impl XmlComplex {
         let xmlns_setter = tokens.xmlns_setter;
         let constructor =  tokens.constructor;
 
-        let debug = LitBool::new(true, Span::call_site());
+        let debug = LitBool::new(false, Span::call_site());
         let print_code = LitBool::new(false, Span::call_site());
 
         let gen = quote! {

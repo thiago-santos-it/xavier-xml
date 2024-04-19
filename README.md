@@ -1,5 +1,7 @@
 # Who is Xavier?
 
+> This is a new lib so please report all bugs and help us!
+
 Introducing Xavier: A Simplified XML Parsing Library **Inspired** by Serde. Why Xavier? Well... it starts with X, and it's the first name that came out of my mind, nothing else.
 
 Xavier is a lightweight and versatile XML parsing library designed to streamline the process of handling XML data with ease and efficiency. 
