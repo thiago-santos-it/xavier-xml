@@ -3,6 +3,13 @@ name = "xavier-internal"
 version = "0.1.1"
 authors = ["Thiago Medeiros dos Santos <thiago.santos.it@gmail.com>"]
 edition = "2021"
+license-file="../LICENSE"
+description="Internal module of Xavier. Xavier is a lightweight and versatile XML parsing library designed to streamline the process of handling XML data with ease and efficiency."
+homepage="https://github.com/thiago-santos-it/xavier-xml"
+documentation="https://github.com/thiago-santos-it/xavier-xml/blob/main/crates-io.md"
+repository="https://github.com/thiago-santos-it/xavier-xml"
+readme="../README.md"
+keywords = ["xavier", "xml"]
 
 [dependencies]
 quick-xml = "0.31.0"
