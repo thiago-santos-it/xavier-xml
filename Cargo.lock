@@ -92,7 +92,7 @@ checksum = "86bd8d4e895da8537e5315b8254664e6b769c4ff3db18321b297a1e7004392e3"
 
 [[package]]
 name = "xavier"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "quick-xml",
  "xavier-derive",
