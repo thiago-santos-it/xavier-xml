@@ -76,3 +76,20 @@ fn valued() {
     let xml = XMLObjectValued { field_a: encode!("Some Text"), child: Child { child_field_a: encode!("Other value")}, value: encode!("Value") };
     assert_eq!(from_obj(&xml), should);
 }
+
+
+#[derive(XmlSerializable)]
+#[xml(name="object", case="Camel")]
+struct XMLObjectSibling {
+    #[xml(tree)]
+    pub child: Vec<Child>
+}
+
+#[test]
+fn sibling() {
+    let should = r#"<object><my_child><child_field_a>Child 1</child_field_a></my_child><my_child><child_field_a>Child 2</child_field_a></my_child></object>"#;
+    let xml = XMLObjectSibling { child: vec!(Child { child_field_a: encode!("Child 1")}, Child { child_field_a: encode!("Child 2")}) };
+    assert_eq!(from_obj(&xml), should);
+}
+
+

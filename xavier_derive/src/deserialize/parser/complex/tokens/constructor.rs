@@ -4,6 +4,7 @@ use quote::{quote, ToTokens};
 pub struct ConstructorField {
     pub is_option: bool,
     pub is_box: bool,
+    pub is_sibling: bool,
     pub field: Ident
 }
 
@@ -18,6 +19,8 @@ impl ToTokens for Constructor {
             if !item.is_option {
                 if item.is_box {
                     quote! { #field: Box::new(#field.unwrap()) }
+                } else if item.is_sibling {
+                    quote! { #field: #field.unwrap_or_else(Vec::new) }  
                 } else {
                     quote! { #field: #field.unwrap() }
                 }

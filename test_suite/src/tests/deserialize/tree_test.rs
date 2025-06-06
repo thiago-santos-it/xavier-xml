@@ -161,3 +161,116 @@ fn deserialize_tree() -> Result<(), PError> {
     assert_eq!(deep.child_field_a, "Deep Value");
     Ok(())
 }
+
+
+#[derive(XmlDeserializable, Debug)]
+#[xml(name="my_child")]
+struct ChildSibling {
+    pub child_field_a: String
+}
+
+#[derive(XmlDeserializable, Debug)]
+#[xml(name="object", case="Camel")]
+struct XMLObjectSibling {
+    pub field_a: String,
+    #[xml(tree)]
+    pub siblings: Vec<ChildSibling>
+}
+
+#[test]
+fn deserialize_sibling() -> Result<(), PError> {
+    let xml = r#"
+    <object>
+        <my_child>
+            <child_field_a>Other value A</child_field_a>
+        </my_child>
+        <my_child>
+            <child_field_a>Other value B</child_field_a>
+        </my_child>
+        <fieldA>Some Text</fieldA>
+    </object>"#;
+
+    let obj: XMLObjectSibling = from_xml(&xml)?;
+    assert_eq!(obj.field_a, "Some Text");
+    assert_eq!(obj.siblings[0].child_field_a, "Other value A");
+    assert_eq!(obj.siblings[1].child_field_a, "Other value B");
+    Ok(())
+}
+
+#[derive(XmlDeserializable, Debug)]
+#[xml(name="object", case="Camel")]
+struct XMLObjectSiblingPrimitive {
+    pub field_a: String,
+    #[xml(tree)]
+    pub any: Vec<String>
+}
+
+//Should not work? (feature or bug?)
+#[test]
+fn deserialize_sibling_primitive() -> Result<(), PError> {
+    let xml = r#"
+    <object>
+        <my_child>Other value A</my_child>
+        <my_child>Other value B</my_child>
+        <my_child_other>value other</my_child_other>
+        <fieldA>Some Text</fieldA>
+    </object>"#;
+
+    let obj: XMLObjectSiblingPrimitive = from_xml(&xml)?;
+    assert_eq!(obj.field_a, "Some Text");
+    assert_eq!(obj.any[0], "Other value A");
+    assert_eq!(obj.any[1], "Other value B");
+    Ok(())
+}
+
+#[derive(XmlDeserializable, Debug)]
+#[xml(name="my_child_a")]
+struct ChildSiblingA {
+    pub child_field_a: String
+}
+
+
+#[derive(XmlDeserializable, Debug)]
+#[xml(name="my_child_b")]
+struct ChildSiblingB {
+    pub child_field_a: String
+}
+
+#[derive(XmlDeserializable, Debug)]
+#[xml(name="object", case="Camel")]
+struct XMLObjectSiblings {
+    pub field_a: String,
+    #[xml(tree)]
+    pub siblings_a: Vec<ChildSiblingA>,
+    #[xml(tree)]
+    pub siblings_b: Vec<ChildSiblingB>
+}
+
+//Should work
+#[test]
+fn deserialize_siblings() -> Result<(), PError> {
+    let xml = r#"
+    <object>
+        <fieldA>Some Text</fieldA>
+        <my_child_a>
+            <child_field_a>Other value AA</child_field_a>
+        </my_child_a>
+        <my_child_a>
+            <child_field_a>Other value BA</child_field_a>
+        </my_child_a>
+        <my_child_b>
+            <child_field_a>Other value AB</child_field_a>
+        </my_child_b>
+        <my_child_b>
+            <child_field_a>Other value BB</child_field_a>
+        </my_child_b>
+    </object>"#;
+
+    let obj: XMLObjectSiblings = from_xml(&xml)?;
+    assert_eq!(obj.field_a, "Some Text");
+    assert_eq!(obj.siblings_a[0].child_field_a, "Other value AA");
+    assert_eq!(obj.siblings_a[1].child_field_a, "Other value BA");
+    assert_eq!(obj.siblings_b[0].child_field_a, "Other value AB");
+    assert_eq!(obj.siblings_b[1].child_field_a, "Other value BB");
+    Ok(())
+}

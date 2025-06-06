@@ -28,7 +28,7 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
         Enum(DataEnum { .. }) => { XmlDeStream::stream(&input, DeStreamType::Enum) },
         Union(DataUnion { .. }) => {
             let message = "Proc macro 'xml deserialize' does not support this type of object config.";
-            return Error::new_spanned(object_name, message).to_compile_error().into();}
+            return Error::new_spanned(object_name, message).to_compile_error().into();} 
     };
 
     let expanded = quote! {

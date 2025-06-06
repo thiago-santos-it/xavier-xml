@@ -15,6 +15,15 @@ impl TypeParser {
         false
     }
 
+    pub fn is_vec(ty: &Type) -> bool {
+        if let Type::Path(type_path) = ty {
+            if let Some(path) = &type_path.path.segments.first() {
+                return path.ident == "Vec";
+            }
+        }
+        false
+    }
+
     pub fn is_box_type(ty: &Type) -> bool {
         if let Some(segment) = Self::first_path_segment(ty) {
             if segment.ident == "Box" {
@@ -45,6 +54,10 @@ impl TypeParser {
 
     pub fn unbox_and_unwrap_type(ty: &Type) -> Type {
         Self::remove_from_type(&Self::remove_from_type(ty, "Option"), "Box")
+    }
+    
+    pub fn ty_from_vec(ty: &Type) -> Type {
+        Self::remove_from_type(ty, "Vec")
     }
 
     fn remove_from_type(ty: &Type, remove: &str) -> Type {

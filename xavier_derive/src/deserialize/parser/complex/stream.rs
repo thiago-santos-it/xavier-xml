@@ -17,12 +17,13 @@ impl XmlComplex {
         let declarations = tokens.declarations;
         let attribute_setters = tokens.attribute_setters;
         let field_setters = tokens.field_setters;
+        let sibling_setters = tokens.sibling_setters;
         let value_setters = tokens.value_setters;
         let xmlns_setter = tokens.xmlns_setter;
         let constructor =  tokens.constructor;
 
         let debug = LitBool::new(false, Span::call_site());
-        let print_code = LitBool::new(false, Span::call_site());
+        let print_code = LitBool::new(true, Span::call_site());
 
         let gen = quote! {
             if #debug { println!("[{}.Recursion] Parser started", #xml_tag_name); }
@@ -47,10 +48,12 @@ impl XmlComplex {
                         let xa_tag_name = String::from_utf8(event.name().0.to_vec())?;
                         if #debug { println!("[{}.{}.Start] Start Event", #xml_tag_name, xa_tag_name); }
                         #(#field_setters)*
+                        #(#sibling_setters)*
                     },
                     Ok(quick_xml::events::Event::Empty(event)) => {
                         let xa_tag_name = String::from_utf8(event.name().0.to_vec())?;
                         #(#field_setters)*
+                        #(#sibling_setters)*
                     },
                     Ok(quick_xml::events::Event::Text(event)) => {
                         #(#value_setters)*

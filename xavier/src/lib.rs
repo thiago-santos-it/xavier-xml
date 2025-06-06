@@ -1,5 +1,5 @@
 use std::panic;
-use std::panic::PanicInfo;
+use std::panic::PanicHookInfo;
 use std::sync::{Arc, Mutex};
 use quick_xml::events::Event;
 pub use xavier_derive::XmlSerializable;
@@ -29,7 +29,7 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
 
     panic::set_hook(Box::new({
         let panic_info = panic_info.clone();
-        move |info: &PanicInfo| {
+        move |info: &PanicHookInfo| {
             if let Some(payload) = info.payload().downcast_ref::<&str>() {
                 panic_info.lock().unwrap().push_str(*payload);
             } else {
@@ -42,7 +42,9 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
         let mut reader = quick_xml::Reader::from_str(&xml);
         loop {
             match reader.read_event() {
-                Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
+                Err(error) =>  {
+                    return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) 
+                },
                 Ok(Event::Eof) => { },
                 Ok(Event::Start(event)) => {
                     return Ok::<T, PError>(T::from_xml(&mut reader, Some(&event))?)
@@ -59,7 +61,7 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
         }
     });
 
-    return if let Err(_error) = result {
+    if let Err(_error) = result {
         Err(PError::new(&format!("Some error occurred in XML parser. Cause: {}", panic_info.lock().unwrap())))
     } else if let Ok(result) = result {
         Ok(result?)
