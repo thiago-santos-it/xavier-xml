@@ -1,6 +1,6 @@
 [package]
 name = "xavier-derive"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Thiago Medeiros dos Santos <thiago.santos.it@gmail.com>"]
 edition = "2021"
 license-file="../LICENSE"
