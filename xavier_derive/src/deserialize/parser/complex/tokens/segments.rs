@@ -67,7 +67,6 @@ impl TokenSegments {
                         } else if field_meta.contains("value") {
                             value_setters.push(ValueSetter { field: ident.clone(), unwrapped_type: TypeParser::unwrapped_type(&field.ty) })
                         } else if is_sibling {
-                            let field_tag_name = XmlNames::tag(&ident, obj_meta_info, Some(&field_meta));
                             sibling_setters.push(SiblingSetter {
                                 name: ident.clone(),
                                 inner_type: TypeParser::ty_from_vec(&TypeParser::unbox_and_unwrap_type(&field.ty)),

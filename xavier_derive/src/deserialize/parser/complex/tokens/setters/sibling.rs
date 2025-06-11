@@ -1,6 +1,5 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::{quote, ToTokens};
-use syn::LitStr;
 use syn::Type;
 
 
@@ -16,13 +15,20 @@ impl ToTokens for SiblingSetter {
         let ty = &self.inner_type;
 
         tokens.extend(quote! {
-            let result = #ty::from_xml(&mut reader, Some(&event));
-            match result {
-                Ok(value) => {
-                    #field.get_or_insert_with(Vec::new).push(value);
-                    continue;
+            let should_parse = if let Some(inner_name) = #ty::inner_name() {
+                xa_tag_name == inner_name
+            } else {
+                false
+            };
+            if should_parse {
+                let result = #ty::from_xml(&mut reader, Some(&event));
+                match result {
+                    Ok(value) => {
+                        #field.get_or_insert_with(Vec::new).push(value);
+                        continue;
+                    }
+                    Err(error) => return Err(error),
                 }
-                Err(error) => return Err(error),
             }
         })
     }
