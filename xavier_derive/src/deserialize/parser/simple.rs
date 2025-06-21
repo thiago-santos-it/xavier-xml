@@ -11,16 +11,16 @@ impl XmlSimpleTag {
             loop {
                 match reader.read_event() {
                     Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
-                    Ok(quick_xml::events::Event::Eof) => { },
-                    Ok(quick_xml::events::Event::Start(_)) => {},
-                    Ok(quick_xml::events::Event::End(_)) => {},
-                    Ok(quick_xml::events::Event::Empty(_)) => {},
-                    Ok(quick_xml::events::Event::Comment(_)) => {},
-                    Ok(quick_xml::events::Event::Text(event)) => { return Ok(Self(String::from_utf8(event.to_vec())?.parse()?)); },
-                    Ok(quick_xml::events::Event::CData(event)) => { return Ok(Self(String::from_utf8(event.to_vec())?.parse()?)); },
-                    Ok(quick_xml::events::Event::Decl(_)) => {},
-                    Ok(quick_xml::events::Event::PI(_)) => {},
-                    Ok(quick_xml::events::Event::DocType(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::Eof) => { },
+                    Ok(::xavier::quick_xml::events::Event::Start(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::End(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::Empty(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::Comment(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::Text(event)) => { return Ok(Self(String::from_utf8(event.to_vec())?.parse()?)); },
+                    Ok(::xavier::quick_xml::events::Event::CData(event)) => { return Ok(Self(String::from_utf8(event.to_vec())?.parse()?)); },
+                    Ok(::xavier::quick_xml::events::Event::Decl(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::PI(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::DocType(_)) => {},
                 }
             }
         }

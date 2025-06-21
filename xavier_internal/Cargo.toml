@@ -12,5 +12,5 @@ readme="../README.md"
 keywords = ["xavier", "xml"]
 
 [dependencies]
-quick-xml = "0.31.0"
+quick-xml = "0.37.5"
 html-escape = "0.2.13"
