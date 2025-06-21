@@ -12,7 +12,7 @@ readme="../README.md"
 keywords = ["xavier", "xml"]
 
 [dependencies]
-quick-xml = "0.31.0"
+quick-xml = "0.37.5"
 xavier-derive = { version = "0.1.4", path = "../xavier_derive", optional = false }
 xavier-internal = { version = "0.1.4", path = "../xavier_internal", optional = false }
 
