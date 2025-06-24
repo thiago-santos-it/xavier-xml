@@ -1,7 +1,7 @@
 use xavier::{from_xml, PError, XmlDeserializable};
 
 #[derive(XmlDeserializable, Debug)]
-#[xml(name="object", case="Camel")]
+#[xml(name="object")]
 struct XMLObject {
     #[xml(attribute, name="some_string")]
     pub other_string: String,
@@ -44,7 +44,7 @@ fn deserialize_child() -> Result<(), PError> {
 struct ChildEmpty;
 
 #[derive(XmlDeserializable, Debug)]
-#[xml(name="object", case="Camel")]
+#[xml(name="object")]
 struct XMLObjectSelfClosingChildEmpty {
     pub child: Option<ChildEmpty>
 }
