@@ -44,24 +44,24 @@ impl XmlComplex {
             loop {
                 match reader.read_event() {
                     Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
-                    Ok(quick_xml::events::Event::Start(event)) => {
+                    Ok(::xavier::quick_xml::events::Event::Start(event)) => {
                         let xa_tag_name = String::from_utf8(event.name().0.to_vec())?;
                         if #debug { println!("[{}.{}.Start] Start Event", #xml_tag_name, xa_tag_name); }
                         #(#field_setters)*
                         #(#sibling_setters)*
                     },
-                    Ok(quick_xml::events::Event::Empty(event)) => {
+                    Ok(::xavier::quick_xml::events::Event::Empty(event)) => {
                         let xa_tag_name = String::from_utf8(event.name().0.to_vec())?;
                         #(#field_setters)*
                         #(#sibling_setters)*
                     },
-                    Ok(quick_xml::events::Event::Text(event)) => {
+                    Ok(::xavier::quick_xml::events::Event::Text(event)) => {
                         #(#value_setters)*
                     },
-                    Ok(quick_xml::events::Event::CData(event)) => {
+                    Ok(::xavier::quick_xml::events::Event::CData(event)) => {
                         #(#value_setters)*
                     },
-                    Ok(quick_xml::events::Event::End(event)) => {
+                    Ok(::xavier::quick_xml::events::Event::End(event)) => {
                         if String::from_utf8(event.name().0.to_vec())? == #xml_tag_name {
                             if #debug { println!("[{}.End] End Event ", #xml_tag_name); }
                             #constructor
@@ -69,11 +69,11 @@ impl XmlComplex {
                             if #debug { println!("[{}.{}.End] End Event ", #xml_tag_name, String::from_utf8(event.name().0.to_vec())?); }
                         }
                     },
-                    Ok(quick_xml::events::Event::Eof) => { break },
-                    Ok(quick_xml::events::Event::Decl(_)) => {},
-                    Ok(quick_xml::events::Event::PI(_)) => {},
-                    Ok(quick_xml::events::Event::DocType(_)) => {},
-                    Ok(quick_xml::events::Event::Comment(_)) => {}
+                    Ok(::xavier::quick_xml::events::Event::Eof) => { break },
+                    Ok(::xavier::quick_xml::events::Event::Decl(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::PI(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::DocType(_)) => {},
+                    Ok(::xavier::quick_xml::events::Event::Comment(_)) => {}
                 };
             };
             Err(xavier::PError::new("Error root not found"))
