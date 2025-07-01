@@ -92,7 +92,7 @@ checksum = "86bd8d4e895da8537e5315b8254664e6b769c4ff3db18321b297a1e7004392e3"
 
 [[package]]
 name = "xavier"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "quick-xml",
  "xavier-derive",
@@ -101,7 +101,7 @@ dependencies = [
 
 [[package]]
 name = "xavier-derive"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "convert_case",
  "proc-macro2",
@@ -111,7 +111,7 @@ dependencies = [
 
 [[package]]
 name = "xavier-internal"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "html-escape",
  "quick-xml",
