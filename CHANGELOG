@@ -1,1 +1,12 @@
-1.1.4 Support for sibling elements <https://github.com/thiago-santos-it/xavier-xml/issues/1>
+Changelog
+
+1.1.5
+Added support for self-closing (closed-ended) tags. This resolves Issue #3 <https://github.com/thiago-santos-it/xavier-xml/issues/3>.
+
+Updated quick-xml usage. See Pull Request #2 for details <https://github.com/thiago-santos-it/xavier-xml/pull/2>.
+
+QuickXML updated up to 3.7.5
+ConvertCase updated up to 0.7.1
+
+1.1.4
+Improved support for sibling elements. This addresses Issue #1 <https://github.com/thiago-santos-it/xavier-xml/issues/1>.

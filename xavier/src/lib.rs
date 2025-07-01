@@ -42,7 +42,7 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
 
     let result = panic::catch_unwind(|| {
         let mut reader = quick_xml::Reader::from_str(&xml);
-        reader.expand_empty_elements(true);
+        reader.config_mut().expand_empty_elements = true;
         loop {
             match reader.read_event() {
                 Err(error) =>  {

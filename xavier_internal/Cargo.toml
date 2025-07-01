@@ -1,6 +1,6 @@
 [package]
 name = "xavier-internal"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Thiago Medeiros dos Santos <thiago.santos.it@gmail.com>"]
 edition = "2021"
 license-file="../LICENSE"
