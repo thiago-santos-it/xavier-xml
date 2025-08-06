@@ -35,7 +35,7 @@ impl ToTokens for FieldSetter {
             if should_parse {
                 let result = #ty::from_xml(&mut reader, Some(&event));
                 match result {
-                    Ok(value) => { #field = Some(value); continue; }
+                    Ok(t_value) => { #field = Some(t_value); continue; }
                     Err(error) => { return Err(error); }
                 }
             }

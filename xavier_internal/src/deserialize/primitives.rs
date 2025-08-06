@@ -22,6 +22,39 @@ impl Primitive for f32 {}
 impl Primitive for f64  {}
 impl Primitive for bool {}
 
+// Função para verificar caracteres maliciosos
+fn contains_malicious_characters(input: &str) -> bool {
+    // Verificar por caracteres nulos e caracteres de controle maliciosos
+    for c in input.chars() {
+        match c as u32 {
+            0x00..=0x08 | 0x0B | 0x0C | 0x0E..=0x1F | 0x7F => {
+                return true;
+            }
+            _ => {}
+        }
+    }
+    false
+}
+
+// Função para verificar entidades hexadecimais maliciosas
+fn contains_malicious_entities(input: &str) -> bool {
+    // Verificar por entidades hexadecimais maliciosas
+    let malicious_patterns = [
+        "&#x00;", "&#x01;", "&#x02;", "&#x03;", "&#x04;", "&#x05;", "&#x06;", "&#x07;", "&#x08;",
+        "&#x0B;", "&#x0C;", "&#x0E;", "&#x0F;", "&#x10;", "&#x11;", "&#x12;", "&#x13;", "&#x14;",
+        "&#x15;", "&#x16;", "&#x17;", "&#x18;", "&#x19;", "&#x1A;", "&#x1B;", "&#x1C;", "&#x1D;",
+        "&#x1E;", "&#x1F;", "&#x7F;"
+    ];
+    
+    for pattern in &malicious_patterns {
+        if input.contains(pattern) {
+            return true;
+        }
+    }
+    
+    false
+}
+
 // Special implementation for String that handles XML entities
 impl XmlDeserializable for String {
     fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Self, PError> {
@@ -36,12 +69,38 @@ impl XmlDeserializable for String {
                 Ok(Event::Text(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
                     let trimmed = raw_string.trim();
-                    return Ok(decode(&trimmed));
+                    
+                    // Verificar se há entidades maliciosas antes da decodificação
+                    if contains_malicious_entities(&trimmed) {
+                        return Err(PError::new("Malicious XML entities detected"));
+                    }
+                    
+                    let decoded = decode(&trimmed);
+                    
+                    // Verificar se há caracteres maliciosos após decodificação
+                    if contains_malicious_characters(&decoded) {
+                        return Err(PError::new("Malicious characters detected in XML content"));
+                    }
+                    
+                    return Ok(decoded);
                 },
                 Ok(Event::CData(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
                     let trimmed = raw_string.trim();
-                    return Ok(decode(&trimmed));
+                    
+                    // Verificar se há entidades maliciosas antes da decodificação
+                    if contains_malicious_entities(&trimmed) {
+                        return Err(PError::new("Malicious XML entities detected"));
+                    }
+                    
+                    let decoded = decode(&trimmed);
+                    
+                    // Verificar se há caracteres maliciosos após decodificação
+                    if contains_malicious_characters(&decoded) {
+                        return Err(PError::new("Malicious characters detected in XML content"));
+                    }
+                    
+                    return Ok(decoded);
                 },
                 Ok(Event::Decl(_)) => {},
                 Ok(Event::PI(_)) => {},
