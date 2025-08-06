@@ -15,5 +15,10 @@ macro_rules! comment {
 }
 
 pub fn escape_xml(input: &str) -> String {
-    html_escape::encode_text(input).to_string()
+    input
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;")
+        .replace("'", "&apos;")
 }

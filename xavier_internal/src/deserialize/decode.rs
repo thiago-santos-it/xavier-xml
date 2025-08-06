@@ -4,5 +4,10 @@ macro_rules! decode {
 }
 
 pub fn decode(input: &str) -> String {
-    html_escape::decode_html_entities(input).to_string()
+    input
+        .replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&apos;", "'")
 }

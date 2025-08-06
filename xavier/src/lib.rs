@@ -26,6 +26,10 @@ pub fn from_obj<T: XmlSerializable>(obj: &T) -> String {
 }
 
 pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
+    // Verificar se o XML está vazio ou contém apenas espaços em branco
+    if xml.trim().is_empty() {
+        return Err(PError::new("Empty XML or whitespace-only content"));
+    }
 
     let panic_info = Arc::new(Mutex::new(String::new()));
 
@@ -43,17 +47,32 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
     let result = panic::catch_unwind(|| {
         let mut reader = quick_xml::Reader::from_str(&xml);
         reader.config_mut().expand_empty_elements = true;
+        let found_element = false;
+        let mut max_iterations = 1000; // Prevenir loops infinitos
+        
         loop {
+            if max_iterations <= 0 {
+                return Err(PError::new("Maximum iterations reached, possible infinite loop"));
+            }
+            max_iterations -= 1;
+            
             match reader.read_event() {
                 Err(error) =>  {
                     return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) 
                 },
-                Ok(Event::Eof) => { },
+                Ok(Event::Eof) => { 
+                    if !found_element {
+                        return Err(PError::new("No valid XML element found"));
+                    }
+                    break;
+                },
                 Ok(Event::Start(event)) => {
                     return Ok::<T, PError>(T::from_xml(&mut reader, Some(&event))?)
                 },
                 Ok(Event::End(_)) => {},
-                Ok(Event::Empty(_)) => { return Ok::<T, PError>(T::from_xml(&mut reader, None)?)},
+                Ok(Event::Empty(_)) => { 
+                    return Ok::<T, PError>(T::from_xml(&mut reader, None)?)
+                },
                 Ok(Event::Comment(_)) => {},
                 Ok(Event::Text(_)) => {},
                 Ok(Event::CData(_)) => {},
@@ -62,6 +81,8 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
                 Ok(Event::DocType(_)) => {},
             }
         }
+        
+        Err(PError::new("No valid XML element found"))
     });
 
     if let Err(_error) = result {
