@@ -1,0 +1,23 @@
+[global]
+# Configurações globais do Criterion
+verbose = true
+plotting-backend = "plotters"
+
+[harness]
+# Configurações do harness de benchmark
+test = false
+bench = true
+
+[profiles.default]
+# Perfil padrão para benchmarks
+confidence-level = 0.95
+measurement-time = 5
+nresamples = 100000
+noise-threshold = 0.05
+
+[profiles.quick]
+# Perfil rápido para desenvolvimento
+confidence-level = 0.95
+measurement-time = 1
+nresamples = 1000
+noise-threshold = 0.1 
