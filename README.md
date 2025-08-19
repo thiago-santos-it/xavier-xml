@@ -207,7 +207,7 @@ fn parse_safely(xml: &str) -> Result<Person, String> {
 - **Custom Naming**: Control element names with `#[xml(name="...")]`
 - **Case Conversion**: Automatic case conversion with `#[xml(case="Camel")]`
 - **Namespaces**: Full XML namespace support
-- **Collections**: Native support for `Vec<T>` and `HashMap<String, T>`
+- **Collections**: Native support for `Vec<T>` and `HashMap<String, T>` with custom inner tags via `#[xml(inner="...")]`
 - **Optional Fields**: Use `Option<T>` for optional elements
 - **Nested Structures**: Complex nested XML structures
 - **Error Handling**: Comprehensive error types and messages
@@ -341,6 +341,39 @@ Should produce:
 ```
 
 > Note: use_suffix="false" or use_prefix="true" can be used to force suffix or prefix.
+
+#### Collection Inner Tags
+
+You can customize the inner tag names for collections using the `#[xml(inner="...")]` attribute:
+
+```Rust
+#[derive(XmlSerializable)]
+struct Product {
+    #[xml(attribute, name="id")]
+    pub id: u32,
+    pub name: String,
+    #[xml(inner="tag")]
+    pub tags: Vec<String>,
+    #[xml(inner="option")]
+    pub options: Vec<String>,
+}
+```
+
+This will produce:
+
+```xml
+<Product id="123">
+    <name>Sample Product</name>
+    <tags>
+        <tag>electronics</tag>
+        <tag>gadget</tag>
+    </tags>
+    <options>
+        <option>red</option>
+        <option>blue</option>
+    </options>
+</Product>
+```
 
 ### Enum
 
@@ -482,6 +515,47 @@ Should produce:
 ```
 
 > Note: ```HashMap<String, T: XmlSerializable>``` is also supported but with no naming effect.
+
+#### Custom Inner Tags for Collections
+
+You can customize the inner tag names for collections using the `#[xml(inner="...")]` attribute:
+
+```Rust
+#[derive(XmlSerializable)]
+struct Product {
+    pub id: u32,
+    pub name: String,
+    #[xml(inner="item")]
+    pub tags: Vec<String>,
+    #[xml(inner="variant")]
+    pub variants: Vec<String>,
+    #[xml(inner="price")]
+    pub prices: Vec<f64>,
+}
+```
+
+This will produce:
+
+```xml
+<Product>
+    <id>123</id>
+    <name>Sample Product</name>
+    <tags>
+        <item>electronics</item>
+        <item>gadget</item>
+    </tags>
+    <variants>
+        <variant>red</variant>
+        <variant>blue</variant>
+    </variants>
+    <prices>
+        <price>29.99</price>
+        <price>39.99</price>
+    </prices>
+</Product>
+```
+
+Without the `inner` attribute, collections would use the default behavior of concatenating all values in a single tag.
 
 ### Structs as tags
 
@@ -715,6 +789,43 @@ Will be available as a normal tag attribute.
 ### Errors
 
 Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier DeSer tiene un PError"* ```ʕ•ᴥ•ʔ```  
+
+### Available Attributes
+
+Xavier provides several attributes to customize XML serialization and deserialization:
+
+#### Struct-level attributes:
+- `#[xml(name="...")]` - Custom XML tag name for the struct
+- `#[xml(case="...")]` - Case conversion (e.g., "Camel", "snake", "kebab")
+- `#[xml(ns="...")]` - XML namespace prefix
+- `#[xml(flatten)]` - Flatten the struct (no wrapper tag)
+- `#[declaration(...)]` - XML declaration attributes
+
+#### Field-level attributes:
+- `#[xml(attribute)]` - Treat field as XML attribute instead of element
+- `#[xml(attribute, name="...")]` - Custom attribute name
+- `#[xml(name="...")]` - Custom element name for the field
+- `#[xml(value)]` - Field contains the text value of the element
+- `#[xml(tree)]` - Field is a nested tree structure
+- `#[xml(inner="...")]` - Custom inner tag name for collections (e.g., `Vec<T>`)
+- `#[xml(xmlns)]` - Field contains namespace declarations
+- `#[xml(flatten)]` - Flatten nested structure
+- `#[xml(ignore_case)]` - Ignore case when parsing
+
+#### Examples:
+```rust
+#[derive(XmlSerializable)]
+#[xml(name="product", case="Camel")]
+struct Product {
+    #[xml(attribute, name="id")]
+    pub id: u32,
+    pub name: String,
+    #[xml(inner="tag")]
+    pub tags: Vec<String>,
+    #[xml(tree)]
+    pub details: ProductDetails,
+}
+```
 
 ### Getting Help
 

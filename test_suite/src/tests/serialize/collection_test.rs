@@ -139,3 +139,63 @@ fn serialize_option_none() {
     assert!(result.contains("<field_a>Some Text</field_a>"));
     assert!(result.contains("<children></children>"));
 }
+
+#[derive(XmlSerializable)]
+struct CustomInnerTestStruct {
+    pub id: u64,
+    pub name: String,
+    #[xml(inner="item")]
+    pub data: Vec<String>,
+    #[xml(inner="element")]
+    pub items: Vec<String>,
+    #[xml(inner="value")]
+    pub scores: Vec<u32>,
+}
+
+#[test]
+fn serialize_custom_inner_tags() {
+    let test_data = CustomInnerTestStruct {
+        id: 1,
+        name: "CustomTest".to_string(),
+        data: vec!["data1".to_string(), "data2".to_string()],
+        items: vec!["item1".to_string(), "item2".to_string()],
+        scores: vec![100, 200, 300],
+    };
+    
+    let xml = from_obj(&test_data);
+    
+    // Verificar se todas as tags internas estão corretas
+    assert!(xml.contains("<data><item>data1</item><item>data2</item></data>"));
+    assert!(xml.contains("<items><element>item1</element><element>item2</element></items>"));
+    assert!(xml.contains("<scores><value>100</value><value>200</value><value>300</value></scores>"));
+}
+
+#[test]
+fn serialize_various_collection_types_with_inner() {
+    #[derive(XmlSerializable)]
+    struct CollectionTestStruct {
+        #[xml(inner="string")]
+        pub strings: Vec<String>,
+        #[xml(inner="number")]
+        pub numbers: Vec<i32>,
+        #[xml(inner="float")]
+        pub floats: Vec<f64>,
+        #[xml(inner="boolean")]
+        pub booleans: Vec<bool>,
+    }
+    
+    let test_data = CollectionTestStruct {
+        strings: vec!["hello".to_string(), "world".to_string()],
+        numbers: vec![1, 2, 3, 4, 5],
+        floats: vec![1.1, 2.2, 3.3],
+        booleans: vec![true, false, true],
+    };
+    
+    let xml = from_obj(&test_data);
+    
+    // Verificar se todas as tags internas estão corretas
+    assert!(xml.contains("<strings><string>hello</string><string>world</string></strings>"));
+    assert!(xml.contains("<numbers><number>1</number><number>2</number><number>3</number><number>4</number><number>5</number></numbers>"));
+    assert!(xml.contains("<floats><float>1.1</float><float>2.2</float><float>3.3</float></floats>"));
+    assert!(xml.contains("<booleans><boolean>true</boolean><boolean>false</boolean><boolean>true</boolean></booleans>"));
+}

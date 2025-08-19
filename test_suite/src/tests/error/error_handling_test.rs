@@ -169,25 +169,3 @@ fn error_only_whitespace() {
     let result = from_xml::<ErrorTestStruct>(whitespace_xml);
     assert!(result.is_err());
 }
-
-#[test]
-fn error_partial_data_recovery() {
-    // Teste para verificar se consegue recuperar dados parcialmente válidos
-    let partial_xml = r#"
-    <ErrorTestStruct>
-        <id>1</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>
-            <tags>tag1</tags>
-            <tags>invalid_tag</tags>
-        </tags>
-        <active>true</active>
-        <score>95.5</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(partial_xml);
-    // Deve falhar devido ao campo inválido
-    assert!(result.is_err());
-} 

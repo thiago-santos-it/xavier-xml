@@ -9,6 +9,7 @@ pub enum XmlTagElement {
     Complex(Ident, XmlExtension),
     Simple(Ident, LitStr, XmlExtension),
     Value(Ident, XmlExtension),
+    Collection(Ident, LitStr, LitStr, XmlExtension), // field, tag_name, inner_name, extension
 }
 
 impl ToTokens for XmlTagElement {
@@ -28,6 +29,19 @@ impl ToTokens for XmlTagElement {
                 quote! {
                     format!("{}{}", #extensions, self.#field.to_xml(false))
                 }
+            },
+            XmlTagElement::Collection(field, tag_name, inner_name, extensions) => {
+                quote! {
+                    {
+                        let mut collection_xml = String::new();
+                        collection_xml.push_str(&format!("<{}>", #tag_name));
+                        for item in &self.#field {
+                            collection_xml.push_str(&format!("<{}>{}</{}>", #inner_name, item.to_xml(false), #inner_name));
+                        }
+                        collection_xml.push_str(&format!("</{}>", #tag_name));
+                        format!("{}{}", #extensions, collection_xml)
+                    }
+                }
             }
         };
         tokens.extend(tag_tokens);
@@ -43,6 +57,11 @@ impl XmlTagElement {
                     Some(XmlTagElement::Complex(field, extension))
                 } else if meta.contains("flatten") || meta.contains("value") {
                     Some(XmlTagElement::Value(field, extension))
+                } else if meta.contains("inner") {
+                    // Handle collection with custom inner tag name
+                    let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
+                    let inner_name = LitStr::new(&meta.get_or("inner", "item".to_string()), proc_macro2::Span::call_site());
+                    Some(XmlTagElement::Collection(field, tag_name, inner_name, extension))
                 } else {
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
                     Some(XmlTagElement::Simple(field, tag_name, extension))

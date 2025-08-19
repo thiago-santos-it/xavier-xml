@@ -2,6 +2,7 @@ use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError};
 
 #[derive(XmlSerializable, XmlDeserializable, Debug)]
 struct LargeCollectionStruct {
+    #[xml(tree)]
     pub items: Vec<CollectionItem>,
     pub metadata: String,
 }
@@ -21,7 +22,7 @@ fn generate_large_collection_xml(count: usize) -> String {
     
     for i in 0..count {
         xml.push_str(&format!(
-            "<items><id>{}</id><name>Item{}</name><value2>{}</value2></items>",
+            "<CollectionItem><id>{}</id><name>Item{}</name><value>{}</value></CollectionItem>",
             i, i, i as f64
         ));
     }
