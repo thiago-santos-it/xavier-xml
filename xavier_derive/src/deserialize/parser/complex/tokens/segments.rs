@@ -83,9 +83,7 @@ impl TokenSegments {
 
                         field_names.push(ident.clone());
                         constructors.push(ConstructorField {
-                            is_sibling,
-                            is_option: TypeParser::is_option_type(&field.ty),
-                            is_box: TypeParser::is_box_type(&field.ty),
+                            path_idents: TypeParser::type_path_idents(&field.ty),
                             field: ident.clone(),
                         })
                     }

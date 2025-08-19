@@ -13,4 +13,3 @@ keywords = ["xavier", "xml"]
 
 [dependencies]
 quick-xml = "0.37.5"
-html-escape = "0.2.13"

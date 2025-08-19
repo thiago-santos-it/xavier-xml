@@ -1,4 +1,5 @@
-use syn::{parse_quote, PathSegment, Type};
+use proc_macro2::Ident;
+use syn::{parse_quote, PathArguments, PathSegment, Type, TypePath};
 use syn::GenericArgument;
 use syn::PathArguments::AngleBracketed;
 
@@ -6,32 +7,29 @@ pub struct TypeParser;
 
 impl TypeParser {
 
-    pub fn is_option_type(ty: &Type) -> bool {
-        if let Type::Path(type_path) = ty {
-            if let Some(path) = &type_path.path.segments.first() {
-                return path.ident == "Option";
+    pub fn type_path_idents(ty: &Type) -> Vec<Ident> {
+        let mut idents = Vec::new();
+        if let Type::Path(TypePath { path, .. }) = ty {
+            for segment in &path.segments {
+                if &segment.ident == "Option" || &segment.ident == "Box" {
+                    idents.push(segment.ident.clone());
+                }
+                if let PathArguments::AngleBracketed(args) = &segment.arguments {
+                    for arg in &args.args {
+                        if let GenericArgument::Type(inner_ty) = arg {
+                            idents.extend(TypeParser::type_path_idents(inner_ty));
+                        }
+                    }
+                }
             }
         }
-        false
+        idents
     }
 
     pub fn is_vec(ty: &Type) -> bool {
         if let Type::Path(type_path) = ty {
             if let Some(path) = &type_path.path.segments.first() {
                 return path.ident == "Vec";
-            }
-        }
-        false
-    }
-
-    pub fn is_box_type(ty: &Type) -> bool {
-        if let Some(segment) = Self::first_path_segment(ty) {
-            if segment.ident == "Box" {
-                return true;
-            } else {
-                if let Some(inner_type) = Self::type_from_segment_args(&segment) {
-                    return Self::is_box_type(&inner_type)
-                }
             }
         }
         false
@@ -155,40 +153,4 @@ fn test_unbox() {
     let ty = syn::parse_quote! { Option<Box<i32>> };
     let result = TypeParser::unbox_and_unwrap_type(&ty);
     assert_eq!(quote::quote! { #result }.to_string(), "i32");
-}
-
-#[test]
-fn test_is_box() {
-
-    let ty = syn::parse_quote! { Box<Vec<i32>> };
-    let result = TypeParser::is_box_type(&ty);
-    assert_eq!(result, true);
-
-    let ty = syn::parse_quote! { Box<i32> };
-    let result = TypeParser::is_box_type(&ty);
-    assert_eq!(result, true);
-
-    let ty = syn::parse_quote! { Option<Box<Vec<i32>>> };
-    let result = TypeParser::is_box_type(&ty);
-    assert_eq!(result, true);
-
-    let ty = syn::parse_quote! { Option<Box<i32>> };
-    let result = TypeParser::is_box_type(&ty);
-    assert_eq!(result, true);
-
-    let ty = syn::parse_quote! { Vec<i32> };
-    let result = TypeParser::is_box_type(&ty);
-    assert_eq!(result, false);
-
-    let ty = syn::parse_quote! { i32 };
-    let result = TypeParser::is_box_type(&ty);
-    assert_eq!(result, false);
-
-    let ty = syn::parse_quote! { Option<Vec<i32>> };
-    let result = TypeParser::is_box_type(&ty);
-    assert_eq!(result, false);
-
-    let ty = syn::parse_quote! { Option<i32> };
-    let result = TypeParser::is_box_type(&ty);
-    assert_eq!(result, false);
 }

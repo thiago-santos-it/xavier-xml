@@ -32,6 +32,7 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
+
         impl #impl_generics xavier::deserialize::macro_trait::XmlDeserializable for #object_name #ty_generics #where_clause {
             fn from_xml(mut reader: &mut ::xavier::quick_xml::Reader<&[u8]>, start_event: Option<&::xavier::quick_xml::events::BytesStart>) -> Result<Self, xavier::PError> {
                 #xml_code
