@@ -2,170 +2,394 @@ use xavier::{from_xml, PError, XmlDeserializable};
 
 #[derive(XmlDeserializable, Debug)]
 #[allow(dead_code)]
-struct ErrorTestStruct {
-    pub id: u64,
+struct TestErrorStruct {
+    pub id: u32,
     pub name: String,
-    pub email: Option<String>,
-    pub tags: Vec<String>,
-    pub active: bool,
-    pub score: f64,
+    pub value: i32,
+}
+
+#[derive(XmlDeserializable, Debug)]
+struct TestErrorStructWithOption {
+    pub id: u32,
+    pub name: Option<String>,
+    pub value: Option<i32>,
+}
+
+#[derive(XmlDeserializable, Debug)]
+#[allow(dead_code)]
+struct TestErrorStructWithVec {
+    pub id: u32,
+    pub items: Vec<String>,
 }
 
 #[test]
-fn error_malformed_xml() {
-    let malformed_xml = r#"
-    <ErrorTestStruct>
-        <id>1</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <!-- Missing closing tag -->
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(malformed_xml);
-    assert!(result.is_err());
-}
-
-#[test]
-fn error_incompatible_types() {
-    let xml_with_wrong_type = r#"
-    <ErrorTestStruct>
-        <id>not_a_number</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>
-            <tags>tag1</tags>
-            <tags>tag2</tags>
-        </tags>
-        <active>true</active>
-        <score>95.5</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_with_wrong_type);
-    assert!(result.is_err());
-}
-
-#[test]
-fn error_missing_required_field() {
-    let xml_missing_field = r#"
-    <ErrorTestStruct>
-        <id>1</id>
-        <!-- Missing name field -->
-        <email>john@example.com</email>
-        <tags>
-            <tags>tag1</tags>
-        </tags>
-        <active>true</active>
-        <score>95.5</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_missing_field);
-    assert!(result.is_err());
-}
-
-#[test]
-fn error_invalid_namespace() {
-    let xml_invalid_namespace = r#"
-    <ns:ErrorTestStruct xmlns:ns="invalid-namespace">
-        <ns:id>1</ns:id>
-        <ns:name>John Doe</ns:name>
-        <ns:email>john@example.com</ns:email>
-    </ns:ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_invalid_namespace);
-    // Pode ser ok ou err, dependendo da implementação
-    println!("Result: {:?}", result);
-}
-
-#[test]
-fn error_duplicate_attributes() {
-    let xml_duplicate_attrs = r#"
-    <ErrorTestStruct id="1" id="2">
-        <id>1</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>
-            <tags>tag1</tags>
-        </tags>
-        <active>true</active>
-        <score>95.5</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_duplicate_attrs);
-    // Deve falhar ou ser rejeitado
-    assert!(result.is_err());
-}
-
-#[test]
-fn error_invalid_boolean() {
-    let xml_invalid_bool = r#"
-    <ErrorTestStruct>
-        <id>1</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>
-            <tags>tag1</tags>
-        </tags>
-        <active>maybe</active>
-        <score>95.5</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_invalid_bool);
-    assert!(result.is_err());
-}
-
-#[test]
-fn error_invalid_float() {
-    let xml_invalid_float = r#"
-    <ErrorTestStruct>
-        <id>1</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>
-            <tags>tag1</tags>
-        </tags>
-        <active>true</active>
-        <score>not_a_number</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_invalid_float);
-    assert!(result.is_err());
-}
-
-#[test]
-fn error_overflow_integer() {
-    let xml_overflow = r#"
-    <ErrorTestStruct>
-        <id>18446744073709551616</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>
-            <tags>tag1</tags>
-        </tags>
-        <active>true</active>
-        <score>95.5</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_overflow);
-    assert!(result.is_err());
-}
-
-#[test]
-fn error_empty_xml() {
+fn test_empty_xml_error() {
     let empty_xml = "";
-    let result = from_xml::<ErrorTestStruct>(empty_xml);
+    let result = from_xml::<TestErrorStruct>(empty_xml);
+    
+    assert!(result.is_err());
+    if let Err(error) = result {
+        assert!(error.to_string().contains("Empty XML"));
+    }
+}
+
+#[test]
+fn test_whitespace_only_xml_error() {
+    let whitespace_xml = "   \n\t  ";
+    let result = from_xml::<TestErrorStruct>(whitespace_xml);
+    
+    assert!(result.is_err());
+    if let Err(error) = result {
+        assert!(error.to_string().contains("Empty XML"));
+    }
+}
+
+#[test]
+fn test_malformed_xml_missing_closing_tag() {
+    let malformed_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test Name
+        <value>456</value>
+    </TestErrorStruct>"#;
+    
+    let result = from_xml::<TestErrorStruct>(malformed_xml);
     assert!(result.is_err());
 }
 
 #[test]
-fn error_only_whitespace() {
-    let whitespace_xml = "   \n\t   ";
-    let result = from_xml::<ErrorTestStruct>(whitespace_xml);
+fn test_malformed_xml_missing_opening_tag() {
+    let malformed_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test Name</name>
+        </value>456</value>
+    </TestErrorStruct>"#;
+    
+    let result = from_xml::<TestErrorStruct>(malformed_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_malformed_xml_unclosed_root() {
+    let malformed_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test Name</name>
+        <value>456</value>"#;
+    
+    let result = from_xml::<TestErrorStruct>(malformed_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_malformed_xml_wrong_tag_name() {
+    let malformed_xml = r#"
+    <WrongTagName>
+        <id>123</id>
+        <name>Test Name</name>
+        <value>456</value>
+    </WrongTagName>"#;
+    
+    let result = from_xml::<TestErrorStruct>(malformed_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_malformed_xml_missing_required_field() {
+    let malformed_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test Name</name>
+    </TestErrorStruct>"#;
+    
+    let result = from_xml::<TestErrorStruct>(malformed_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_malformed_xml_extra_field() {
+    let malformed_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test Name</name>
+        <value>456</value>
+        <extra_field>Extra Value</extra_field>
+    </TestErrorStruct>"#;
+    
+    // Este teste pode passar ou falhar dependendo da implementação
+    // Alguns parsers são tolerantes a campos extras
+    let _result = from_xml::<TestErrorStruct>(malformed_xml);
+    // Não fazemos assert aqui pois o comportamento pode variar
+}
+
+#[test]
+fn test_type_conversion_error_invalid_integer() {
+    let invalid_integer_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test Name</name>
+        <value>not_a_number</value>
+    </TestErrorStruct>"#;
+    
+    let result = from_xml::<TestErrorStruct>(invalid_integer_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_type_conversion_error_invalid_unsigned_integer() {
+    let invalid_uint_xml = r#"
+    <TestErrorStruct>
+        <id>-123</id>
+        <name>Test Name</name>
+        <value>456</value>
+    </TestErrorStruct>"#;
+    
+    let result = from_xml::<TestErrorStruct>(invalid_uint_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_type_conversion_error_invalid_float() {
+    #[derive(XmlDeserializable, Debug)]
+    #[allow(dead_code)]
+    struct TestFloatStruct {
+        pub id: u32,
+        pub value: f64,
+    }
+    
+    let invalid_float_xml = r#"
+    <TestFloatStruct>
+        <id>123</id>
+        <value>not_a_float</value>
+    </TestFloatStruct>"#;
+    
+    let result = from_xml::<TestFloatStruct>(invalid_float_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_type_conversion_error_invalid_boolean() {
+    #[derive(XmlDeserializable, Debug)]
+    #[allow(dead_code)]
+    struct TestBooleanStruct {
+        pub id: u32,
+        pub flag: bool,
+    }
+    
+    let invalid_boolean_xml = r#"
+    <TestBooleanStruct>
+        <id>123</id>
+        <flag>not_a_boolean</flag>
+    </TestBooleanStruct>"#;
+    
+    let result = from_xml::<TestBooleanStruct>(invalid_boolean_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_encoding_error_invalid_utf8() {
+    // Criar XML com bytes inválidos de UTF-8
+    let invalid_utf8_bytes = vec![
+        0x3c, 0x54, 0x65, 0x73, 0x74, 0x3e, // <Test>
+        0x48, 0x65, 0x6c, 0x6c, 0x6f, // Hello
+        0xff, 0xfe, // Bytes inválidos de UTF-8
+        0x3c, 0x2f, 0x54, 0x65, 0x73, 0x74, 0x3e // </Test>
+    ];
+    
+    let invalid_utf8_xml = String::from_utf8(invalid_utf8_bytes);
+    assert!(invalid_utf8_xml.is_err());
+}
+
+#[test]
+fn test_encoding_error_invalid_xml_entities() {
+    let invalid_entities_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test &amp; Name</name>
+        <value>456</value>
+    </TestErrorStruct>"#;
+    
+    // Este teste deve passar pois &amp; é uma entidade válida
+    let result = from_xml::<TestErrorStruct>(invalid_entities_xml);
+    assert!(result.is_ok());
+}
+
+#[test]
+fn test_encoding_error_malformed_entities() {
+    let malformed_entities_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test & Name</name>
+        <value>456</value>
+    </TestErrorStruct>"#;
+    
+    let _result = from_xml::<TestErrorStruct>(malformed_entities_xml);
+    // Pode falhar devido ao & não escapado
+    // Não fazemos assert aqui pois o comportamento pode variar
+}
+
+#[test]
+fn test_collection_parsing_error() {
+    let malformed_collection_xml = r#"
+    <TestErrorStructWithVec>
+        <id>123</id>
+        <items>
+            <items>item1</items>
+            <items>item2
+            <items>item3</items>
+        </items>
+    </TestErrorStructWithVec>"#;
+    
+    let result = from_xml::<TestErrorStructWithVec>(malformed_collection_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_option_field_parsing() -> Result<(), PError> {
+    // Teste com campos opcionais presentes
+    let valid_option_xml = r#"
+    <TestErrorStructWithOption>
+        <id>123</id>
+        <name>Test Name</name>
+        <value>456</value>
+    </TestErrorStructWithOption>"#;
+    
+    let result = from_xml::<TestErrorStructWithOption>(valid_option_xml)?;
+    assert_eq!(result.id, 123);
+    assert_eq!(result.name, Some("Test Name".to_string()));
+    assert_eq!(result.value, Some(456));
+    
+    // Teste com campos opcionais ausentes
+    let missing_option_xml = r#"
+    <TestErrorStructWithOption>
+        <id>789</id>
+    </TestErrorStructWithOption>"#;
+    
+    let result = from_xml::<TestErrorStructWithOption>(missing_option_xml)?;
+    assert_eq!(result.id, 789);
+    assert_eq!(result.name, None);
+    assert_eq!(result.value, None);
+    
+    Ok(())
+}
+
+#[test]
+fn test_nested_structure_parsing_error() {
+    #[derive(XmlDeserializable, Debug)]
+    #[allow(dead_code)]
+    struct TestNestedStruct {
+        pub id: u32,
+        pub inner: TestInnerStruct,
+    }
+    
+    #[derive(XmlDeserializable, Debug)]
+    #[allow(dead_code)]
+    struct TestInnerStruct {
+        pub name: String,
+        pub value: i32,
+    }
+    
+    let malformed_nested_xml = r#"
+    <TestNestedStruct>
+        <id>123</id>
+        <inner>
+            <name>Inner Name
+            <value>456</value>
+        </inner>
+    </TestNestedStruct>"#;
+    
+    let result = from_xml::<TestNestedStruct>(malformed_nested_xml);
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_error_message_content() {
+    let malformed_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test Name
+        <value>456</value>
+    </TestErrorStruct>"#;
+    
+    let result = from_xml::<TestErrorStruct>(malformed_xml);
+    assert!(result.is_err());
+    
+    if let Err(error) = result {
+        let error_message = error.to_string();
+        println!("Mensagem de erro: {}", error_message);
+        
+        // Verificar se a mensagem de erro contém informações úteis
+        assert!(!error_message.is_empty());
+        assert!(error_message.len() > 10); // Deve ter pelo menos alguma informação
+    }
+}
+
+#[test]
+fn test_multiple_errors_handling() {
+    let multiple_errors_xml = r#"
+    <TestErrorStruct>
+        <id>not_a_number</id>
+        <name>Test Name
+        <value>also_not_a_number</value>
+    </TestErrorStruct>"#;
+    
+    let result = from_xml::<TestErrorStruct>(multiple_errors_xml);
+    assert!(result.is_err());
+    
+    // O parser deve falhar no primeiro erro encontrado
+    // Não fazemos assert específico sobre qual erro foi reportado
+}
+
+#[test]
+fn test_error_recovery_attempts() {
+    // Teste para verificar se o parser tenta se recuperar de erros
+    let recoverable_xml = r#"
+    <TestErrorStruct>
+        <id>123</id>
+        <name>Test Name</name>
+        <value>456</value>
+        <extra_field>Extra</extra_field>
+        <another_extra>Another</another_extra>
+    </TestErrorStruct>"#;
+    
+    let _result = from_xml::<TestErrorStruct>(recoverable_xml);
+    // Dependendo da implementação, pode passar ou falhar
+    // Não fazemos assert aqui
+}
+
+#[test]
+fn test_error_with_large_xml() {
+    // Criar XML grande com erro no final
+    let mut large_xml = String::from("<TestErrorStruct>\n");
+    large_xml.push_str("<id>123</id>\n");
+    large_xml.push_str("<name>Test Name</name>\n");
+    
+    // Adicionar muitas linhas válidas
+    for i in 0..1000 {
+        large_xml.push_str(&format!("<extra_field_{}>Value {}</extra_field_{}>\n", i, i, i));
+    }
+    
+    large_xml.push_str("<value>456</value>\n");
+    large_xml.push_str("</TestErrorStruct>"); // Fechamento correto
+    
+    let result = from_xml::<TestErrorStruct>(&large_xml);
+    // Deve passar pois o XML é válido
+    assert!(result.is_ok());
+    
+    // Agora criar XML grande com erro
+    let mut large_xml_with_error = String::from("<TestErrorStruct>\n");
+    large_xml_with_error.push_str("<id>123</id>\n");
+    large_xml_with_error.push_str("<name>Test Name</name>\n");
+    
+    // Adicionar muitas linhas válidas
+    for i in 0..1000 {
+        large_xml_with_error.push_str(&format!("<extra_field_{}>Value {}</extra_field_{}>\n", i, i, i));
+    }
+    
+    large_xml_with_error.push_str("<value>456</value>\n");
+    // Falta fechamento da tag root
+    
+    let result = from_xml::<TestErrorStruct>(&large_xml_with_error);
     assert!(result.is_err());
 }

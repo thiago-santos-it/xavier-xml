@@ -20,4 +20,6 @@ mod value_test;
 mod self_closing_test;
 mod error_test;
 mod inner_test;
+mod cdata_comments_test;
+mod specific_cases_test;
 
