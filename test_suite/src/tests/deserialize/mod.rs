@@ -19,4 +19,5 @@ mod panic_test;
 mod value_test;
 mod self_closing_test;
 mod error_test;
+mod inner_test;
 
