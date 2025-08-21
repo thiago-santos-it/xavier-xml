@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
-use syn::{DeriveInput, LitBool, LitStr};
+use syn::{DeriveInput, LitStr};
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
 use crate::deserialize::parser::complex::tokens::segments::TokenSegments;
@@ -22,18 +22,14 @@ impl XmlComplex {
         let value_setters = tokens.value_setters;
         let xmlns_setter = tokens.xmlns_setter;
         let constructor =  tokens.constructor;
-
-        let debug = LitBool::new(false, Span::call_site());
-
         let gen = quote! {
 
-            
             #(#declarations)*
 
             if let Some(start_event) = start_event {
                 for xa_attribute in start_event.attributes() {
                     let xa_attr_name = String::from_utf8(xa_attribute.as_ref()?.key.0.to_vec())?;
-                    let xa_attr_value = String::from_utf8(xa_attribute.as_ref()?.value.to_vec())?;
+                    let xa_attr_value = xavier::deserialize::decode::decode_xml(&String::from_utf8(xa_attribute.as_ref()?.value.to_vec())?);
 
                     #(#attribute_setters)*
                     #xmlns_setter

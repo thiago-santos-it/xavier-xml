@@ -1,4 +1,4 @@
-use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError};
+use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError, cdata};
 
 #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
 struct TestAttributes {
@@ -29,6 +29,7 @@ struct TestMixedAttributes {
     pub name: String,
     #[xml(attribute, name="enabled")]
     pub enabled: bool,
+    #[xml(inner="item")]
     pub data: Vec<String>,
 }
 
@@ -56,7 +57,7 @@ fn test_basic_attributes() -> Result<(), PError> {
 
 #[test]
 fn test_optional_attributes() -> Result<(), PError> {
-    // Teste com todos os atributos
+
     let test_data = TestOptionalAttributes {
         id: 123,
         name: Some("Test Name".to_string()),
@@ -67,8 +68,7 @@ fn test_optional_attributes() -> Result<(), PError> {
     let xml = from_obj(&test_data);
     let parsed: TestOptionalAttributes = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
-    
-    // Teste sem atributos opcionais
+
     let test_data_none = TestOptionalAttributes {
         id: 789,
         name: None,
@@ -110,13 +110,17 @@ fn test_attributes_with_special_characters() -> Result<(), PError> {
         name: "Test & Name <with> \"quotes\"".to_string(),
         value: -123,
         flag: false,
-        content: "Content with & < > \" characters".to_string(),
+        content: cdata!("Content with & < > \" characters".to_string()),
     };
     
     let xml = from_obj(&test_data);
     
     let parsed: TestAttributes = from_xml(&xml)?;
-    assert_eq!(test_data, parsed);
+    assert_eq!(test_data.id, parsed.id);
+    assert_eq!(test_data.name, parsed.name);
+    assert_eq!(test_data.value, parsed.value);
+    assert_eq!(test_data.flag, parsed.flag);
+    assert_eq!(test_data.content, cdata!(parsed.content)); //Reapply because it's removed on des
     
     Ok(())
 }

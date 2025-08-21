@@ -74,7 +74,7 @@ fn error_invalid_namespace() {
     </ns:ErrorTestStruct>
     "#;
     
-    let result = from_xml::<ErrorTestStruct>(xml_invalid_namespace);
+    let _result = from_xml::<ErrorTestStruct>(xml_invalid_namespace);
     // May be ok or err, depending on implementation
 }
 
@@ -126,7 +126,7 @@ fn error_invalid_xml_structure() {
     </ExtraElement>
     "#;
     
-    let result = from_xml::<ErrorTestStruct>(invalid_xml);
+    let _result = from_xml::<ErrorTestStruct>(invalid_xml);
           // Should fail or accept only the first element
 }
 

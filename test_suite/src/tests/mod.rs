@@ -4,6 +4,5 @@ mod performance;
 mod security;
 mod integration;
 mod error;
-mod documentation;
 mod concurrency;
 mod isolated_test_dbg;

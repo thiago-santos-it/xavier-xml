@@ -3,7 +3,7 @@ use quick_xml::events::{BytesStart, Event};
 use quick_xml::Reader;
 use crate::deserialize::error::PError;
 use crate::deserialize::macro_trait::XmlDeserializable;
-use crate::deserialize::decode::decode;
+use crate::deserialize::decode::{decode_xml, strip_cdata};
 
 trait Primitive {}
 impl Primitive for i8 {}
@@ -63,18 +63,18 @@ impl XmlDeserializable for String {
                 Err(error) => { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                 Ok(Event::Eof) => { },
                 Ok(Event::Start(_)) => {},
-                Ok(Event::End(_)) => { return Ok(None); },
+                Ok(Event::End(_)) => { return Ok(Some("".to_string())); },
                 Ok(Event::Empty(_)) => { return Ok(None); },
                 Ok(Event::Comment(_)) => {},
                 Ok(Event::Text(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
-                    let trimmed = raw_string.trim();
+                    let trimmed = strip_cdata(raw_string.trim());
 
                     if contains_malicious_entities(&trimmed) {
                         return Err(PError::new("Malicious XML entities detected"));
                     }
                     
-                    let decoded = decode(&trimmed);
+                    let decoded = decode_xml(&trimmed);
                     
                     if contains_malicious_characters(&decoded) {
                         return Err(PError::new("Malicious characters detected in XML content"));
@@ -90,7 +90,7 @@ impl XmlDeserializable for String {
                         return Err(PError::new("Malicious XML entities detected"));
                     }
                     
-                    let decoded = decode(&trimmed);
+                    let decoded = decode_xml(&trimmed);
                     
                     if contains_malicious_characters(&decoded) {
                         return Err(PError::new("Malicious characters detected in XML content"));

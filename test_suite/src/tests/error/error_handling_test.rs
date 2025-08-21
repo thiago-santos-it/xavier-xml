@@ -108,6 +108,7 @@ fn test_malformed_xml_missing_required_field() {
 }
 
 #[test]
+#[allow(unused_variables)]
 fn test_malformed_xml_extra_field() {
     let malformed_xml = r#"
     <TestErrorStruct>
@@ -116,7 +117,7 @@ fn test_malformed_xml_extra_field() {
         <value>456</value>
         <extra_field>Extra Value</extra_field>
     </TestErrorStruct>"#;
-    
+    let _result = from_xml::<TestErrorStruct>(malformed_xml);
     // This test may pass or fail depending on implementation
     // Some parsers are tolerant to extra fields
     // We don't assert here as behavior may vary

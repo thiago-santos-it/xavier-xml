@@ -1,4 +1,4 @@
-use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError};
+use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError, cdata};
 
 #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
 struct TestCDATA {
@@ -32,7 +32,7 @@ fn test_cdata_processing() -> Result<(), PError> {
     let test_data = TestCDATA {
         title: "Test Title".to_string(),
         content: "Normal content".to_string(),
-        code: "<script>alert('test')</script>".to_string(),
+        code: cdata!("<script>alert('test')</script>".to_string()),
     };
     
     let xml = from_obj(&test_data);
@@ -64,9 +64,9 @@ fn test_cdata_manual_xml() -> Result<(), PError> {
 #[test]
 fn test_cdata_with_special_characters() -> Result<(), PError> {
     let test_data = TestCDATA {
-        title: "Special & Characters <Test>".to_string(),
-        content: "Content with & < > \" ' characters".to_string(),
-        code: "if (x < 10 && y > 20) { return \"value\"; }".to_string(),
+        title: cdata!("Special & Characters <Test>".to_string()),
+        content: cdata!("Content with & < > \" ' characters".to_string()),
+        code: cdata!("if (x < 10 && y > 20) { return \"value\"; }".to_string()),
     };
     
     let xml = from_obj(&test_data);
@@ -178,7 +178,7 @@ fn test_cdata_edge_cases() -> Result<(), PError> {
     let parsed_empty: TestCDATA = from_xml(empty_cdata_xml)?;
     assert_eq!(parsed_empty.code, "");
     
-            // CDATA with only whitespace
+    // CDATA with only whitespace
     let whitespace_cdata_xml = r#"
     <TestCDATA>
         <title>Whitespace CDATA Test</title>
