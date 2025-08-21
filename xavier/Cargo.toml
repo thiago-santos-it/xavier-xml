@@ -15,4 +15,5 @@ keywords = ["xavier", "xml"]
 quick-xml = "0.37.5"
 xavier-derive = { version = "0.1.5", path = "../xavier_derive", optional = false }
 xavier-internal = { version = "0.1.5", path = "../xavier_internal", optional = false }
+reader = "0.1.4"
 

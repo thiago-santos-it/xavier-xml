@@ -222,6 +222,7 @@ fn test_xml_numeric_precision() -> Result<(), PError> {
 
 #[test]
 fn test_xml_boolean_values() -> Result<(), PError> {
+
     #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
     struct TestBoolean {
         pub true_val: bool,
@@ -230,7 +231,7 @@ fn test_xml_boolean_values() -> Result<(), PError> {
         pub optional_false: Option<bool>,
         pub optional_none: Option<bool>,
     }
-    
+
     let test_data = TestBoolean {
         true_val: true,
         false_val: false,
@@ -241,7 +242,7 @@ fn test_xml_boolean_values() -> Result<(), PError> {
     
     let xml = from_obj(&test_data);
     println!("XML com valores booleanos: {}", xml);
-    
+
     // Verificar se valores booleanos foram serializados corretamente
     assert!(xml.contains("<true_val>true</true_val>"));
     assert!(xml.contains("<false_val>false</false_val>"));

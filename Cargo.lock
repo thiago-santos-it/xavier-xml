@@ -494,6 +494,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "reader"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db9ed64930a1319a8c8613860fcee924569e330ddb063d02b1cb178309b7a7b6"
+
+[[package]]
 name = "regex"
 version = "1.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -934,6 +940,7 @@ name = "xavier"
 version = "0.1.5"
 dependencies = [
  "quick-xml",
+ "reader",
  "xavier-derive",
  "xavier-internal",
 ]

@@ -24,7 +24,6 @@ impl XmlComplex {
         let constructor =  tokens.constructor;
 
         let debug = LitBool::new(false, Span::call_site());
-        let print_code = LitBool::new(false, Span::call_site());
 
         let gen = quote! {
             if #debug { println!("[{}.Recursion] Parser started", #xml_tag_name); }
@@ -82,12 +81,7 @@ impl XmlComplex {
             Err(xavier::PError::new("Error root not found"))
         };
 
-        let gen_code_lit =  LitStr::new(&gen.to_string(), Span::call_site());
         let mut result = quote! {};
-        result.extend(quote! {
-            let _ = #gen_code_lit;
-            if #print_code { println!("\n\n Generated Code: {} \n\n  {}", #xml_tag_name, #gen_code_lit); }
-        });
         result.extend(gen);
         result
     }

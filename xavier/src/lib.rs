@@ -1,5 +1,5 @@
 use std::panic;
-use std::panic::PanicHookInfo;
+use std::panic::{AssertUnwindSafe, PanicHookInfo};
 use std::sync::{Arc, Mutex};
 use quick_xml::events::Event;
 pub use xavier_derive::XmlSerializable;
@@ -26,7 +26,14 @@ pub fn from_obj<T: XmlSerializable>(obj: &T) -> String {
 }
 
 pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
-    // Verificar se o XML está vazio ou contém apenas espaços em branco
+    from_xml_using_builder(xml, T::from_xml)
+}
+
+pub fn from_xml_using_builder<T, B>(xml: &str, builder: B) -> Result<T, PError>
+where
+    T: XmlDeserializable,
+    B: Fn(&mut quick_xml::Reader<&[u8]>, Option<&quick_xml::events::BytesStart<'_>>) -> Result<T, PError>,
+{
     if xml.trim().is_empty() {
         return Err(PError::new("Empty XML or whitespace-only content"));
     }
@@ -44,34 +51,29 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
         }
     }));
 
-    let result = panic::catch_unwind(|| {
+    let result = panic::catch_unwind(AssertUnwindSafe( || {
+
         let mut reader = quick_xml::Reader::from_str(&xml);
         reader.config_mut().expand_empty_elements = true;
         let found_element = false;
-        let mut max_iterations = 1000; // Prevenir loops infinitos
-        
+
         loop {
-            if max_iterations <= 0 {
-                return Err(PError::new("Maximum iterations reached, possible infinite loop"));
-            }
-            max_iterations -= 1;
-            
             match reader.read_event() {
                 Err(error) =>  {
-                    return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) 
+                    return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error)))
                 },
-                Ok(Event::Eof) => { 
+                Ok(Event::Eof) => {
                     if !found_element {
                         return Err(PError::new("No valid XML element found"));
                     }
                     break;
                 },
                 Ok(Event::Start(event)) => {
-                    return Ok::<T, PError>(T::from_xml(&mut reader, Some(&event))?)
+                    return Ok::<T, PError>(builder(&mut reader, Some(&event))?)
                 },
                 Ok(Event::End(_)) => {},
-                Ok(Event::Empty(_)) => { 
-                    return Ok::<T, PError>(T::from_xml(&mut reader, None)?)
+                Ok(Event::Empty(_)) => {
+                    return Ok::<T, PError>(builder(&mut reader, None)?)
                 },
                 Ok(Event::Comment(_)) => {},
                 Ok(Event::Text(_)) => {},
@@ -81,9 +83,9 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
                 Ok(Event::DocType(_)) => {},
             }
         }
-        
+
         Err(PError::new("No valid XML element found"))
-    });
+    }));
 
     if let Err(_error) = result {
         Err(PError::new(&format!("Some error occurred in XML parser. Cause: {}", panic_info.lock().unwrap())))

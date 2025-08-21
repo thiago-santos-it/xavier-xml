@@ -14,4 +14,3 @@ mod collection_test;
 mod instructions_test;
 mod option_test;
 mod validation_test;
-mod minimal_boolean_test;

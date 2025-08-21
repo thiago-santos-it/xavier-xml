@@ -42,5 +42,9 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
             }
         }
     };
-    return TokenStream::from(expanded)
+
+    /*if object_name.to_string() == "IsolatedTest" {
+        println!("{:?}", xml_code.to_string());
+    }*/
+    TokenStream::from(expanded)
 }
