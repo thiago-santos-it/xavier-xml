@@ -4,6 +4,7 @@ use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError};
 struct TestValidationStruct {
     pub id: u32,
     pub name: String,
+    #[xml(inner="item")]
     pub items: Vec<String>,
     pub metadata: Option<String>,
 }
@@ -27,6 +28,7 @@ struct TestFormatting {
     pub id: u32,
     pub name: String,
     pub description: String,
+    #[xml(inner="tag")]
     pub tags: Vec<String>,
 }
 
@@ -40,8 +42,7 @@ fn test_xml_validity() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    
-    // Verify that XML is valid by doing round-trip
+
     let parsed: TestValidationStruct = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
     
