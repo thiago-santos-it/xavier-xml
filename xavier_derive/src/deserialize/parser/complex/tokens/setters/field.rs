@@ -27,16 +27,15 @@ impl ToTokens for FieldSetter {
             });
         } else {
             tokens.extend(quote! {
-                let should_parse = (xa_tag_name == #tag_name);
+                let should_parse = xa_tag_name == #tag_name;
             });
         }
 
         tokens.extend(quote! {
             if should_parse {
-                let result = #ty::from_xml(&mut reader, Some(&event));
-                match result {
-                    Ok(t_value) => { #field = Some(t_value); continue; }
-                    Err(error) => { return Err(error); }
+                match #ty::from_xml(&mut reader, Some(&event)) {
+                    Ok(t_value) => { #field = t_value; continue; },
+                    Err(err) => return Err(PError::new(&format!("Error parsing XML: {:?}", err))),
                 }
             }
         })

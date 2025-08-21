@@ -6,6 +6,6 @@ pub struct XmlEmptyTag;
 
 impl XmlEmptyTag {
     pub fn parse(_: &DeriveInput) -> TokenStream {
-        quote! { Ok(Self {}) }
+        quote! { Ok(Some(Self {})) }
     }
 }

@@ -23,7 +23,6 @@ pub fn parse(xml: &str) -> Result<(String, String), PError> {
                 return if let Some((name, file)) = doctype_obj(&doc_type) {
                     Ok((name, file))
                 } else {
-                    eprintln!("Parse of inline doc type is not implemented yet!");
                     Err(PError::new("Unsupported content"))
                 }
             },

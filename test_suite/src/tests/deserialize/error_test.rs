@@ -75,8 +75,7 @@ fn error_invalid_namespace() {
     "#;
     
     let result = from_xml::<ErrorTestStruct>(xml_invalid_namespace);
-    // Pode ser ok ou err, dependendo da implementação
-    println!("Result: {:?}", result);
+    // May be ok or err, depending on implementation
 }
 
 #[test]
@@ -96,7 +95,7 @@ fn error_duplicate_attributes() {
 fn error_empty_xml() {
     let empty_xml = "";
     let result = from_xml::<ErrorTestStruct>(empty_xml);
-    // XML vazio deve retornar erro, não loop infinito
+    // Empty XML should return error, not infinite loop
     assert!(result.is_err());
 }
 
@@ -104,7 +103,7 @@ fn error_empty_xml() {
 fn error_only_whitespace() {
     let whitespace_xml = "   \n\t  ";
     let result = from_xml::<ErrorTestStruct>(whitespace_xml);
-    // Apenas espaços em branco deve retornar erro, não loop infinito
+    // Only whitespace should return error, not infinite loop
     assert!(result.is_err());
 }
 
@@ -128,8 +127,7 @@ fn error_invalid_xml_structure() {
     "#;
     
     let result = from_xml::<ErrorTestStruct>(invalid_xml);
-    // Deve falhar ou aceitar apenas o primeiro elemento
-    println!("Result: {:?}", result);
+          // Should fail or accept only the first element
 }
 
 #[test]

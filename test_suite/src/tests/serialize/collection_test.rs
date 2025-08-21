@@ -164,7 +164,7 @@ fn serialize_custom_inner_tags() {
     
     let xml = from_obj(&test_data);
     
-    // Verificar se todas as tags internas estão corretas
+    // Verify that all internal tags are correct
     assert!(xml.contains("<data><item>data1</item><item>data2</item></data>"));
     assert!(xml.contains("<items><element>item1</element><element>item2</element></items>"));
     assert!(xml.contains("<scores><value>100</value><value>200</value><value>300</value></scores>"));
@@ -193,7 +193,7 @@ fn serialize_various_collection_types_with_inner() {
     
     let xml = from_obj(&test_data);
     
-    // Verificar se todas as tags internas estão corretas
+    // Verify that all internal tags are correct
     assert!(xml.contains("<strings><string>hello</string><string>world</string></strings>"));
     assert!(xml.contains("<numbers><number>1</number><number>2</number><number>3</number><number>4</number><number>5</number></numbers>"));
     assert!(xml.contains("<floats><float>1.1</float><float>2.2</float><float>3.3</float></floats>"));

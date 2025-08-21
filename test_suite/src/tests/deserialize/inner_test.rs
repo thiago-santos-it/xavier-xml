@@ -20,13 +20,12 @@ fn test_inner_serialization_deserialization() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML serializado: {}", xml);
     
-    // Verificar se o XML contém as tags internas corretas
+    // Verify that XML contains correct internal tags
     assert!(xml.contains("<data><item>value1</item><item>value2</item><item>value3</item></data>"));
     assert!(xml.contains("<numbers><number>10</number><number>20</number><number>30</number></numbers>"));
     
-    // Teste de deserialização
+    // Test deserialization
     let parsed: TestInnerStruct = from_xml(&xml)?;
     
     assert_eq!(test_data, parsed);
@@ -96,7 +95,6 @@ fn test_inner_different_types() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com tipos diferentes: {}", xml);
     
     let parsed: TestInnerFloat = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -128,7 +126,6 @@ fn test_inner_nested_structs() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com structs aninhados: {}", xml);
     
     let parsed: TestInnerNested = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -188,7 +185,6 @@ fn test_inner_mixed_with_normal_fields() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com campos mistos: {}", xml);
     
     let parsed: TestInnerMixed = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -213,7 +209,7 @@ fn test_inner_malformed_xml() {
     </TestInnerStruct>"#;
     
     let result = from_xml::<TestInnerStruct>(malformed_xml);
-    // Deve falhar porque <wrong_tag> não é reconhecido
+    // Should fail because <wrong_tag> is not recognized
     assert!(result.is_err());
 }
 
@@ -232,6 +228,6 @@ fn test_inner_missing_outer_tag() {
     </TestInnerStruct>"#;
     
     let result = from_xml::<TestInnerStruct>(missing_outer_xml);
-    // Deve falhar porque <item> está fora de <data>
+    // Should fail because <item> is outside of <data>
     assert!(result.is_err());
 }

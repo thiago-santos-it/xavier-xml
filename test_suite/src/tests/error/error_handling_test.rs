@@ -117,10 +117,9 @@ fn test_malformed_xml_extra_field() {
         <extra_field>Extra Value</extra_field>
     </TestErrorStruct>"#;
     
-    // Este teste pode passar ou falhar dependendo da implementação
-    // Alguns parsers são tolerantes a campos extras
-    let _result = from_xml::<TestErrorStruct>(malformed_xml);
-    // Não fazemos assert aqui pois o comportamento pode variar
+    // This test may pass or fail depending on implementation
+    // Some parsers are tolerant to extra fields
+    // We don't assert here as behavior may vary
 }
 
 #[test]
@@ -189,11 +188,11 @@ fn test_type_conversion_error_invalid_boolean() {
 
 #[test]
 fn test_encoding_error_invalid_utf8() {
-    // Criar XML com bytes inválidos de UTF-8
+    // Create XML with invalid UTF-8 bytes
     let invalid_utf8_bytes = vec![
         0x3c, 0x54, 0x65, 0x73, 0x74, 0x3e, // <Test>
         0x48, 0x65, 0x6c, 0x6c, 0x6f, // Hello
-        0xff, 0xfe, // Bytes inválidos de UTF-8
+        0xff, 0xfe, // Invalid UTF-8 bytes
         0x3c, 0x2f, 0x54, 0x65, 0x73, 0x74, 0x3e // </Test>
     ];
     
@@ -210,7 +209,7 @@ fn test_encoding_error_invalid_xml_entities() {
         <value>456</value>
     </TestErrorStruct>"#;
     
-    // Este teste deve passar pois &amp; é uma entidade válida
+    // This test should pass as &amp; is a valid entity
     let result = from_xml::<TestErrorStruct>(invalid_entities_xml);
     assert!(result.is_ok());
 }
@@ -225,8 +224,8 @@ fn test_encoding_error_malformed_entities() {
     </TestErrorStruct>"#;
     
     let _result = from_xml::<TestErrorStruct>(malformed_entities_xml);
-    // Pode falhar devido ao & não escapado
-    // Não fazemos assert aqui pois o comportamento pode variar
+    // May fail due to unescaped &
+    // We don't assert here as behavior may vary
 }
 
 #[test]
@@ -247,7 +246,7 @@ fn test_collection_parsing_error() {
 
 #[test]
 fn test_option_field_parsing() -> Result<(), PError> {
-    // Teste com campos opcionais presentes
+    // Test with optional fields present
     let valid_option_xml = r#"
     <TestErrorStructWithOption>
         <id>123</id>
@@ -260,7 +259,7 @@ fn test_option_field_parsing() -> Result<(), PError> {
     assert_eq!(result.name, Some("Test Name".to_string()));
     assert_eq!(result.value, Some(456));
     
-    // Teste com campos opcionais ausentes
+    // Test with optional fields missing
     let missing_option_xml = r#"
     <TestErrorStructWithOption>
         <id>789</id>
@@ -317,11 +316,10 @@ fn test_error_message_content() {
     
     if let Err(error) = result {
         let error_message = error.to_string();
-        println!("Mensagem de erro: {}", error_message);
         
-        // Verificar se a mensagem de erro contém informações úteis
+        // Check if error message contains useful information
         assert!(!error_message.is_empty());
-        assert!(error_message.len() > 10); // Deve ter pelo menos alguma informação
+        assert!(error_message.len() > 10); // Should have at least some information
     }
 }
 
@@ -337,13 +335,13 @@ fn test_multiple_errors_handling() {
     let result = from_xml::<TestErrorStruct>(multiple_errors_xml);
     assert!(result.is_err());
     
-    // O parser deve falhar no primeiro erro encontrado
-    // Não fazemos assert específico sobre qual erro foi reportado
+    // The parser should fail on the first error encountered
+    // We don't make specific assertions about which error was reported
 }
 
 #[test]
 fn test_error_recovery_attempts() {
-    // Teste para verificar se o parser tenta se recuperar de erros
+    // Test to verify if the parser attempts to recover from errors
     let recoverable_xml = r#"
     <TestErrorStruct>
         <id>123</id>
@@ -354,41 +352,41 @@ fn test_error_recovery_attempts() {
     </TestErrorStruct>"#;
     
     let _result = from_xml::<TestErrorStruct>(recoverable_xml);
-    // Dependendo da implementação, pode passar ou falhar
-    // Não fazemos assert aqui
+    // Depending on implementation, may pass or fail
+    // We don't assert here
 }
 
 #[test]
 fn test_error_with_large_xml() {
-    // Criar XML grande com erro no final
+    // Create large XML with an error at the end
     let mut large_xml = String::from("<TestErrorStruct>\n");
     large_xml.push_str("<id>123</id>\n");
     large_xml.push_str("<name>Test Name</name>\n");
     
-    // Adicionar muitas linhas válidas
+    // Add many valid lines
     for i in 0..1000 {
         large_xml.push_str(&format!("<extra_field_{}>Value {}</extra_field_{}>\n", i, i, i));
     }
     
     large_xml.push_str("<value>456</value>\n");
-    large_xml.push_str("</TestErrorStruct>"); // Fechamento correto
+    large_xml.push_str("</TestErrorStruct>"); // Correct closing
     
     let result = from_xml::<TestErrorStruct>(&large_xml);
-    // Deve passar pois o XML é válido
+    // Should pass as XML is valid
     assert!(result.is_ok());
     
-    // Agora criar XML grande com erro
+    // Now create large XML with an error
     let mut large_xml_with_error = String::from("<TestErrorStruct>\n");
     large_xml_with_error.push_str("<id>123</id>\n");
     large_xml_with_error.push_str("<name>Test Name</name>\n");
     
-    // Adicionar muitas linhas válidas
+    // Add many valid lines
     for i in 0..1000 {
         large_xml_with_error.push_str(&format!("<extra_field_{}>Value {}</extra_field_{}>\n", i, i, i));
     }
     
     large_xml_with_error.push_str("<value>456</value>\n");
-    // Falta fechamento da tag root
+    // Missing root tag closing
     
     let result = from_xml::<TestErrorStruct>(&large_xml_with_error);
     assert!(result.is_err());

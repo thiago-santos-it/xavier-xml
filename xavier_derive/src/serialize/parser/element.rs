@@ -41,7 +41,7 @@ impl XmlElementDef {
         let result = Self::from_fields(fields, obj_meta, parse);
         if let Some(first) = result.first().cloned() {
             if result.len() > 1 {
-                println!("[WARNING] You configured more than one helper when should exists only one. We will pick the first one!");
+
             }
             Some(first)
         } else {

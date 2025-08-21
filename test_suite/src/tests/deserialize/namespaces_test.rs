@@ -1,4 +1,4 @@
-use xavier::{PError, XmlDeserializable};
+use xavier::{from_xml, PError, XmlDeserializable};
 
 #[derive(XmlDeserializable)]
 #[xml(ns="xml", name="object", case="Camel")]
@@ -20,10 +20,8 @@ fn serialize() -> Result<(), PError> {
         <xml:someFloat>11.0</xml:someFloat>
     </xml:object>"#;
 
-    let mut reader = quick_xml::Reader::from_str(&xml);
-    let obj =  XMLObject::from_xml(&mut reader, None)?;
-
-    assert_eq!(obj.some_string, "Some Text");
+    let obj: XMLObject =  from_xml(&xml)?;
+    assert_eq!(obj. some_string, "Some Text");
     assert_eq!(obj.some_int, 10);
     assert_eq!(obj.some_float, 11.0);
     Ok(())

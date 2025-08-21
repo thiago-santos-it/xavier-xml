@@ -16,7 +16,6 @@ fn deserialize() -> Result<(), PError> {
                </XMLObject>"#;
     let result: Result<XMLObject, PError> = from_xml(&xml);
     if let Err(_error) = result {
-        //println!("{:?}", _error);
         assert!(true)
     } else {
         assert!(false)

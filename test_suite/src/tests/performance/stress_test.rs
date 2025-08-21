@@ -103,16 +103,14 @@ fn test_deep_nesting_performance() {
     let xml = from_obj(&test_data);
     
     let serialization_time = start.elapsed();
-    println!("Tempo de serialização (10 níveis): {:?}", serialization_time);
-    
-    // Verificar se não excedeu um tempo razoável (ex: 100ms)
+    // Check if it didn't exceed a reasonable time (e.g., 100ms)
     assert!(serialization_time.as_millis() < 100);
     
     let start = Instant::now();
     let parsed: DeepNestedStruct = from_xml(&xml).expect("Falha na deserialização");
     let deserialization_time = start.elapsed();
     
-    println!("Tempo de deserialização (10 níveis): {:?}", deserialization_time);
+    
     assert!(deserialization_time.as_millis() < 100);
     
     assert_eq!(test_data, parsed);
@@ -126,16 +124,14 @@ fn test_large_collection_performance() {
     let xml = from_obj(&test_data);
     
     let serialization_time = start.elapsed();
-    println!("Tempo de serialização (1000 itens): {:?}", serialization_time);
-    
-    // Verificar se não excedeu um tempo razoável (ex: 500ms)
+    // Check if it didn't exceed a reasonable time (e.g., 500ms)
     assert!(serialization_time.as_millis() < 500);
     
     let start = Instant::now();
     let parsed: LargeCollectionStruct = from_xml(&xml).expect("Falha na deserialização");
     let deserialization_time = start.elapsed();
     
-    println!("Tempo de deserialização (1000 itens): {:?}", deserialization_time);
+    
     assert!(deserialization_time.as_millis() < 500);
     
     assert_eq!(test_data.id, parsed.id);
@@ -146,20 +142,18 @@ fn test_large_collection_performance() {
 fn test_memory_intensive_operations() {
     let start = Instant::now();
     
-    let test_data = create_memory_intensive_struct(5); // 5 níveis de aninhamento
+    let test_data = create_memory_intensive_struct(5); // 5 levels of nesting
     let xml = from_obj(&test_data);
     
     let serialization_time = start.elapsed();
-    println!("Tempo de serialização (estrutura intensiva): {:?}", serialization_time);
-    
-    // Verificar se não excedeu um tempo razoável (ex: 200ms)
+    // Check if it didn't exceed a reasonable time (e.g., 200ms)
     assert!(serialization_time.as_millis() < 200);
     
     let start = Instant::now();
     let parsed: MemoryIntensiveStruct = from_xml(&xml).expect("Falha na deserialização");
     let deserialization_time = start.elapsed();
     
-    println!("Tempo de deserialização (estrutura intensiva): {:?}", deserialization_time);
+    
     assert!(deserialization_time.as_millis() < 200);
     
     assert_eq!(test_data.id, parsed.id);
@@ -172,17 +166,15 @@ fn test_xml_size_limits() {
     let large_data = create_large_collection(10000); // 10.000 itens
     let xml = from_obj(&large_data);
     
-    println!("Tamanho do XML: {} bytes", xml.len());
-    
-    // Verificar se o XML não excedeu um tamanho razoável (ex: 10MB)
+    // Check if XML didn't exceed a reasonable size (e.g., 10MB)
     assert!(xml.len() < 10 * 1024 * 1024);
     
-    // Teste de deserialização do XML grande
+            // Test deserialization of large XML
     let start = Instant::now();
     let parsed: LargeCollectionStruct = from_xml(&xml).expect("Falha na deserialização");
     let deserialization_time = start.elapsed();
     
-    println!("Tempo de deserialização (10.000 itens): {:?}", deserialization_time);
+    
     
     assert_eq!(large_data.id, parsed.id);
     assert_eq!(large_data.items.len(), parsed.items.len());
@@ -212,36 +204,32 @@ fn test_concurrent_parsing_performance() {
     }
     
     let total_time = start.elapsed();
-    println!("Tempo total para 4 threads paralelas: {:?}", total_time);
-    
-    // Verificar se o tempo total não excedeu um limite razoável
+    // Check if total time didn't exceed a reasonable limit
     assert!(total_time.as_millis() < 1000);
 }
 
 #[test]
 fn test_iteration_limits() {
-    // Teste para verificar se o parser não entra em loop infinito
+            // Test to verify if parser doesn't enter infinite loop
     let start = Instant::now();
     
     let test_data = create_deep_nested_struct();
     let xml = from_obj(&test_data);
     
-    // Adicionar tags extras para testar limites de iteração
+            // Add extra tags to test iteration limits
     let xml_with_extra = format!("{}<extra>data</extra>", xml);
     
     let result = from_xml::<DeepNestedStruct>(&xml_with_extra);
     
     let processing_time = start.elapsed();
-    println!("Tempo de processamento com tags extras: {:?}", processing_time);
-    
-    // Verificar se não excedeu um tempo razoável (ex: 50ms)
+    // Check if it didn't exceed a reasonable time (e.g., 50ms)
     assert!(processing_time.as_millis() < 50);
     
-    // O resultado deve ser um erro ou sucesso, mas não deve travar
+    // Result should be error or success, but shouldn't hang
     assert!(result.is_ok() || result.is_err());
 }
 
-// Funções auxiliares para criar dados de teste
+        // Helper functions to create test data
 fn create_deep_nested_struct() -> DeepNestedStruct {
     DeepNestedStruct {
         id: 1,

@@ -28,7 +28,7 @@ fn concurrent_parsing_thread_safety() {
     let mut handles = vec![];
     let results = Arc::new(Mutex::new(Vec::new()));
     
-    // Criar múltiplas threads para testar parsing concorrente
+    // Create multiple threads to test concurrent parsing
     for i in 0..10 {
         let xml_clone = Arc::clone(&xml_arc);
         let results_clone = Arc::clone(&results);
@@ -42,12 +42,12 @@ fn concurrent_parsing_thread_safety() {
         handles.push(handle);
     }
     
-    // Aguardar todas as threads terminarem
+    // Await all threads to complete
     for handle in handles {
         handle.join().unwrap();
     }
     
-    // Verificar se todos os resultados são iguais
+    // Verify that all results are equal
     let results_guard = results.lock().unwrap();
     assert_eq!(results_guard.len(), 10);
     
@@ -68,7 +68,7 @@ fn concurrent_serialization_thread_safety() {
     let mut handles = vec![];
     let results = Arc::new(Mutex::new(Vec::new()));
     
-    // Criar múltiplas threads para testar serialização concorrente
+    // Create multiple threads to test concurrent serialization
     for i in 0..10 {
         let data_clone = Arc::clone(&data_arc);
         let results_clone = Arc::clone(&results);
@@ -82,12 +82,12 @@ fn concurrent_serialization_thread_safety() {
         handles.push(handle);
     }
     
-    // Aguardar todas as threads terminarem
+    // Await all threads to complete
     for handle in handles {
         handle.join().unwrap();
     }
     
-    // Verificar se todos os resultados são iguais
+    // Verify that all results are equal
     let results_guard = results.lock().unwrap();
     assert_eq!(results_guard.len(), 10);
     
@@ -107,20 +107,20 @@ fn concurrent_mixed_operations() {
     let mut handles = vec![];
     let results = Arc::new(Mutex::new(Vec::new()));
     
-    // Criar threads que fazem tanto parsing quanto serialização
+    // Create threads that do both parsing and serialization
     for i in 0..5 {
         let xml_clone = Arc::clone(&xml_arc);
         let _data_clone = Arc::clone(&data_arc);
         let results_clone = Arc::clone(&results);
         
         let handle = thread::spawn(move || {
-            // Fazer parsing
+            // Do parsing
             let parsed = from_xml::<ConcurrentTestStruct>(&xml_clone).unwrap();
             
-            // Fazer serialização
+            // Do serialization
             let serialized = from_obj(&parsed);
             
-            // Fazer parsing novamente
+            // Do parsing again
             let reparsed = from_xml::<ConcurrentTestStruct>(&serialized).unwrap();
             
             let mut results_guard = results_clone.lock().unwrap();
@@ -130,12 +130,12 @@ fn concurrent_mixed_operations() {
         handles.push(handle);
     }
     
-    // Aguardar todas as threads terminarem
+    // Await all threads to complete
     for handle in handles {
         handle.join().unwrap();
     }
     
-    // Verificar se todos os resultados são consistentes
+    // Verify that all results are consistent
     let results_guard = results.lock().unwrap();
     assert_eq!(results_guard.len(), 5);
     
@@ -148,7 +148,7 @@ fn concurrent_mixed_operations() {
 
 #[test]
 fn concurrent_large_data_processing() {
-    // Criar dados maiores para testar performance concorrente
+    // Create larger data to test concurrent performance
     let mut large_data = ConcurrentTestStruct {
         id: 1,
         name: "LargeTest".to_string(),
@@ -165,7 +165,7 @@ fn concurrent_large_data_processing() {
     let mut handles = vec![];
     let start_time = std::time::Instant::now();
     
-    // Criar múltiplas threads para processar dados grandes
+    // Create multiple threads to process large data
     for _i in 0..5 {
         let xml_clone = Arc::clone(&xml_arc);
         
@@ -178,14 +178,13 @@ fn concurrent_large_data_processing() {
         handles.push(handle);
     }
     
-    // Aguardar todas as threads terminarem
+    // Await all threads to complete
     for handle in handles {
         handle.join().unwrap();
     }
     
     let duration = start_time.elapsed();
-    println!("Concurrent large data processing took: {:?}", duration);
     
-    // Verificar se não demorou muito
+    // Verify that it didn't take too long
     assert!(duration < Duration::from_secs(10));
 } 

@@ -6,7 +6,7 @@ use crate::deserialize::macro_trait::XmlDeserializable;
 
 impl <T: XmlDeserializable> XmlDeserializable for Vec<T>  {
 
-    fn from_xml(reader: &mut Reader<&[u8]>, start_event: Option<&BytesStart>) -> Result<Self, PError> {
+    fn from_xml(reader: &mut Reader<&[u8]>, start_event: Option<&BytesStart>) -> Result<Option<Self>, PError> {
         let mut children: Vec<T> = vec!();
         let tag_name = if let Some(start_event) = start_event {
             String::from_utf8(start_event.name().0.to_vec())?
@@ -18,10 +18,15 @@ impl <T: XmlDeserializable> XmlDeserializable for Vec<T>  {
             match reader.read_event() {
                 Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                 Ok(Event::Eof) => { },
-                Ok(Event::Start(event)) => { children.push(T::from_xml(reader, Some(&event))?)},
+                Ok(Event::Start(event)) => {
+                    children.push(
+                        T::from_xml(reader, Some(&event))?
+                            .ok_or_else(|| PError::new("Expected child element but got None"))?
+                    );
+                },
                 Ok(Event::End(event)) => {
                     if String::from_utf8(event.name().0.to_vec())? == tag_name {
-                        return Ok(children)
+                        return Ok(Some(children))
                     }
                 },
                 Ok(Event::Empty(_)) => {},

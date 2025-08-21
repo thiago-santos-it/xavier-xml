@@ -21,13 +21,12 @@ impl ToTokens for SiblingSetter {
                 false
             };
             if should_parse {
-                let result = #ty::from_xml(&mut reader, Some(&event));
-                match result {
+                match #ty::from_xml(&mut reader, Some(&event)) {
                     Ok(t_value) => {
-                        #field.get_or_insert_with(Vec::new).push(t_value);
+                        #field.get_or_insert_with(Vec::new).push(t_value.unwrap());
                         continue;
-                    }
-                    Err(error) => return Err(error),
+                    },
+                    Err(err) => return Err(PError::new(&format!("Error parsing XML: {:?}", err))),
                 }
             }
         })

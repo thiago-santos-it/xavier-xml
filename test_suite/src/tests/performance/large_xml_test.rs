@@ -35,14 +35,13 @@ fn performance_large_xml_parsing() {
     let parsed: LargeDataSet = from_xml(&xml).unwrap();
     let duration = start.elapsed();
     
-    println!("Parsed {} items in {:?}", parsed.items.len(), duration);
-    assert!(duration < std::time::Duration::from_secs(5)); // Máximo 5 segundos
+    assert!(duration < std::time::Duration::from_secs(5)); // Maximum 5 seconds
     assert_eq!(parsed.items.len(), 1000);
 }
 
 #[test]
 fn performance_memory_usage() {
-    // Teste de uso de memória com XMLs grandes
+    // Memory usage test with large XMLs
     let large_data = generate_large_dataset(5000);
     let xml = from_obj(&large_data);
     
@@ -50,8 +49,7 @@ fn performance_memory_usage() {
     let parsed: LargeDataSet = from_xml(&xml).unwrap();
     let duration = start.elapsed();
     
-    println!("Parsed {} items in {:?} (memory test)", parsed.items.len(), duration);
-    assert!(duration < std::time::Duration::from_secs(10)); // Máximo 10 segundos
+    assert!(duration < std::time::Duration::from_secs(10)); // Maximum 10 seconds
     assert_eq!(parsed.items.len(), 5000);
 }
 
@@ -63,6 +61,5 @@ fn performance_serialization_speed() {
     let _xml = from_obj(&large_data);
     let duration = start.elapsed();
     
-    println!("Serialized {} items in {:?}", large_data.items.len(), duration);
-    assert!(duration < std::time::Duration::from_secs(2)); // Máximo 2 segundos
+    assert!(duration < std::time::Duration::from_secs(2)); // Maximum 2 seconds
 } 

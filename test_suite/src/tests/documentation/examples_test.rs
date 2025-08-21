@@ -16,23 +16,22 @@ fn documentation_basic_example() {
     };
     
     let xml = from_obj(&person);
-    println!("Generated XML: {}", xml);
     
-    // Verificar se o XML contém os elementos esperados
+    // Verify that XML contains expected elements
     assert!(xml.contains("<Person>"));
     assert!(xml.contains("<name>John Doe</name>"));
     assert!(xml.contains("<age>30</age>"));
     assert!(xml.contains("<email>john@example.com</email>"));
     assert!(xml.contains("</Person>"));
     
-    // Testar deserialização
+    // Test deserialization
     let parsed: Person = from_xml(&xml).unwrap();
     assert_eq!(parsed.name, "John Doe");
     assert_eq!(parsed.age, 30);
     assert_eq!(parsed.email, "john@example.com");
 }
 
-// Exemplo com atributos
+// Example with attributes
 #[derive(XmlSerializable, XmlDeserializable, Debug)]
 #[xml(name="user")]
 struct User {
@@ -50,9 +49,8 @@ fn documentation_attributes_example() {
     };
     
     let xml = from_obj(&user);
-    println!("User XML: {}", xml);
     
-    // Verificar se usa o nome correto
+    // Verify that it uses the correct name
     assert!(xml.contains("<user>"));
     assert!(xml.contains("</user>"));
     
@@ -62,7 +60,7 @@ fn documentation_attributes_example() {
     assert_eq!(parsed.email, "jane@example.com");
 }
 
-// Exemplo com coleções
+// Example with collections
 #[derive(XmlSerializable, XmlDeserializable, Debug)]
 struct BookCollection {
     pub books: Vec<Book>,
@@ -97,9 +95,8 @@ fn documentation_collections_example() {
     };
     
     let xml = from_obj(&collection);
-    println!("Collection XML: {}", xml);
     
-    // Verificar se contém os livros
+    // Verify that it contains the books
     assert!(xml.contains("The Rust Programming Language"));
     assert!(xml.contains("Programming Rust"));
     assert!(xml.contains("John Doe"));
@@ -111,7 +108,7 @@ fn documentation_collections_example() {
     assert_eq!(parsed.books[1].title, "Programming Rust");
 }
 
-// Exemplo com namespaces
+// Example with namespaces
 #[derive(XmlSerializable, XmlDeserializable, Debug)]
 #[xml(name="config")]
 struct Configuration {
@@ -142,9 +139,8 @@ fn documentation_namespaces_example() {
     };
     
     let xml = from_obj(&config);
-    println!("Config XML: {}", xml);
     
-    // Verificar se usa o nome correto
+    // Verify that it uses the correct name
     assert!(xml.contains("<config>"));
     assert!(xml.contains("</config>"));
     

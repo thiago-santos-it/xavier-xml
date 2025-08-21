@@ -3,11 +3,11 @@ use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError};
 #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
 struct TestAttributes {
     pub id: u32,
-    #[xml(attr="name")]
+    #[xml(attribute, name="name")]
     pub name: String,
-    #[xml(attr="value")]
+    #[xml(attribute, name="value")]
     pub value: i32,
-    #[xml(attr="flag")]
+    #[xml(attribute, name="flag")]
     pub flag: bool,
     pub content: String,
 }
@@ -15,19 +15,19 @@ struct TestAttributes {
 #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
 struct TestOptionalAttributes {
     pub id: u32,
-    #[xml(attr="name")]
+    #[xml(attribute, name="name")]
     pub name: Option<String>,
-    #[xml(attr="value")]
+    #[xml(attribute, name="value")]
     pub value: Option<i32>,
     pub content: String,
 }
 
 #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
 struct TestMixedAttributes {
-    #[xml(attr="id")]
+    #[xml(attribute, name="id")]
     pub id: u32,
     pub name: String,
-    #[xml(attr="enabled")]
+    #[xml(attribute, name="enabled")]
     pub enabled: bool,
     pub data: Vec<String>,
 }
@@ -43,9 +43,7 @@ fn test_basic_attributes() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com atributos: {}", xml);
     
-    // Verificar se os atributos estão presentes
     assert!(xml.contains("name=\"Test Name\""));
     assert!(xml.contains("value=\"456\""));
     assert!(xml.contains("flag=\"true\""));
@@ -95,9 +93,7 @@ fn test_mixed_attributes_and_content() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML misto: {}", xml);
     
-    // Verificar se o atributo id está presente
     assert!(xml.contains("id=\"123\""));
     assert!(xml.contains("enabled=\"true\""));
     
@@ -118,7 +114,6 @@ fn test_attributes_with_special_characters() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com caracteres especiais: {}", xml);
     
     let parsed: TestAttributes = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -128,7 +123,7 @@ fn test_attributes_with_special_characters() -> Result<(), PError> {
 
 #[test]
 fn test_attributes_validation() {
-    // XML com atributo obrigatório faltando
+    // XML with missing required attribute
     let invalid_xml = r#"
     <TestAttributes>
         <id>123</id>
@@ -136,7 +131,7 @@ fn test_attributes_validation() {
     </TestAttributes>"#;
     
     let result = from_xml::<TestAttributes>(invalid_xml);
-    // Deve falhar porque name, value e flag são obrigatórios
+    // Should fail because name, value and flag are required
     assert!(result.is_err());
 }
 
@@ -184,7 +179,6 @@ fn test_nested_attributes() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML aninhado com atributos: {}", xml);
     
     let parsed: TestNestedAttributes = from_xml(&xml)?;
     assert_eq!(test_data, parsed);

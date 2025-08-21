@@ -51,7 +51,8 @@ fn main() {
     };
     
     let xml = from_obj(&person);
-    println!("{}", xml);
+    // Remove println! statements
+    // println!("{}", xml);
 }
 ```
 
@@ -85,7 +86,8 @@ fn main() -> Result<(), PError> {
     </Person>"#;
     
     let person: Person = from_xml(xml)?;
-    println!("{:?}", person);
+    // Remove println! statements
+    // println!("{:?}", person);
     Ok(())
 }
 ```
@@ -116,11 +118,13 @@ fn main() -> Result<(), PError> {
     
     // Serialize
     let xml = from_obj(&user);
-    println!("Serialized: {}", xml);
+    // Remove println! statements
+    // println!("Serialized: {}", xml);
     
     // Deserialize
     let parsed_user: User = from_xml(&xml)?;
-    println!("Parsed: {:?}", parsed_user);
+    // Remove println! statements
+    // println!("Parsed: {:?}", parsed_user);
     
     Ok(())
 }
@@ -167,10 +171,12 @@ fn main() -> Result<(), PError> {
     };
     
     let xml = from_obj(&order);
-    println!("{}", xml);
+    // Remove println! statements
+    // println!("{}", xml);
     
     let parsed_order: Order = from_xml(&xml)?;
-    println!("Order has {} items", parsed_order.items.len());
+    // Remove println! statements
+    // println!("Order has {} items", parsed_order.items.len());
     
     Ok(())
 }
@@ -185,15 +191,18 @@ fn parse_safely(xml: &str) -> Result<Person, String> {
     match from_xml::<Person>(xml) {
         Ok(person) => Ok(person),
         Err(PError::ParseError(msg)) => {
-            eprintln!("XML parsing error: {}", msg);
+            // Remove eprintln! statements
+            // eprintln!("XML parsing error: {}", msg);
             Err("Invalid XML format".to_string())
         }
         Err(PError::Custom(msg)) => {
-            eprintln!("Custom error: {}", msg);
+            // Remove eprintln! statements
+            // eprintln!("Custom error: {}", msg);
             Err("Data validation failed".to_string())
         }
         Err(e) => {
-            eprintln!("Unexpected error: {:?}", e);
+            // Remove eprintln! statements
+            // eprintln!("Unexpected error: {:?}", e);
             Err("Unknown error occurred".to_string())
         }
     }
@@ -229,7 +238,8 @@ struct XMLObject {
 }
 
 // ... 
-    println!(from_obj(&instance));
+    // Remove println! statements
+    // println!(from_obj(&instance));
 // ... 
 ```
 
@@ -257,7 +267,8 @@ struct XMLObject {
 }
 
 // ... 
-    println!(from_obj(&instance));
+    // Remove println! statements
+    // println!(from_obj(&instance));
 // ... 
 ```
 
@@ -296,7 +307,8 @@ struct XMLObject {
     let xmlns = namespaces!(xml = "http://www.w3.org/XML/1998/namespace", xhtml = "http://www.w3.org/1999/xhtml");
     XMLObject{ namespaces: xmlns, ... }
     //...
-    println!(from_obj(&instance));
+    // Remove println! statements
+    // println!(from_obj(&instance));
     // ... 
 ```
 
@@ -328,7 +340,8 @@ struct XMLObject {
 }
 
 // ... 
-    println!(from_obj(&instance));
+    // Remove println! statements
+    // println!(from_obj(&instance));
 // ... 
 ```
 
@@ -401,7 +414,8 @@ struct XMLObject {
 }
 
 // ...
-     println!(from_obj(&instance));
+     // Remove println! statements
+     // println!(from_obj(&instance));
 // ...
 ```
 
@@ -676,7 +690,8 @@ Should produce:
 This:
 
 ``` Rust
-  println!(cdata!("Some text & others"));  
+  // Remove println! statements
+  // println!(cdata!("Some text & others"));  
 ```
 
 Prints this:
@@ -687,7 +702,8 @@ Prints this:
 #### Text encoded
 
 ``` Rust
-  println!(encode!("Some text & others"));  
+  // Remove println! statements
+  // println!(encode!("Some text & others"));  
 ```
 
 Prints this:
@@ -700,7 +716,8 @@ Prints this:
 This:
 
 ``` Rust
-  println!(comment!("Some text & others"));  
+  // Remove println! statements
+  // println!(comment!("Some text & others"));  
 ```
 
 Prints this:
@@ -730,10 +747,10 @@ struct XMLObject {
         <some_float>0.0</some_float>
     </XMLObject>"#
     
-    let instance: XMLObject = from_xml(&xml)?;
-    assert_eq!(instance.some_string, "Some Content A");
-    assert_eq!(instance.some_int, 0);
-    assert_eq!(instance.some_float, 0.0);
+          let instance: XMLObject = from_xml(&xml)?;
+      assert_eq!(instance.some_string, "Some Content A");
+      assert_eq!(instance.some_int, 0);
+      assert_eq!(instance.some_float, 0.0);
 // ... 
 ```
 
@@ -774,7 +791,8 @@ PI's can be parsed using this macro!
 #### Text decode
 
 ``` Rust
-  println!(decode!("Some text &amp; others"));  
+  // Remove println! statements
+  // println!(decode!("Some text &amp; others"));  
 ```
 
 Prints this:

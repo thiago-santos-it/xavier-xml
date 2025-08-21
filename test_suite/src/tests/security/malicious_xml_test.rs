@@ -19,7 +19,7 @@ fn security_dangerous_characters() {
     assert!(result.is_ok());
     
     let parsed = result.unwrap();
-    // O conteúdo deve ser preservado literalmente dentro do CDATA
+    // Content should be preserved literally within CDATA
     assert!(parsed.content.contains("<script>"));
     assert!(parsed.content.contains("alert('XSS')"));
     assert!(parsed.content.contains("</script>"));

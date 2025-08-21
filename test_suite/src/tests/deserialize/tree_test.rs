@@ -34,7 +34,6 @@ fn deserialize_recursion() -> Result<(), PError> {
         </my_child>
     </object>"#;
     let obj: XMLObjectRecursion = from_xml(&xml)?;
-    println!("{:?}", obj);
     assert_eq!(obj.field_a, "Some Text");
     assert_eq!(obj.child.attribute, "Outer Attr");
     assert_eq!(obj.child.child_field_a, "Outer Value");

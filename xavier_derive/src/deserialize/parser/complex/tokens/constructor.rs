@@ -63,6 +63,6 @@ impl ToTokens for Constructor {
             var_field = quote! { #field : #var_field };
             var_field
         }).collect();
-        tokens.extend(quote! { return Ok(Self{ #(#values,)* }); })
+        tokens.extend(quote! { return Ok(Some(Self{ #(#values,)* })); })
     }
 }

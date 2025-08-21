@@ -16,7 +16,7 @@ struct ApiResponse {
     pub data: Option<User>,
 }
 
-// Simulação de endpoint de API
+// API endpoint simulation
 fn test_xml_endpoint(user_xml: &str) -> Result<String, String> {
     match from_xml::<User>(user_xml) {
         Ok(user) => {

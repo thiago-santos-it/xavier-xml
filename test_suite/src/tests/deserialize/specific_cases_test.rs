@@ -70,7 +70,6 @@ fn test_optional_fields_serialization() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com campos opcionais: {}", xml);
     
     let parsed: TestOptionalFields = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -106,7 +105,6 @@ fn test_private_fields() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com campos privados: {}", xml);
     
     assert!(!xml.contains("internal_data"));
     assert!(!xml.contains("Internal data"));
@@ -129,7 +127,6 @@ fn test_skip_fields() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com campos pulados: {}", xml);
     
     assert!(!xml.contains("skipped_field"));
     assert!(!xml.contains("This should be skipped"));
@@ -155,7 +152,6 @@ fn test_custom_naming() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com nomes customizados: {}", xml);
 
     assert!(xml.contains("<custom_id>123</custom_id>"));
     assert!(xml.contains("<user_name>Custom Name</user_name>"));
@@ -198,7 +194,6 @@ fn test_nested_options() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com opções aninhadas: {}", xml);
     
     let parsed: TestNestedOptions = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -225,7 +220,6 @@ fn test_mixed_visibility() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com visibilidade mista: {}", xml);
 
     assert!(xml.contains("public_field"));
     assert!(xml.contains("crate_field"));

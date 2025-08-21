@@ -22,9 +22,9 @@ impl Primitive for f32 {}
 impl Primitive for f64  {}
 impl Primitive for bool {}
 
-// Função para verificar caracteres maliciosos
+// Function to check for malicious characters
 fn contains_malicious_characters(input: &str) -> bool {
-    // Verificar por caracteres nulos e caracteres de controle maliciosos
+    // Check for null characters and malicious control characters
     for c in input.chars() {
         match c as u32 {
             0x00..=0x08 | 0x0B | 0x0C | 0x0E..=0x1F | 0x7F => {
@@ -36,9 +36,9 @@ fn contains_malicious_characters(input: &str) -> bool {
     false
 }
 
-// Função para verificar entidades hexadecimais maliciosas
+// Function to check for malicious hexadecimal entities
 fn contains_malicious_entities(input: &str) -> bool {
-    // Verificar por entidades hexadecimais maliciosas
+    // Check for malicious hexadecimal entities
     let malicious_patterns = [
         "&#x00;", "&#x01;", "&#x02;", "&#x03;", "&#x04;", "&#x05;", "&#x06;", "&#x07;", "&#x08;",
         "&#x0B;", "&#x0C;", "&#x0E;", "&#x0F;", "&#x10;", "&#x11;", "&#x12;", "&#x13;", "&#x14;",
@@ -57,50 +57,46 @@ fn contains_malicious_entities(input: &str) -> bool {
 
 // Special implementation for String that handles XML entities
 impl XmlDeserializable for String {
-    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Self, PError> {
+    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Option<Self>, PError> {
         loop {
             match reader.read_event() {
                 Err(error) => { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                 Ok(Event::Eof) => { },
                 Ok(Event::Start(_)) => {},
-                Ok(Event::End(_)) => {},
-                Ok(Event::Empty(_)) => {},
+                Ok(Event::End(_)) => { return Ok(None); },
+                Ok(Event::Empty(_)) => { return Ok(None); },
                 Ok(Event::Comment(_)) => {},
                 Ok(Event::Text(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
                     let trimmed = raw_string.trim();
-                    
-                    // Verificar se há entidades maliciosas antes da decodificação
+
                     if contains_malicious_entities(&trimmed) {
                         return Err(PError::new("Malicious XML entities detected"));
                     }
                     
                     let decoded = decode(&trimmed);
                     
-                    // Verificar se há caracteres maliciosos após decodificação
                     if contains_malicious_characters(&decoded) {
                         return Err(PError::new("Malicious characters detected in XML content"));
                     }
                     
-                    return Ok(decoded);
+                    return Ok(Some(decoded));
                 },
                 Ok(Event::CData(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
                     let trimmed = raw_string.trim();
                     
-                    // Verificar se há entidades maliciosas antes da decodificação
                     if contains_malicious_entities(&trimmed) {
                         return Err(PError::new("Malicious XML entities detected"));
                     }
                     
                     let decoded = decode(&trimmed);
                     
-                    // Verificar se há caracteres maliciosos após decodificação
                     if contains_malicious_characters(&decoded) {
                         return Err(PError::new("Malicious characters detected in XML content"));
                     }
                     
-                    return Ok(decoded);
+                    return Ok(Some(decoded));
                 },
                 Ok(Event::Decl(_)) => {},
                 Ok(Event::PI(_)) => {},
@@ -112,33 +108,33 @@ impl XmlDeserializable for String {
 
 // Special implementation for char that handles whitespace correctly
 impl XmlDeserializable for char {
-    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Self, PError> {
+    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Option<Self>, PError> {
         loop {
             match reader.read_event() {
                 Err(error) => { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                 Ok(Event::Eof) => { },
                 Ok(Event::Start(_)) => {},
-                Ok(Event::End(_)) => {},
-                Ok(Event::Empty(_)) => {},
+                Ok(Event::End(_)) => { return Ok(None); },
+                Ok(Event::Empty(_)) => { return Ok(None); },
                 Ok(Event::Comment(_)) => {},
                 Ok(Event::Text(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
                     let trimmed = raw_string.trim();
                     if trimmed.is_empty() {
-                        return Ok(' ');
+                        return Ok(Some(' '));
                     }
                     if raw_string.chars().count()  > 1 {
                         return Err(PError::new("It's supposed to be a char and string was found!"));
                     }
-                    return Ok(trimmed.chars().next().ok_or_else(|| PError::new("Empty string cannot be parsed as char"))?);
+                    return Ok(Some(trimmed.chars().next().ok_or_else(|| PError::new("Empty string cannot be parsed as char"))?));
                 },
                 Ok(Event::CData(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
                     let trimmed = raw_string.trim();
                     if trimmed.is_empty() {
-                        return Ok(' ');
+                        return Ok(Some(' '));
                     }
-                    return Ok(trimmed.chars().next().ok_or_else(|| PError::new("Empty string cannot be parsed as char"))?);
+                    return Ok(Some(trimmed.chars().next().ok_or_else(|| PError::new("Empty string cannot be parsed as char"))?));
                 },
                 Ok(Event::Decl(_)) => {},
                 Ok(Event::PI(_)) => {},
@@ -150,17 +146,21 @@ impl XmlDeserializable for char {
 
 impl <T: FromStr + Primitive> XmlDeserializable for T
     where PError: From<<T as FromStr>::Err> {
-    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>)  -> Result<Self, PError> {
+    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>)  -> Result<Option<Self>, PError> {
         loop {
             match reader.read_event() {
                 Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
-                Ok(Event::Eof) => { },
+                Ok(Event::Eof) => {},
                 Ok(Event::Start(_)) => {},
-                Ok(Event::End(_)) => {},
-                Ok(Event::Empty(_)) => {},
+                Ok(Event::End(_)) => { return Ok(None); },
+                Ok(Event::Empty(_)) => { return Ok(None); },
                 Ok(Event::Comment(_)) => {},
-                Ok(Event::Text(event)) => { return Ok(String::from_utf8(event.to_vec())?.parse()?) },
-                Ok(Event::CData(event)) => { return Ok(String::from_utf8(event.to_vec())?.parse()?) },
+                Ok(Event::Text(event)) => {
+                    return Ok(Some(String::from_utf8(event.to_vec())?.parse()?))
+                },
+                Ok(Event::CData(event)) => {
+                    return Ok(Some(String::from_utf8(event.to_vec())?.parse()?))
+                },
                 Ok(Event::Decl(_)) => {},
                 Ok(Event::PI(_)) => {},
                 Ok(Event::DocType(_)) => {},

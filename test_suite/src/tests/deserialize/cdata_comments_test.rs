@@ -36,7 +36,6 @@ fn test_cdata_processing() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com CDATA: {}", xml);
     
     let parsed: TestCDATA = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -71,7 +70,6 @@ fn test_cdata_with_special_characters() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com caracteres especiais: {}", xml);
     
     let parsed: TestCDATA = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -88,7 +86,6 @@ fn test_comments_processing() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com comentários: {}", xml);
     
     let parsed: TestComments = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -126,7 +123,6 @@ fn test_processing_instructions() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com instruções de processamento: {}", xml);
     
     let parsed: TestProcessingInstructions = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -162,7 +158,6 @@ fn test_mixed_content_with_cdata() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com conteúdo misto: {}", xml);
     
     let parsed: TestMixedContent = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -183,7 +178,7 @@ fn test_cdata_edge_cases() -> Result<(), PError> {
     let parsed_empty: TestCDATA = from_xml(empty_cdata_xml)?;
     assert_eq!(parsed_empty.code, "");
     
-    // CDATA com apenas espaços em branco
+            // CDATA with only whitespace
     let whitespace_cdata_xml = r#"
     <TestCDATA>
         <title>Whitespace CDATA Test</title>
@@ -199,7 +194,7 @@ fn test_cdata_edge_cases() -> Result<(), PError> {
 
 #[test]
 fn test_comments_edge_cases() -> Result<(), PError> {
-    // Comentários vazios
+            // Empty comments
     let empty_comments_xml = r#"
     <TestComments>
         <id>123</id>
@@ -210,7 +205,7 @@ fn test_comments_edge_cases() -> Result<(), PError> {
     let parsed: TestComments = from_xml(empty_comments_xml)?;
     assert_eq!(parsed.id, 123);
     
-    // Comentários com caracteres especiais
+            // Comments with special characters
     let special_comments_xml = r#"
     <!-- Comment with & < > " ' characters -->
     <TestComments>
@@ -248,7 +243,6 @@ fn test_nested_cdata_and_comments() -> Result<(), PError> {
     };
     
     let xml = from_obj(&test_data);
-    println!("XML com CDATA e comentários aninhados: {}", xml);
     
     let parsed: TestMixedContent = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
