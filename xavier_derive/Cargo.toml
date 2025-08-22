@@ -16,6 +16,7 @@ syn = "2.0.53"
 quote = "1.0.35"
 proc-macro2 = "1.0.79"
 convert_case = "0.6.0"
+ty = "0.2.1"
 
 [lib]
 proc-macro = true

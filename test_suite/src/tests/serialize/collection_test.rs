@@ -137,7 +137,7 @@ fn serialize_option_none() {
     let result = from_obj(&xml);
     assert!(!result.is_empty());
     assert!(result.contains("<field_a>Some Text</field_a>"));
-    assert!(result.contains("<children></children>"));
+    assert!(!result.contains("<children></children>"));
 }
 
 #[derive(XmlSerializable)]

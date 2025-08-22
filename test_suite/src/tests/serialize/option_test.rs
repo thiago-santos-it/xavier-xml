@@ -21,7 +21,7 @@ struct XMLObject {
 
 #[test]
 fn serialize() {
-    let should = r#"<XMLObject attr_string="attr_string" opt_attr_string="opt_attr_string" none_string=""><some_string></some_string><some_int>1</some_int><some_float>10</some_float><opt_some_string>opt_some_string</opt_some_string><opt_some_int>12</opt_some_int><opt_some_float>11.1</opt_some_float><none_some_string></none_some_string><none_some_int></none_some_int><none_some_float></none_some_float></XMLObject>"#;
+    let should = r#""<XMLObject attr_string="attr_string" opt_attr_string="opt_attr_string"><some_string></some_string><some_int>1</some_int><some_float>10</some_float><opt_some_string>opt_some_string</opt_some_string><opt_some_int>12</opt_some_int><opt_some_float>11.1</opt_some_float></XMLObject>""#;
     let xml = XMLObject {
         attr_string: "attr_string".to_string(),
         opt_attr_string: Some("opt_attr_string".to_string()),

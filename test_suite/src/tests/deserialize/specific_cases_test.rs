@@ -5,6 +5,7 @@ struct TestOptionalFields {
     pub id: u32,
     pub name: Option<String>,
     pub description: Option<String>,
+    #[xml(inner="tag")]
     pub tags: Option<Vec<String>>,
     pub metadata: Option<KeyValue>,
 }

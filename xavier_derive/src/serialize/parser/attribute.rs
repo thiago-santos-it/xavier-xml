@@ -1,4 +1,4 @@
-use syn::LitStr;
+use syn::{LitStr, Type};
 use proc_macro2::{ Ident, TokenStream };
 use quote::{ quote, ToTokens };
 use crate::common::meta::MetaInfo;
@@ -22,7 +22,7 @@ impl ToTokens for XmlElementAttr {
 }
 
 impl XmlElementAttr {
-    pub fn parse(field: Ident, obj_meta: Option<&MetaInfo>, meta: Option<&MetaInfo>, _: XmlExtension) -> Option<XmlElementAttr> {
+    pub fn parse(field: Ident, ty: Type, obj_meta: Option<&MetaInfo>, meta: Option<&MetaInfo>, _: XmlExtension) -> Option<XmlElementAttr> {
         meta.and_then(|meta| {
             if meta.contains("attribute") {
                 let name = XmlNames::attribute(&field, obj_meta, &meta);

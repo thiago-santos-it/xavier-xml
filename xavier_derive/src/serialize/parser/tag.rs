@@ -1,13 +1,14 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::{quote, ToTokens};
-use syn::LitStr;
+use syn::{LitStr, Type};
 use crate::common::meta::MetaInfo;
 use crate::common::naming::names::XmlNames;
 use crate::serialize::parser::extension::XmlExtension;
+use crate::serialize::parser::types::is_outer_option;
 
 pub enum XmlTagElement {
     Complex(Ident, XmlExtension),
-    Simple(Ident, LitStr, XmlExtension),
+    Simple(Ident, Type, LitStr, XmlExtension),
     Value(Ident, XmlExtension),
     Collection(Ident, LitStr, LitStr, XmlExtension), // field, tag_name, inner_name, extension
 }
@@ -15,9 +16,17 @@ pub enum XmlTagElement {
 impl ToTokens for XmlTagElement {
     fn to_tokens(&self, tokens: &mut TokenStream) {
          let tag_tokens = match self {
-            XmlTagElement::Simple(field, name, extensions) => {
-                quote! {
-                    format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(false), #name)
+            XmlTagElement::Simple(field, ty, name, extensions) => {
+                if is_outer_option(&ty) {
+                    quote! {
+                        if self.#field.is_none()  {
+                            "".to_string()
+                        } else {
+                            format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(false), #name)
+                        }
+                    }
+                } else {
+                    quote! { format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(false), #name) }
                 }
             },
             XmlTagElement::Complex(field, extensions) =>  {
@@ -49,7 +58,7 @@ impl ToTokens for XmlTagElement {
 }
 
 impl XmlTagElement {
-    pub fn parse(field: Ident, obj_meta: Option<&MetaInfo>, meta: Option<&MetaInfo>, extension: XmlExtension) -> Option<XmlTagElement> {
+    pub fn parse(field: Ident, ty: Type, obj_meta: Option<&MetaInfo>, meta: Option<&MetaInfo>, extension: XmlExtension) -> Option<XmlTagElement> {
 
         if let Some(meta) = meta {
             if !meta.contains("attribute") && !meta.contains("xmlns") {
@@ -64,12 +73,12 @@ impl XmlTagElement {
                     Some(XmlTagElement::Collection(field, tag_name, inner_name, extension))
                 } else {
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
-                    Some(XmlTagElement::Simple(field, tag_name, extension))
+                    Some(XmlTagElement::Simple(field, ty, tag_name, extension))
                 }
             }
         } else {
             let tag_name = XmlNames::tag(&field, obj_meta, None);
-            return Some(XmlTagElement::Simple(field, tag_name, extension))
+            return Some(XmlTagElement::Simple(field, ty, tag_name, extension))
         }
         None
     }
