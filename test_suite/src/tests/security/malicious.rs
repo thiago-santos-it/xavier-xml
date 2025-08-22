@@ -13,11 +13,11 @@ fn security_dangerous_characters() {
         <content><![CDATA[<script>alert('XSS')</script>]]></content>
     </TestStruct>
     "#;
-    
+
     let result = from_xml::<TestStruct>(&malicious_xml);
     // Deve ser processado corretamente com CDATA
     assert!(result.is_ok());
-    
+
     let parsed = result.unwrap();
     // Content should be preserved literally within CDATA
     assert!(parsed.content.contains("<script>"));

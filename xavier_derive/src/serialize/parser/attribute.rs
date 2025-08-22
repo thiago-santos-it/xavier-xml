@@ -4,18 +4,30 @@ use quote::{ quote, ToTokens };
 use crate::common::meta::MetaInfo;
 use crate::common::naming::names::XmlNames;
 use crate::serialize::parser::extension::XmlExtension;
+use crate::serialize::parser::types::is_outer_option;
 
 pub struct XmlElementAttr {
     pub field: Ident,
-    pub name: LitStr
+    pub name: LitStr,
+    pub ty: Type
 }
 
 impl ToTokens for XmlElementAttr {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let field = &self.field;
         let name = &self.name;
-        let attr_tokens = quote! {
-            format!(" {}=\"{}\"", #name, xavier::serialize::encode::escape_xml(&self.#field.to_xml(false)))
+        let attr_tokens = if is_outer_option(&self.ty) {
+            quote! {
+                if self.#field.is_none() {
+                    "".to_string()
+                } else {
+                    format!(" {}=\"{}\"", #name, xavier::serialize::encode::escape_xml(&self.#field.to_xml(false)))
+                }
+            }
+        } else {
+            quote! {
+                format!(" {}=\"{}\"", #name, xavier::serialize::encode::escape_xml(&self.#field.to_xml(false)))
+            }
         };
         tokens.extend(attr_tokens);
     }
@@ -26,7 +38,7 @@ impl XmlElementAttr {
         meta.and_then(|meta| {
             if meta.contains("attribute") {
                 let name = XmlNames::attribute(&field, obj_meta, &meta);
-                Some(XmlElementAttr { field, name })
+                Some(XmlElementAttr { field, name, ty })
             } else {
                 None
             }

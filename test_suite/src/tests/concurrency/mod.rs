@@ -1,1 +1,2 @@
-pub mod concurrent_parsing_test; 
+pub mod parallel_parsing;
+pub mod thread_safety;
