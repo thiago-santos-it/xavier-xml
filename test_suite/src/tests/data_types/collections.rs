@@ -181,7 +181,6 @@ fn collection_empty() -> Result<(), PError> {
 
 #[test]
 fn collection_tree() -> Result<(), PError> {
-    //TODO Default name as field name and skip
     let xml = r#"
     <XMLObjectTree>
         <field_a>Tree Test</field_a>

@@ -1,6 +1,7 @@
 use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError};
 
 #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+#[xml(name="child")]
 struct Child {
     #[xml(attribute, name="attr")]
     pub attribute: String,
@@ -98,7 +99,7 @@ fn serialize_unit_struct() {
     let test_data = XMLObjectUnit;
     let result = from_obj(&test_data);
     assert!(!result.is_empty());
-    assert!(result.contains("<XMLObjectUnit></XMLObjectUnit>"));
+    assert!(result.contains("<XMLObjectUnit/>"));
 }
 
 #[test]

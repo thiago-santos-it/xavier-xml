@@ -96,9 +96,7 @@ impl XmlSerializable for usize {
 }
 
 impl XmlSerializable for char {
-    fn to_xml(&self, _: bool) -> String {
-        self.to_string()
-    }
+    fn to_xml(&self, _: bool) -> String { format!("{}", self) }
 }
 
 

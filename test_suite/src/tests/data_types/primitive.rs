@@ -112,8 +112,6 @@ fn deserialize_edge_cases() -> Result<(), PError> {
     Ok(())
 }
 
-// ===== SERIALIZAÇÃO =====
-
 #[test]
 fn serialize_all_types() {
     let xml = XMLObject {
@@ -189,5 +187,5 @@ fn serialize_edge_cases() {
     assert!(result.contains("<type_f32>-inf</type_f32>"));
     assert!(result.contains("<type_f64>-inf</type_f64>"));
     assert!(result.contains("<type_bool>false</type_bool>"));
-    assert!(result.contains("<type_char></type_char>"));
+    assert!(result.contains(&format!("<type_char>{}</type_char>", '\0')));
 }
