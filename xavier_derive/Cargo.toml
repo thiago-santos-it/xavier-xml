@@ -1,6 +1,6 @@
 [package]
 name = "xavier-derive"
-version = "0.1.5"
+version = "0.1.7"
 authors = ["Thiago Medeiros dos Santos <thiago.santos.it@gmail.com>"]
 edition = "2021"
 license-file="../LICENSE"
@@ -16,7 +16,6 @@ syn = "2.0.53"
 quote = "1.0.35"
 proc-macro2 = "1.0.79"
 convert_case = "0.6.0"
-ty = "0.2.1"
 
 [lib]
 proc-macro = true
