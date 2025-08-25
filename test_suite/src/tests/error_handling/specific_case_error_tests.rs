@@ -6,7 +6,7 @@ struct TestOptionalFields {
     pub name: Option<String>,
     pub description: Option<String>,
     #[xml(inner="tag")]
-    pub tags: Vec<String>,
+    pub tags: Option<Vec<String>>,
     pub metadata: Option<KeyValue>,
 }
 
@@ -63,7 +63,7 @@ fn test_optional_fields_serialization() -> Result<(), PError> {
         id: 123,
         name: Some("Test Name".to_string()),
         description: Some("Test Description".to_string()),
-        tags: vec!["tag1".to_string(), "tag2".to_string()],
+        tags: Some(vec!["tag1".to_string(), "tag2".to_string()]),
         metadata: Some(KeyValue {
             key: "type".to_string(),
             value: "test".to_string(),
@@ -91,7 +91,7 @@ fn test_optional_fields_deserialization() -> Result<(), PError> {
     assert_eq!(parsed.id, 456);
     assert_eq!(parsed.name, None);
     assert_eq!(parsed.description, None);
-    assert_eq!(parsed.tags.is_empty(), true);
+    assert_eq!(parsed.tags, None);
     assert_eq!(parsed.metadata, None);
     
     Ok(())
@@ -164,9 +164,9 @@ fn test_custom_naming_handling() -> Result<(), PError> {
     assert!(xml.contains("user_age"));
     
     // Should not contain original field names
-    assert!(!xml.contains("id"));
-    assert!(!xml.contains("name"));
-    assert!(!xml.contains("age"));
+    assert!(!xml.contains("<id>"));
+    assert!(!xml.contains("<name>"));
+    assert!(!xml.contains("<age>"));
     
     let parsed: TestCustomNaming = from_xml(&xml)?;
     
