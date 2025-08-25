@@ -15,7 +15,7 @@ pub enum XmlTagElement {
 
 impl ToTokens for XmlTagElement {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-         let tag_tokens = match self {
+        let tag_tokens = match self {
             XmlTagElement::Simple(field, ty, name, extensions) => {
                 if is_outer_option(&ty) {
                     quote! {
@@ -62,7 +62,9 @@ impl XmlTagElement {
 
         if let Some(meta) = meta {
             if !meta.contains("attribute") && !meta.contains("xmlns") {
-                return if meta.contains("tree") {
+                return if meta.contains("skip") {
+                    None
+                } else if meta.contains("tree") {
                     Some(XmlTagElement::Complex(field, extension))
                 } else if meta.contains("flatten") || meta.contains("value") {
                     Some(XmlTagElement::Value(field, extension))

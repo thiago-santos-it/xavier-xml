@@ -1,4 +1,3 @@
-- Refazer README.md
-- Skip 
+- Refazer README.md 
 - Nome do campo como nome do objeto by default 
 - 

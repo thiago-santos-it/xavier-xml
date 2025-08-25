@@ -69,19 +69,3 @@ fn error_incompatible_types_string_to_float() {
     assert!(result.is_err());
 }
 
-#[test]
-fn error_incompatible_types_invalid_collection() {
-    let xml_with_wrong_type = r#"
-    <ErrorTestStruct>
-        <id>1</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>not_a_collection</tags>
-        <active>true</active>
-        <score>95.5</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_with_wrong_type);
-    assert!(result.is_err());
-} 

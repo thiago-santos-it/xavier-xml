@@ -42,6 +42,8 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
             }
         }
     };
-
+    // if object_name == "TestOptionalFields" {
+    //     println!("{:?}", expanded.to_string());
+    // }
     TokenStream::from(expanded)
 }

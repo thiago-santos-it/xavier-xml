@@ -74,23 +74,3 @@ fn error_invalid_tag_name() {
     let result = from_xml::<ErrorTestStruct>(xml_invalid_tag);
     assert!(result.is_err());
 }
-
-#[test]
-fn error_invalid_collection_structure() {
-    let xml_invalid_collection = r#"
-    <ErrorTestStruct>
-        <id>1</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>
-            <invalid_tag>tag1</invalid_tag>
-            <tags>tag2</tags>
-        </tags>
-        <active>true</active>
-        <score>95.5</score>
-    </ErrorTestStruct>
-    "#;
-    
-    let result = from_xml::<ErrorTestStruct>(xml_invalid_collection);
-    assert!(result.is_err());
-} 

@@ -6,7 +6,7 @@ struct TestOptionalFields {
     pub name: Option<String>,
     pub description: Option<String>,
     #[xml(inner="tag")]
-    pub tags: Option<Vec<String>>,
+    pub tags: Vec<String>,
     pub metadata: Option<KeyValue>,
 }
 
@@ -21,7 +21,7 @@ struct TestPrivateFields {
     pub id: u32,
     pub name: String,
     #[xml(skip)]
-    pub internal_data: String,
+    pub internal_data: Option<String>,
 }
 
 #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
@@ -29,7 +29,7 @@ struct TestSkipFields {
     pub id: u32,
     pub name: String,
     #[xml(skip)]
-    pub skipped_field: String,
+    pub skipped_field: Option<String>,
     pub visible_field: String,
 }
 
@@ -63,7 +63,7 @@ fn test_optional_fields_serialization() -> Result<(), PError> {
         id: 123,
         name: Some("Test Name".to_string()),
         description: Some("Test Description".to_string()),
-        tags: Some(vec!["tag1".to_string(), "tag2".to_string()]),
+        tags: vec!["tag1".to_string(), "tag2".to_string()],
         metadata: Some(KeyValue {
             key: "type".to_string(),
             value: "test".to_string(),
@@ -91,7 +91,7 @@ fn test_optional_fields_deserialization() -> Result<(), PError> {
     assert_eq!(parsed.id, 456);
     assert_eq!(parsed.name, None);
     assert_eq!(parsed.description, None);
-    assert_eq!(parsed.tags, None);
+    assert_eq!(parsed.tags.is_empty(), true);
     assert_eq!(parsed.metadata, None);
     
     Ok(())
@@ -102,7 +102,7 @@ fn test_private_fields_handling() -> Result<(), PError> {
     let test_data = TestPrivateFields {
         id: 789,
         name: "Private Test".to_string(),
-        internal_data: "Internal Value".to_string(),
+        internal_data: Some("Internal Value".to_string()),
     };
     
     let xml = from_obj(&test_data);
@@ -125,7 +125,7 @@ fn test_skip_fields_handling() -> Result<(), PError> {
     let test_data = TestSkipFields {
         id: 101,
         name: "Skip Test".to_string(),
-        skipped_field: "Should be skipped".to_string(),
+        skipped_field: Some("Should be skipped".to_string()),
         visible_field: "Should be visible".to_string(),
     };
     

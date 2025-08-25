@@ -58,7 +58,7 @@ impl TokenSegments {
                         } else {
                             quote! { Option<#inner_type> }
                         };
-                        
+
                         declarations.push(FieldDecl {
                             name: ident.clone(),
                             optional_type,
@@ -96,13 +96,15 @@ impl TokenSegments {
                                 inner_type: TypeParser::ty_from_vec(&TypeParser::unbox_and_unwrap_type(&field.ty)),
                             });
                         } else {
-                            let field_tag_name = XmlNames::tag(&ident, obj_meta_info, Some(&field_meta));
-                            field_setters.push(FieldSetter {
-                                name: ident.clone(),
-                                is_flatten,
-                                tag_name: field_tag_name,
-                                inner_type: TypeParser::unbox_and_unwrap_type(&field.ty),
-                            });
+                            if !field_meta.contains("skip") {
+                                let field_tag_name = XmlNames::tag(&ident, obj_meta_info, Some(&field_meta));
+                                field_setters.push(FieldSetter {
+                                    name: ident.clone(),
+                                    is_flatten,
+                                    tag_name: field_tag_name,
+                                    inner_type: TypeParser::unbox_and_unwrap_type(&field.ty),
+                                });
+                            }
                         }
 
                         field_names.push(ident.clone());

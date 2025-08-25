@@ -36,6 +36,6 @@ pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
             }
         }
     };
-    return TokenStream::from(expanded)
+    TokenStream::from(expanded)
 
 }
