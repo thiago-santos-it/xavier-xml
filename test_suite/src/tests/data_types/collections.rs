@@ -255,4 +255,95 @@ fn sibling_collections() -> Result<(), PError> {
     assert!(result.contains("Sibling B1"));
 
     Ok(())
+}
+
+#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+struct TestOptionVecInner {
+    pub id: u32,
+    pub name: String,
+    #[xml(inner="item")]
+    pub items: Option<Vec<String>>,
+}
+
+#[test]
+fn test_option_vec_inner_none() -> Result<(), PError> {
+    let test_data = TestOptionVecInner {
+        id: 123,
+        name: "Test Object".to_string(),
+        items: None,
+    };
+    
+    let xml = from_obj(&test_data);
+    
+    // Verifica se a tag <items> NÃO aparece quando é None
+    assert!(!xml.contains("<items>"), "Tag <items> should not appear when Option<Vec> is None");
+    assert!(!xml.contains("</items>"), "Closing tag </items> should not appear when Option<Vec> is None");
+    
+    // Verifica se outras tags aparecem normalmente
+    assert!(xml.contains("<id>123</id>"));
+    assert!(xml.contains("<name>Test Object</name>"));
+    
+    // Testa round-trip (serializar → deserializar)
+    let parsed: TestOptionVecInner = from_xml(&xml)?;
+    assert_eq!(test_data, parsed);
+    assert_eq!(parsed.items, None);
+    
+    Ok(())
+}
+
+#[test]
+fn test_option_vec_inner_some() -> Result<(), PError> {
+    let test_data = TestOptionVecInner {
+        id: 456,
+        name: "Test Object With Items".to_string(),
+        items: Some(vec!["item1".to_string(), "item2".to_string(), "item3".to_string()]),
+    };
+    
+    let xml = from_obj(&test_data);
+    
+    // Verifica se a tag <items> aparece quando tem valores
+    assert!(xml.contains("<items>"), "Tag <items> should appear when Option<Vec> has values");
+    assert!(xml.contains("</items>"), "Closing tag </items> should appear when Option<Vec> has values");
+    
+    // Verifica se os itens individuais aparecem
+    assert!(xml.contains("<item>item1</item>"));
+    assert!(xml.contains("<item>item2</item>"));
+    assert!(xml.contains("<item>item3</item>"));
+    
+    // Verifica se outras tags aparecem normalmente
+    assert!(xml.contains("<id>456</id>"));
+    assert!(xml.contains("<name>Test Object With Items</name>"));
+    
+    // Testa round-trip (serializar → deserializar)
+    let parsed: TestOptionVecInner = from_xml(&xml)?;
+    assert_eq!(test_data, parsed);
+    assert_eq!(parsed.items, Some(vec!["item1".to_string(), "item2".to_string(), "item3".to_string()]));
+    
+    Ok(())
+}
+
+#[test]
+fn test_option_vec_inner_empty() -> Result<(), PError> {
+    let test_data = TestOptionVecInner {
+        id: 789,
+        name: "Test Object Empty".to_string(),
+        items: Some(vec![]),
+    };
+    
+    let xml = from_obj(&test_data);
+    
+    // Verifica se a tag <items> aparece mesmo quando o Vec está vazio
+    assert!(xml.contains("<items>"), "Tag <items> should appear even when Vec is empty");
+    assert!(xml.contains("</items>"), "Closing tag </items> should appear even when Vec is empty");
+    
+    // Verifica se outras tags aparecem normalmente
+    assert!(xml.contains("<id>789</id>"));
+    assert!(xml.contains("<name>Test Object Empty</name>"));
+    
+    // Testa round-trip (serializar → deserializar)
+    let parsed: TestOptionVecInner = from_xml(&xml)?;
+    assert_eq!(test_data, parsed);
+    assert_eq!(parsed.items, Some(vec![]));
+    
+    Ok(())
 } 
