@@ -8,7 +8,7 @@ use syn::parse_macro_input;
 use crate::serialize::parser::streams::{SerStreamType, XmlSerStream};
 
 pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
-    let input  = parse_macro_input!(input as DeriveInput);
+    let input = parse_macro_input!(input as DeriveInput);
     let (impl_generics, ty_generics, where_clause) = &input.generics.split_for_impl();
     let object_name = &input.ident;
 
@@ -21,7 +21,8 @@ pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
         Enum(DataEnum { .. }) => { XmlSerStream::stream(&input, SerStreamType::Enum) },
         Union(DataUnion { .. }) => {
             let message = "Proc macro 'xml serialize' does not support this type of object config.";
-            return Error::new_spanned(object_name, message).to_compile_error().into();}
+            return Error::new_spanned(object_name, message).to_compile_error().into();
+        }
     };
 
     let expanded = quote! {
@@ -36,6 +37,8 @@ pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
             }
         }
     };
+    if object_name == "TestOptionalFields" {
+        println!("{:?}", expanded.to_string());
+    }
     TokenStream::from(expanded)
-
 }

@@ -10,7 +10,7 @@ pub enum XmlTagElement {
     Complex(Ident, XmlExtension),
     Simple(Ident, Type, LitStr, XmlExtension),
     Value(Ident, XmlExtension),
-    Collection(Ident, LitStr, LitStr, XmlExtension), // field, tag_name, inner_name, extension
+    Collection(Ident, Type, LitStr, LitStr, XmlExtension),
 }
 
 impl ToTokens for XmlTagElement {
@@ -39,12 +39,24 @@ impl ToTokens for XmlTagElement {
                     format!("{}{}", #extensions, self.#field.to_xml(false))
                 }
             },
-            XmlTagElement::Collection(field, tag_name, inner_name, extensions) => {
+            XmlTagElement::Collection(field, ty, tag_name, inner_name, extensions) => {
+                let items_constructor = if is_outer_option(&ty) {
+                    quote!{
+                        let xa_items = if let Some(xa_value_item) = &self.#field {
+                            xa_value_item
+                        } else {
+                            &Vec::new()
+                        };
+                    }
+                } else {
+                    quote!{ let xa_items = &self.#field;  }
+                };
                 quote! {
                     {
+                        #items_constructor
                         let mut collection_xml = String::new();
                         collection_xml.push_str(&format!("<{}>", #tag_name));
-                        for item in &self.#field {
+                        for item in xa_items {
                             collection_xml.push_str(&format!("<{}>{}</{}>", #inner_name, item.to_xml(false), #inner_name));
                         }
                         collection_xml.push_str(&format!("</{}>", #tag_name));
@@ -62,6 +74,7 @@ impl XmlTagElement {
 
         if let Some(meta) = meta {
             if !meta.contains("attribute") && !meta.contains("xmlns") {
+
                 return if meta.contains("skip") {
                     None
                 } else if meta.contains("tree") {
@@ -69,10 +82,9 @@ impl XmlTagElement {
                 } else if meta.contains("flatten") || meta.contains("value") {
                     Some(XmlTagElement::Value(field, extension))
                 } else if meta.contains("inner") {
-                    // Handle collection with custom inner tag name
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
                     let inner_name = LitStr::new(&meta.get_or("inner", "item".to_string()), proc_macro2::Span::call_site());
-                    Some(XmlTagElement::Collection(field, tag_name, inner_name, extension))
+                    Some(XmlTagElement::Collection(field, ty, tag_name, inner_name, extension))
                 } else {
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
                     Some(XmlTagElement::Simple(field, ty, tag_name, extension))
