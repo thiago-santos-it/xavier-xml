@@ -37,8 +37,8 @@ pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
             }
         }
     };
-    // if object_name == "TestOptionalFields" {
-    //     println!("{:?}", expanded.to_string());
-    // }
+    //  if object_name == "TestOptionVecInner" {
+    //      println!("{:?}", expanded.to_string());
+    //  }
     TokenStream::from(expanded)
 }

@@ -275,15 +275,12 @@ fn test_option_vec_inner_none() -> Result<(), PError> {
     
     let xml = from_obj(&test_data);
     
-    // Verifica se a tag <items> NÃO aparece quando é None
     assert!(!xml.contains("<items>"), "Tag <items> should not appear when Option<Vec> is None");
     assert!(!xml.contains("</items>"), "Closing tag </items> should not appear when Option<Vec> is None");
     
-    // Verifica se outras tags aparecem normalmente
     assert!(xml.contains("<id>123</id>"));
     assert!(xml.contains("<name>Test Object</name>"));
     
-    // Testa round-trip (serializar → deserializar)
     let parsed: TestOptionVecInner = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
     assert_eq!(parsed.items, None);
