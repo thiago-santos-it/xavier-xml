@@ -21,12 +21,12 @@ impl ToTokens for XmlElementAttr {
                 if self.#field.is_none() {
                     "".to_string()
                 } else {
-                    format!(" {}=\"{}\"", #name, xavier::serialize::encode::escape_xml(&self.#field.to_xml(false)))
+                    format!(" {}=\"{}\"", #name, xavier::serialize::encode::escape_xml(&self.#field.to_xml(None, false, false)))
                 }
             }
         } else {
             quote! {
-                format!(" {}=\"{}\"", #name, xavier::serialize::encode::escape_xml(&self.#field.to_xml(false)))
+                format!(" {}=\"{}\"", #name, xavier::serialize::encode::escape_xml(&self.#field.to_xml(None, false, false)))
             }
         };
         tokens.extend(attr_tokens);

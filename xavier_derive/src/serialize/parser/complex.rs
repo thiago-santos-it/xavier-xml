@@ -44,7 +44,7 @@ impl XmlComplexTag {
                 let mut attributes = String::new();
                 #(attributes.push_str(&#attributes);)*
 
-                if !#flatten {
+                if !#flatten && !xa_headless {
                     xml.push_str("<");
                     xml.push_str(&tag);
                     if !namespace.is_empty() {
@@ -60,7 +60,7 @@ impl XmlComplexTag {
                 #(children.push_str(&#children);)*
                 xml.push_str(&children);
 
-                if !#flatten {
+                if !#flatten && !xa_headless {
                    xml.push_str(&format!("</{}>", tag));
                 }
             }

@@ -11,7 +11,7 @@ impl XmlDTD {
         let dtd_def = XmlDTD::dtd_def(input, tag);
         quote! {
             {
-                if root { #dtd_def.to_string() } else { "".to_string() }
+                if xa_root { #dtd_def.to_string() } else { "".to_string() }
             }
         }
     }

@@ -11,7 +11,7 @@ impl XmlDeclaration {
         let xml_declaration = XmlDeclaration::xml_declaration(input);
         quote! {
             {
-                if root { #xml_declaration.to_string() } else { "".to_string() }
+                if xa_root { #xml_declaration.to_string() } else { "".to_string() }
             }
         }
     }
