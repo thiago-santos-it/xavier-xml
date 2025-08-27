@@ -90,6 +90,7 @@ impl XmlTagElement {
                 } else if meta.contains("flatten") || meta.contains("value") {
                     Some(XmlTagElement::Value(field, extension))
                 } else if meta.contains("inner") {
+                    //TODO apply prefix
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
                     let inner_name = LitStr::new(&meta.get_or("inner", "item".to_string()), proc_macro2::Span::call_site());
                     Some(XmlTagElement::Collection(field, ty, tag_name, inner_name, extension))

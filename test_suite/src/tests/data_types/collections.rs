@@ -110,9 +110,9 @@ struct ChildSiblingB {
 #[derive(XmlSerializable, XmlDeserializable, Debug)]
 struct XMLObjectSiblings {
     pub field_a: String,
-    #[xml(tree)]
+    #[xml(inner="child_a")]
     pub siblings_a: Vec<ChildSiblingA>,
-    #[xml(tree)]
+    #[xml(inner="child_b")]
     pub siblings_b: Vec<ChildSiblingB>
 }
 
@@ -246,6 +246,7 @@ fn sibling_collections() -> Result<(), PError> {
     };
     
     let result = from_obj(&test_data);
+    println!("{:?}", result);
     assert!(!result.is_empty());
     assert!(result.contains("<field_a>Siblings Test</field_a>"));
     assert!(result.contains("<siblings_a>"));
