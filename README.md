@@ -17,6 +17,8 @@ Support for #[xml(inner = "tag")] to deserialize/serialize Vec<primitive> in the
 
 Improved interpretation of smart pointers (Box, Rc, Arc, ...) within field chains, enabling greater flexibility.
 
+TODO: Test Case Prefix and Force inner error changing internal XML tag name 
+
 > This is a new lib so please report all bugs and help us!
 
 # Who is Xavier?

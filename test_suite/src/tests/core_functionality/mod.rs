@@ -1,5 +1,15 @@
-pub mod serialization;
+pub mod cdata_and_comments;
+pub mod collection_handling;
 pub mod deserialization;
+pub mod doctype_handling;
 pub mod encoding_cases;
-pub mod advanced_serde;
 pub mod inner_handling;
+pub mod name_handling;
+pub mod namespace_handling;
+pub mod processing_instructions;
+pub mod self_closing_tags;
+pub mod serialization;
+pub mod value_handling;
+pub mod xml_attributes;
+pub mod xml_declarations;
+pub mod xmlns_attributes;

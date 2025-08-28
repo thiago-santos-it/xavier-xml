@@ -8,7 +8,6 @@ use crate::deserialize::parser::complex::tokens::constructor::{Constructor, Cons
 use crate::deserialize::parser::complex::tokens::declaration::FieldDecl;
 use crate::deserialize::parser::complex::tokens::setters::attribute::FieldAttributeSetter;
 use crate::deserialize::parser::complex::tokens::setters::field::FieldSetter;
-use crate::deserialize::parser::complex::tokens::setters::inner::InnerSetter;
 use crate::deserialize::parser::complex::tokens::setters::sibling::SiblingSetter;
 use crate::deserialize::parser::complex::tokens::setters::value::ValueSetter;
 use crate::deserialize::parser::complex::tokens::setters::xmlns::FieldXmlnsSetter;
@@ -19,7 +18,6 @@ pub struct TokenSegments {
     pub attribute_setters: Vec<FieldAttributeSetter>,
     pub field_setters: Vec<FieldSetter>,
     pub sibling_setters: Vec<SiblingSetter>,
-    pub inner_setters: Vec<InnerSetter>,
     pub value_setters: Vec<ValueSetter>,
     pub xmlns_setter: Option<FieldXmlnsSetter>,
     pub constructor: Constructor
@@ -33,7 +31,6 @@ impl TokenSegments {
 
         let mut field_setters: Vec<FieldSetter> = vec![];
         let mut sibling_setters: Vec<SiblingSetter> = vec![];
-        let mut inner_setters: Vec<InnerSetter> = vec![];
         let mut attribute_setters: Vec<FieldAttributeSetter> = vec![];
         let mut value_setters: Vec<ValueSetter> = vec![];
         let mut xmlns_setter: Option<FieldXmlnsSetter> = None;
@@ -75,21 +72,6 @@ impl TokenSegments {
                             xmlns_setter = Some(FieldXmlnsSetter { field: ident.clone() })
                         } else if field_meta.contains("value") {
                             value_setters.push(ValueSetter { field: ident.clone(), unwrapped_type: TypeParser::unwrapped_type(&field.ty) })
-                        } else if field_meta.contains("inner") && TypeParser::is_vec(&field.ty) {
-                            let inner_tag_name = field_meta.get_or("inner", "item".to_string());
-                            let inner_tag_lit = syn::LitStr::new(&inner_tag_name, proc_macro2::Span::call_site());
-                            inner_setters.push(InnerSetter {
-                                name: ident.clone(),
-                                inner_type: TypeParser::ty_from_vec(&TypeParser::unbox_and_unwrap_type(&field.ty)),
-                                inner_tag_name: inner_tag_lit,
-                            });
-                            let field_tag_name = XmlNames::tag(&ident, obj_meta_info, Some(&field_meta));
-                            field_setters.push(FieldSetter {
-                                name: ident.clone(),
-                                is_flatten: false,
-                                tag_name: field_tag_name,
-                                inner_type: TypeParser::unbox_and_unwrap_type(&field.ty),
-                            });
                         } else if is_sibling {
                             sibling_setters.push(SiblingSetter {
                                 name: ident.clone(),
@@ -116,6 +98,6 @@ impl TokenSegments {
                 }
             }
         }
-        Self { declarations, field_setters, sibling_setters, inner_setters, attribute_setters, value_setters, xmlns_setter, constructor: Constructor { values: constructors } }
+        Self { declarations, field_setters, sibling_setters, attribute_setters, value_setters, xmlns_setter, constructor: Constructor { values: constructors } }
     }
 }
