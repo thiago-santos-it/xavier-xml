@@ -15,6 +15,7 @@ impl ToTokens for SiblingSetter {
         let ty = &self.inner_type;
 
         tokens.extend(quote! {
+            let _dbg = "Sibling";
             let should_parse = if let Some(inner_name) = #ty::inner_name() {
                 xa_tag_name == inner_name
             } else {

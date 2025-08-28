@@ -15,6 +15,7 @@ impl ToTokens for ValueSetter {
         let ty = &self.unwrapped_type;
 
         tokens.extend(quote! {
+            let _dbg = "Value";
             let result: #ty = String::from_utf8(event.to_vec())?.parse()?;
             #field = Some(result);
         })

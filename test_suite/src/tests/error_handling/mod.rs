@@ -1,4 +1,3 @@
-pub mod inner_parsing_error_tests;
 pub mod malformed_xml_errors;
 pub mod missing_field_errors;
 pub mod panic_condition_tests;

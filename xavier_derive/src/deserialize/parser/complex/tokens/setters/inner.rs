@@ -16,6 +16,7 @@ impl ToTokens for InnerSetter {
         let inner_tag = &self.inner_tag_name;
 
         tokens.extend(quote! {
+            let _dbg = "Inner";
             if xa_tag_name == #inner_tag {
                 match #ty::from_xml(&mut reader, Some(&event)) {
                     Ok(t_value) => {

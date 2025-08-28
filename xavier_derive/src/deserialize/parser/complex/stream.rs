@@ -73,7 +73,7 @@ impl XmlComplex {
                     Ok(::xavier::quick_xml::events::Event::Comment(_)) => {}
                 };
             };
-            Err(xavier::PError::new("Error root not found"))
+            Err(xavier::PError::new("Error object not found"))
         };
 
         let mut result = quote! {};
