@@ -42,7 +42,7 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
             }
         }
     };
-    if object_name == "TestComplexVecInner" {
+    if object_name == "TestCDATA" {
         println!("{:?}", expanded.to_string());
     }
     TokenStream::from(expanded)

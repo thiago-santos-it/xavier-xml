@@ -82,13 +82,12 @@ impl XmlDeserializable for String {
                 },
                 Ok(Event::CData(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
-                    let trimmed = raw_string.trim();
-                    
-                    if contains_malicious_entities(&trimmed) {
+
+                    if contains_malicious_entities(&raw_string) {
                         return Err(PError::new("Malicious XML entities detected"));
                     }
                     
-                    let decoded = decode_xml(&trimmed);
+                    let decoded = decode_xml(&raw_string);
                     
                     if contains_malicious_characters(&decoded) {
                         return Err(PError::new("Malicious characters detected in XML content"));

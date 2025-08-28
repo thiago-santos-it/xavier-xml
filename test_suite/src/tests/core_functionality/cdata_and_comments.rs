@@ -167,7 +167,7 @@ fn test_mixed_content_with_cdata() -> Result<(), PError> {
 
 #[test]
 fn test_cdata_edge_cases() -> Result<(), PError> {
-    // CDATA vazio
+
     let empty_cdata_xml = r#"
     <TestCDATA>
         <title>Empty CDATA Test</title>
