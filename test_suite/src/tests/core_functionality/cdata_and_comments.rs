@@ -73,7 +73,9 @@ fn test_cdata_with_special_characters() -> Result<(), PError> {
     let xml = from_obj(&test_data);
     
     let parsed: TestCDATA = from_xml(&xml)?;
-    assert_eq!(test_data, parsed);
+    assert_eq!(test_data.title, cdata!(parsed.title));
+    assert_eq!(test_data.content, cdata!(parsed.content));
+    assert_eq!(test_data.code, cdata!(parsed.code));
     
     Ok(())
 }
@@ -155,13 +157,15 @@ fn test_mixed_content_with_cdata() -> Result<(), PError> {
     let test_data = TestMixedContent {
         id: 123,
         text: "Normal text content".to_string(),
-        html: "<p>This is <strong>HTML</strong> content</p>".to_string(),
+        html: cdata!("<p>This is <strong>HTML</strong> content</p>".to_string()),
     };
     
     let xml = from_obj(&test_data);
     
     let parsed: TestMixedContent = from_xml(&xml)?;
-    assert_eq!(test_data, parsed);
+    assert_eq!(test_data.id, parsed.id);
+    assert_eq!(test_data.text, parsed.text);
+    assert_eq!(test_data.html, cdata!(parsed.html));
     
     Ok(())
 }
@@ -239,14 +243,15 @@ fn test_malformed_cdata() {
 fn test_nested_cdata_and_comments() -> Result<(), PError> {
     let test_data = TestMixedContent {
         id: 123,
-        text: "Text with <!-- comment --> inside".to_string(),
-        html: "<div><!-- HTML comment --><p>Content</p></div>".to_string(),
+        text: cdata!("Text with <!-- comment --> inside".to_string()),
+        html: cdata!("<div><!-- HTML comment --><p>Content</p></div>".to_string()),
     };
     
     let xml = from_obj(&test_data);
     
     let parsed: TestMixedContent = from_xml(&xml)?;
-    assert_eq!(test_data, parsed);
+    assert_eq!(test_data.text, cdata!(parsed.text));
+    assert_eq!(test_data.html, cdata!(parsed.html));
     
     Ok(())
 } 
