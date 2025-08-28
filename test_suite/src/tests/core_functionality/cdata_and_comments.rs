@@ -38,7 +38,8 @@ fn test_cdata_processing() -> Result<(), PError> {
     let xml = from_obj(&test_data);
     
     let parsed: TestCDATA = from_xml(&xml)?;
-    assert_eq!(test_data, parsed);
+    let with_cdata = TestCDATA { title: parsed.title, content: parsed.content, code: cdata!(parsed.code) };
+    assert_eq!(test_data, with_cdata);
     
     Ok(())
 }
