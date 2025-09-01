@@ -8,6 +8,12 @@ use syn::{DataEnum, DataUnion, DeriveInput, Error, Fields, FieldsNamed, FieldsUn
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
 
+//Debug imports
+#[allow(unused_imports)]
+use syn::{File, parse2};
+#[allow(unused_imports)]
+use log::debug;
+
 use crate::deserialize::parser::streams::{DeStreamType, XmlDeStream};
 
 pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
@@ -42,8 +48,14 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
             }
         }
     };
-    // if object_name == "TestCDATA" {
-    //     println!("{:?}", expanded.to_string());
+
+    // let dbg_object = "TestSecurityResourceExhaustionDbg";
+    // if object_name == dbg_object {
+    //     let syntax: File = parse2(TokenStream::from(expanded.clone()).into()).expect("Failed to parse tokens as a file");
+    //     let formatted = prettyplease::unparse(&syntax);
+    //     println!("{}", formatted);
     // }
+
     TokenStream::from(expanded)
 }
+

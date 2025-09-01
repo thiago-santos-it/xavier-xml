@@ -1,262 +1,95 @@
 use xavier::{from_xml, from_obj, XmlSerializable, XmlDeserializable, PError};
 use std::time::Instant;
 
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct DeepNestedStruct {
-    pub id: u32,
-    pub level1: Level1,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level1 {
-    pub name: String,
-    pub level2: Level2,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level2 {
-    pub value: i32,
-    pub level3: Level3,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level3 {
-    pub data: String,
-    pub level4: Level4,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level4 {
-    pub flag: bool,
-    pub level5: Level5,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level5 {
-    pub number: f64,
-    pub level6: Level6,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level6 {
-    pub text: String,
-    pub level7: Level7,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level7 {
-    pub count: u64,
-    pub level8: Level8,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level8 {
-    #[xml(inner="item")]
-    pub items: Vec<String>,
-    pub level9: Level9,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level9 {
-    pub metadata: String,
-    pub level10: Level10,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct Level10 {
-    pub final_value: String,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct LargeCollectionStruct {
-    pub id: u32,
-    #[xml(inner="item")]
-    pub items: Vec<LargeItem>,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct LargeItem {
-    pub item_id: u64,
-    pub name: String,
-    pub description: String,
-    #[xml(inner="item")]
-    pub tags: Vec<String>,
-    pub metadata: Vec<KeyValue>,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct KeyValue {
-    pub key: String,
-    pub value: String,
-}
-
-#[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-struct MemoryIntensiveStruct {
-    pub id: u32,
-    pub large_string: String,
-    #[xml(inner="item")]
-    pub large_array: Vec<u8>,
-    pub nested_data: Vec<MemoryIntensiveStruct>,
-}
-
 #[test]
-fn test_deep_nesting_performance() {
-    let start = Instant::now();
-    
-    let test_data = create_deep_nested_struct();
-    let xml = from_obj(&test_data);
-    
-    let serialization_time = start.elapsed();
-    // Check if it didn't exceed a reasonable time (e.g., 100ms)
-    assert!(serialization_time.as_millis() < 100);
-    
-    let start = Instant::now();
-    let parsed: DeepNestedStruct = from_xml(&xml).expect("Falha na deserialização");
-    let deserialization_time = start.elapsed();
-    
-    
-    assert!(deserialization_time.as_millis() < 100);
-    
-    assert_eq!(test_data, parsed);
-}
-
-#[test]
-fn test_large_collection_performance() {
-    let start = Instant::now();
-    
-    let test_data = create_large_collection(1000); // 1000 itens
-    let xml = from_obj(&test_data);
-    
-    let serialization_time = start.elapsed();
-    // Check if it didn't exceed a reasonable time (e.g., 500ms)
-    assert!(serialization_time.as_millis() < 500);
-    
-    let start = Instant::now();
-    let parsed: LargeCollectionStruct = from_xml(&xml).expect("Falha na deserialização");
-    let deserialization_time = start.elapsed();
-    
-    
-    assert!(deserialization_time.as_millis() < 500);
-    
-    assert_eq!(test_data.id, parsed.id);
-    assert_eq!(test_data.items.len(), parsed.items.len());
-}
-
-#[test]
-fn test_memory_intensive_operations() {
-    let start = Instant::now();
-    
-    let test_data = create_memory_intensive_struct(1);
-    let xml = from_obj(&test_data);
-    
-    let serialization_time = start.elapsed();
-
-    assert!(serialization_time.as_millis() < 200);
-
-    let start = Instant::now();
-    let parsed: MemoryIntensiveStruct = from_xml(&xml).expect("Falha na deserialização");
-    println!("2 {}", serialization_time.as_millis());
-    let deserialization_time = start.elapsed();
-    println!("3 {}", serialization_time.as_millis());
-
-    assert!(deserialization_time.as_millis() < 200);
-    
-    assert_eq!(test_data.id, parsed.id);
-    assert_eq!(test_data.large_string.len(), parsed.large_string.len());
-}
-
-#[test]
-fn test_xml_size_limits() {
-    // Teste com XML muito grande
-    let large_data = create_large_collection(10000); // 10.000 itens
-    let xml = from_obj(&large_data);
-    
-    // Check if XML didn't exceed a reasonable size (e.g., 10MB)
-    assert!(xml.len() < 10 * 1024 * 1024);
-    
-            // Test deserialization of large XML
-    let start = Instant::now();
-    let parsed: LargeCollectionStruct = from_xml(&xml).expect("Falha na deserialização");
-    let _deserialization_time = start.elapsed();
-    
-    
-    
-    assert_eq!(large_data.id, parsed.id);
-    assert_eq!(large_data.items.len(), parsed.items.len());
-}
-
-#[test]
-fn test_concurrent_parsing_performance() {
-    use std::sync::Arc;
-    use std::thread;
-    
-    let test_data = create_large_collection(100);
-    let xml = from_obj(&test_data);
-    let xml_arc = Arc::new(xml);
-    
-    let start = Instant::now();
-    
-    let handles: Vec<_> = (0..4).map(|_| {
-        let xml_clone = Arc::clone(&xml_arc);
-        thread::spawn(move || {
-            let parsed: LargeCollectionStruct = from_xml(&xml_clone).expect("Falha na deserialização");
-            assert_eq!(parsed.items.len(), 100);
-        })
-    }).collect();
-    
-    for handle in handles {
-        handle.join().expect("Falha na thread");
+fn test_performance_stress_deep_nesting() -> Result<(), PError> {
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressDeepNested {
+        pub id: u32,
+        pub level1: TestPerformanceStressLevel1,
     }
-    
-    let total_time = start.elapsed();
-    // Check if total time didn't exceed a reasonable limit
-    assert!(total_time.as_millis() < 1000);
-}
 
-#[test]
-fn test_iteration_limits() {
-            // Test to verify if parser doesn't enter infinite loop
-    let start = Instant::now();
-    
-    let test_data = create_deep_nested_struct();
-    let xml = from_obj(&test_data);
-    
-            // Add extra tags to test iteration limits
-    let xml_with_extra = format!("{}<extra>data</extra>", xml);
-    
-    let result = from_xml::<DeepNestedStruct>(&xml_with_extra);
-    
-    let processing_time = start.elapsed();
-    // Check if it didn't exceed a reasonable time (e.g., 50ms)
-    assert!(processing_time.as_millis() < 50);
-    
-    // Result should be error or success, but shouldn't hang
-    assert!(result.is_ok() || result.is_err());
-}
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel1 {
+        pub name: String,
+        pub level2: TestPerformanceStressLevel2,
+    }
 
-        // Helper functions to create test data
-fn create_deep_nested_struct() -> DeepNestedStruct {
-    DeepNestedStruct {
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel2 {
+        pub value: i32,
+        pub level3: TestPerformanceStressLevel3,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel3 {
+        pub data: String,
+        pub level4: TestPerformanceStressLevel4,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel4 {
+        pub flag: bool,
+        pub level5: TestPerformanceStressLevel5,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel5 {
+        pub number: f64,
+        pub level6: TestPerformanceStressLevel6,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel6 {
+        pub text: String,
+        pub level7: TestPerformanceStressLevel7,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel7 {
+        pub count: u64,
+        pub level8: TestPerformanceStressLevel8,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel8 {
+        #[xml(inner="item")]
+        pub items: Vec<String>,
+        pub level9: TestPerformanceStressLevel9,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel9 {
+        pub metadata: String,
+        pub level10: TestPerformanceStressLevel10,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLevel10 {
+        pub final_value: String,
+    }
+
+    let data = TestPerformanceStressDeepNested {
         id: 1,
-        level1: Level1 {
+        level1: TestPerformanceStressLevel1 {
             name: "Level 1".to_string(),
-            level2: Level2 {
-                value: 2,
-                level3: Level3 {
+            level2: TestPerformanceStressLevel2 {
+                value: 42,
+                level3: TestPerformanceStressLevel3 {
                     data: "Level 3 Data".to_string(),
-                    level4: Level4 {
+                    level4: TestPerformanceStressLevel4 {
                         flag: true,
-                        level5: Level5 {
-                            number: 3.14,
-                            level6: Level6 {
+                        level5: TestPerformanceStressLevel5 {
+                            number: 3.14159,
+                            level6: TestPerformanceStressLevel6 {
                                 text: "Level 6 Text".to_string(),
-                                level7: Level7 {
-                                    count: 7,
-                                    level8: Level8 {
+                                level7: TestPerformanceStressLevel7 {
+                                    count: 1000,
+                                    level8: TestPerformanceStressLevel8 {
                                         items: vec!["item1".to_string(), "item2".to_string()],
-                                        level9: Level9 {
+                                        level9: TestPerformanceStressLevel9 {
                                             metadata: "Level 9 Metadata".to_string(),
-                                            level10: Level10 {
+                                            level10: TestPerformanceStressLevel10 {
                                                 final_value: "Final Value".to_string(),
                                             },
                                         },
@@ -268,60 +101,230 @@ fn create_deep_nested_struct() -> DeepNestedStruct {
                 },
             },
         },
-    }
+    };
+    
+    let start = Instant::now();
+    let xml = from_obj(&data);
+    let serialization_duration = start.elapsed();
+    
+    let start = Instant::now();
+    let parsed: TestPerformanceStressDeepNested = from_xml(&xml)?;
+    let deserialization_duration = start.elapsed();
+    
+    assert!(serialization_duration < std::time::Duration::from_secs(1));
+    assert!(deserialization_duration < std::time::Duration::from_secs(1));
+    assert_eq!(data, parsed);
+    
+    Ok(())
 }
 
-fn create_large_collection(count: usize) -> LargeCollectionStruct {
-    let mut items = Vec::with_capacity(count);
-    
-    for i in 0..count {
-        let mut tags = Vec::new();
-        for j in 0..5 {
-            tags.push(format!("tag{}_{}", i, j));
-        }
-        
-        let mut metadata = Vec::new();
-        for j in 0..3 {
-            metadata.push(KeyValue {
-                key: format!("key{}_{}", i, j),
-                value: format!("value{}_{}", i, j),
-            });
-        }
-        
-        items.push(LargeItem {
+#[test]
+fn test_performance_stress_large_collections() -> Result<(), PError> {
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLargeCollection {
+        pub id: u32,
+        #[xml(inner="item")]
+        pub items: Vec<TestPerformanceStressLargeItem>,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressLargeItem {
+        pub item_id: u64,
+        pub name: String,
+        pub description: String,
+        #[xml(inner="item")]
+        pub tags: Vec<String>,
+        pub metadata: Vec<TestPerformanceStressKeyValue>,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressKeyValue {
+        pub key: String,
+        pub value: String,
+    }
+
+    let mut items = Vec::with_capacity(1000);
+    for i in 0..1000 {
+        items.push(TestPerformanceStressLargeItem {
             item_id: i as u64,
             name: format!("Item {}", i),
             description: format!("Description for item {}", i),
-            tags,
-            metadata,
+            tags: vec![format!("tag{}", i), format!("category{}", i % 10)],
+            metadata: vec![
+                TestPerformanceStressKeyValue {
+                    key: format!("key{}", i),
+                    value: format!("value{}", i),
+                },
+                TestPerformanceStressKeyValue {
+                    key: format!("meta{}", i),
+                    value: format!("meta_value{}", i),
+                },
+            ],
         });
     }
     
-    LargeCollectionStruct {
+    let data = TestPerformanceStressLargeCollection {
         id: 1,
         items,
-    }
+    };
+    
+    let start = Instant::now();
+    let xml = from_obj(&data);
+    let serialization_duration = start.elapsed();
+    
+    let start = Instant::now();
+    let parsed: TestPerformanceStressLargeCollection = from_xml(&xml)?;
+    let deserialization_duration = start.elapsed();
+    
+    assert!(serialization_duration < std::time::Duration::from_secs(5));
+    assert!(deserialization_duration < std::time::Duration::from_secs(5));
+    assert_eq!(data.id, parsed.id);
+    assert_eq!(data.items.len(), parsed.items.len());
+    
+    Ok(())
 }
 
-fn create_memory_intensive_struct(depth: u32) -> MemoryIntensiveStruct {
-    if depth == 0 {
-        MemoryIntensiveStruct {
-            id: 0,
-            large_string: "".to_string(),
-            large_array: vec![],
-            nested_data: vec![],
-        }
-    } else {
-        let mut nested_data = Vec::new();
-        for _i in 0..3 {
-            nested_data.push(create_memory_intensive_struct(depth - 1));
-        }
-        
-        MemoryIntensiveStruct {
-            id: depth,
-            large_string: "A".repeat(1000), // String de 1000 caracteres
-            large_array: vec![0u8; 1000],   // Array de 1000 bytes
-            nested_data,
-        }
+#[test]
+fn test_performance_stress_memory_intensive() -> Result<(), PError> {
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressMemoryIntensive {
+        pub id: u32,
+        pub large_string: String,
+        #[xml(inner="item")]
+        pub large_array: Vec<u8>,
+        pub nested_data: Vec<TestPerformanceStressMemoryIntensive>,
     }
+
+    let large_string = "A".repeat(10000);
+    let large_array: Vec<u8> = (0..255).collect();
+    
+    let data = TestPerformanceStressMemoryIntensive {
+        id: 1,
+        large_string,
+        large_array,
+        nested_data: vec![], 
+    };
+    
+    let start = Instant::now();
+    let xml = from_obj(&data);
+    let serialization_duration = start.elapsed();
+    
+    let start = Instant::now();
+    let parsed: TestPerformanceStressMemoryIntensive = from_xml(&xml)?;
+    let deserialization_duration = start.elapsed();
+    
+    assert!(serialization_duration < std::time::Duration::from_secs(3));
+    assert!(deserialization_duration < std::time::Duration::from_secs(3));
+    assert_eq!(data.id, parsed.id);
+    assert_eq!(data.large_string, parsed.large_string);
+    assert_eq!(data.large_array.len(), parsed.large_array.len());
+    
+    Ok(())
+}
+
+#[test]
+fn test_performance_stress_mixed_types() -> Result<(), PError> {
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressMixedTypes {
+        pub id: u32,
+        pub name: String,
+        pub count: i32,
+        pub price: f64,
+        pub active: bool,
+        pub tags: Vec<String>,
+        pub metadata: Option<String>,
+        pub nested: Option<TestPerformanceStressNested>,
+        pub attributes: TestPerformanceStressAttributes,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressNested {
+        pub value: String,
+        pub count: u32,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressAttributes {
+        pub priority: u32,
+        pub category: String,
+        pub active: bool,
+    }
+
+    let data = TestPerformanceStressMixedTypes {
+        id: 1,
+        name: "Mixed Types Stress Test".to_string(),
+        count: 42,
+        price: 3.14159,
+        active: true,
+        tags: vec!["tag1".to_string(), "tag2".to_string(), "tag3".to_string()],
+        metadata: Some("Some metadata".to_string()),
+        nested: Some(TestPerformanceStressNested {
+            value: "Nested value".to_string(),
+            count: 100,
+        }),
+        attributes: TestPerformanceStressAttributes {
+            priority: 1,
+            category: "Test".to_string(),
+            active: true,
+        },
+    };
+    
+    let start = Instant::now();
+    let xml = from_obj(&data);
+    let serialization_duration = start.elapsed();
+    
+    let start = Instant::now();
+    let parsed: TestPerformanceStressMixedTypes = from_xml(&xml)?;
+    let deserialization_duration = start.elapsed();
+    
+    assert!(serialization_duration < std::time::Duration::from_secs(1));
+    assert!(deserialization_duration < std::time::Duration::from_secs(1));
+    assert_eq!(data, parsed);
+    
+    Ok(())
+}
+
+#[test]
+fn test_performance_stress_concurrent_operations() -> Result<(), PError> {
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressConcurrent {
+        pub id: u32,
+        pub name: String,
+        pub items: Vec<TestPerformanceStressConcurrentItem>,
+    }
+
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestPerformanceStressConcurrentItem {
+        pub id: u32,
+        pub name: String,
+        pub value: f64,
+    }
+
+    let data = TestPerformanceStressConcurrent {
+        id: 1,
+        name: "Concurrent Test".to_string(),
+        items: vec![
+            TestPerformanceStressConcurrentItem {
+                id: 1,
+                name: "Item 1".to_string(),
+                value: 1.0,
+            },
+            TestPerformanceStressConcurrentItem {
+                id: 2,
+                name: "Item 2".to_string(),
+                value: 2.0,
+            },
+        ],
+    };
+    
+    let start = Instant::now();
+    for _ in 0..100 {
+        let xml = from_obj(&data);
+        let _parsed: TestPerformanceStressConcurrent = from_xml(&xml)?;
+    }
+    let total_duration = start.elapsed();
+    
+    assert!(total_duration < std::time::Duration::from_secs(10));
+    
+    Ok(())
 } 

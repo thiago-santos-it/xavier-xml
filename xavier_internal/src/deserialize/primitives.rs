@@ -5,26 +5,23 @@ use crate::deserialize::error::PError;
 use crate::deserialize::macro_trait::XmlDeserializable;
 use crate::deserialize::decode::{decode_xml, strip_cdata};
 
-trait Primitive {}
-impl Primitive for i8 {}
-impl Primitive for i16 {}
-impl Primitive for i32 {}
-impl Primitive for i64 {}
-impl Primitive for i128 {}
-impl Primitive for u8 {}
-impl Primitive for u16 {}
-impl Primitive for u32 {}
-impl Primitive for u64 {}
-impl Primitive for u128 {}
-impl Primitive for isize {}
-impl Primitive for usize {}
-impl Primitive for f32 {}
-impl Primitive for f64  {}
-impl Primitive for bool {}
+trait Number {}
+impl Number for i8 {}
+impl Number for i16 {}
+impl Number for i32 {}
+impl Number for i64 {}
+impl Number for i128 {}
+impl Number for u8 {}
+impl Number for u16 {}
+impl Number for u32 {}
+impl Number for u64 {}
+impl Number for u128 {}
+impl Number for isize {}
+impl Number for usize {}
+impl Number for f32 {}
+impl Number for f64  {}
 
-// Function to check for malicious characters
 fn contains_malicious_characters(input: &str) -> bool {
-    // Check for null characters and malicious control characters
     for c in input.chars() {
         match c as u32 {
             0x00..=0x08 | 0x0B | 0x0C | 0x0E..=0x1F | 0x7F => {
@@ -36,9 +33,7 @@ fn contains_malicious_characters(input: &str) -> bool {
     false
 }
 
-// Function to check for malicious hexadecimal entities
 fn contains_malicious_entities(input: &str) -> bool {
-    // Check for malicious hexadecimal entities
     let malicious_patterns = [
         "&#x00;", "&#x01;", "&#x02;", "&#x03;", "&#x04;", "&#x05;", "&#x06;", "&#x07;", "&#x08;",
         "&#x0B;", "&#x0C;", "&#x0E;", "&#x0F;", "&#x10;", "&#x11;", "&#x12;", "&#x13;", "&#x14;",
@@ -55,7 +50,6 @@ fn contains_malicious_entities(input: &str) -> bool {
     false
 }
 
-// Special implementation for String that handles XML entities
 impl XmlDeserializable for String {
     fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Option<Self>, PError> {
         loop {
@@ -103,7 +97,6 @@ impl XmlDeserializable for String {
     }
 }
 
-// Special implementation for char that handles whitespace correctly
 impl XmlDeserializable for char {
     fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Option<Self>, PError> {
         loop {
@@ -141,8 +134,36 @@ impl XmlDeserializable for char {
     }
 }
 
-impl <T: FromStr + Primitive> XmlDeserializable for T
+impl <T: FromStr + Number> XmlDeserializable for T
     where PError: From<<T as FromStr>::Err> {
+    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>)  -> Result<Option<Self>, PError> {
+
+        loop {
+              match reader.read_event() {
+                Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
+                Ok(Event::Eof) => {},
+                Ok(Event::Start(_)) => {},
+                Ok(Event::End(_)) => {  return Ok(Some("0".parse()?)); },
+                Ok(Event::Empty(_)) => { return Ok(Some("0".parse()?)); },
+                Ok(Event::Comment(_)) => {},
+                Ok(Event::Text(event)) => {
+                    let raw_string = String::from_utf8(event.to_vec())?;
+                    return if raw_string.is_empty() { Ok(Some("0".parse()?)) } else { Ok(Some(raw_string.parse()?)) };
+                },
+                Ok(Event::CData(event)) => {
+                    let raw_string = String::from_utf8(event.to_vec())?;
+                    return if raw_string.is_empty() { Ok(Some("0".parse()?)) } else { Ok(Some(raw_string.parse()?)) };
+                },
+                Ok(Event::Decl(_)) => {},
+                Ok(Event::PI(_)) => {},
+                Ok(Event::DocType(_)) => {},
+            }
+        }
+    }
+}
+
+
+impl XmlDeserializable for bool {
     fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>)  -> Result<Option<Self>, PError> {
         loop {
             match reader.read_event() {

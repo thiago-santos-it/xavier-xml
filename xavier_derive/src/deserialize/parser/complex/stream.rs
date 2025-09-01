@@ -37,7 +37,9 @@ impl XmlComplex {
 
             loop {
                 match reader.read_event() {
-                    Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
+                    Err(error) =>  {
+                        return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error)))
+                    },
                     Ok(::xavier::quick_xml::events::Event::Start(event)) => {
                         let xa_tag_name = String::from_utf8(event.name().0.to_vec())?;
 

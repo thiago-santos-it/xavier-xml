@@ -27,7 +27,10 @@ impl ToTokens for SiblingSetter {
                         #field.get_or_insert_with(Vec::new).push(t_value.unwrap());
                         continue;
                     },
-                    Err(err) => return Err(PError::new(&format!("Error parsing XML: {:?}", err))),
+                    Err(err) => {
+                        let msg = "Error parsing XML object";
+                        return Err(PError::new(&format!("{}{}", if format!("{}", err).starts_with(msg) { "" } else { msg }, err )))
+                    },
                 }
             }
         })
