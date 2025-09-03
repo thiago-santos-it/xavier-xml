@@ -11,7 +11,7 @@ impl XmlSimpleTag {
         let meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
         let tag = XmlNames::root(&input, meta_info.as_ref());
         quote! {
-            let xml = format!("<{}>{}</{}>", #tag, &self.0.to_xml(xa_tag_name, false, false), #tag).to_string();
+            let xml = format!("<{}>{}</{}>", #tag, &self.0.to_xml(false, false), #tag).to_string();
         }
     }
 }

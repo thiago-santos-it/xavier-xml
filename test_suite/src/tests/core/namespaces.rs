@@ -46,7 +46,7 @@ fn test_namespace_handling_with_namespaces() -> Result<(), PError> {
 
     let xml = r#"
     <xml:test_namespace_complex
-            xmlns:xml="http:
+            xmlns:xml="http://www.w3.org/1999/xml"
             xmlns:xhtml="http://www.w3.org/1999/xhtml">
         <xml:justString>Some Text</xml:justString>
         <xml:someInt>10</xml:someInt>

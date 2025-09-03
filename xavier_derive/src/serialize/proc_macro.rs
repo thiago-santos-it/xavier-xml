@@ -27,12 +27,12 @@ pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         impl #impl_generics xavier::serialize::macro_trait::XmlSerializable for #object_name #ty_generics #where_clause {
-            fn to_xml(&self, xa_tag_name: Option<&str>, xa_headless: bool, xa_root: bool) -> String {
+            fn to_xml(&self, xa_headless: bool, xa_root: bool) -> String {
                 #xml_code
             }
         }
         impl xavier::serialize::macro_trait::XmlSerializable for Box<#object_name> {
-            fn to_xml(&self, xa_tag_name: Option<&str>, xa_headless: bool, xa_root: bool) -> String {
+            fn to_xml(&self, xa_headless: bool, xa_root: bool) -> String {
                 #xml_code
             }
         }

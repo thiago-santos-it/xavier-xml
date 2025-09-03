@@ -22,21 +22,21 @@ impl ToTokens for XmlTagElement {
                         if self.#field.is_none()  {
                             "".to_string()
                         } else {
-                            format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(None, xa_headless, false), #name)
+                            format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(xa_headless, false), #name)
                         }
                     }
                 } else {
-                    quote! { format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(None, xa_headless, false), #name) }
+                    quote! { format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(xa_headless, false), #name) }
                 }
             },
             XmlTagElement::Complex(field, extensions) =>  {
                 quote! {
-                    format!("{}{}", #extensions, self.#field.to_xml(xa_tag_name, xa_headless, false))
+                    format!("{}{}", #extensions, self.#field.to_xml(xa_headless, false))
                 }
             },
             XmlTagElement::Value(field, extensions) =>  {
                 quote! {
-                    format!("{}{}", #extensions, self.#field.to_xml(None, xa_headless, false))
+                    format!("{}{}", #extensions, self.#field.to_xml(xa_headless, false))
                 }
             },
             XmlTagElement::Collection(field, ty, tag_name, inner_name, extensions) => {
@@ -62,7 +62,7 @@ impl ToTokens for XmlTagElement {
                         if render {
                             collection_xml.push_str(&format!("<{}>", #tag_name));
                             for item in xa_items {
-                                collection_xml.push_str(&format!("<{}>{}</{}>", #inner_name, item.to_xml(None, true, false), #inner_name));
+                                collection_xml.push_str(&format!("<{}>{}</{}>", #inner_name, item.to_xml(true, false), #inner_name));
                             }
                             collection_xml.push_str(&format!("</{}>", #tag_name));
                             format!("{}{}", #extensions, collection_xml)

@@ -52,7 +52,7 @@ fn test_xmlns_attributes_with_namespaces() -> Result<(), PError> {
 
     let xml = r#"
     <TestXmlnsWithNamespaces
-            xmlns:xhtml="http:
+            xmlns:xhtml="http://www.w3.org/1999/xhtml"
             xmlns:xhtml2="http://www.w3.org/1999/xhtml"
             some_string="Some text"
             some_int="11">
@@ -81,7 +81,7 @@ fn test_xmlns_attributes_multiple_namespaces() -> Result<(), PError> {
 
     let xml = r#"
     <TestXmlnsMultipleNamespaces
-            xmlns:app="http:
+            xmlns:app="http://example.com/app"
             xmlns:data="http://example.com/data"
             xmlns:meta="http://example.com/meta">
         <id>1</id>

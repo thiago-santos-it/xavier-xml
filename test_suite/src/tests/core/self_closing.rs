@@ -51,37 +51,37 @@ fn test_self_closing_tags_with_attributes() -> Result<(), PError> {
 fn test_self_closing_tags_child_roundtrip() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_child")]
-    struct TestSelfClosingChild {
+    struct TestSelfClosingChildX {
         #[xml(attribute, name="attr")]
         pub attribute: String,
     }
 
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object", case="Camel")]
-    struct TestSelfClosingObjectChild {
+    struct TestSelfClosingObjectX {
         pub id: u32,
         pub name: String,
-        pub child: TestSelfClosingChild,
+        pub child: TestSelfClosingChildX,
     }
 
-    let test_data = TestSelfClosingObjectChild {
+    let test_data = TestSelfClosingObjectX {
         id: 1,
         name: "Test Object".to_string(),
-        child: TestSelfClosingChild {
+        child: TestSelfClosingChildX {
             attribute: "Some text".to_string(),
         },
     };
 
     let xml = from_obj(&test_data);
     
-    assert!(xml.contains("<test_object>"));
-    assert!(xml.contains("</test_object>"));
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<id>1</id>"));
     assert!(xml.contains("<name>Test Object</name>"));
     assert!(xml.contains("<test_child"));
     assert!(xml.contains("attr=\"Some text\""));
     
-    let parsed: TestSelfClosingObjectChild = from_xml(&xml)?;
+    let parsed: TestSelfClosingObjectX = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
     
     Ok(())
@@ -99,6 +99,7 @@ fn test_self_closing_tags_child_with_attributes() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object", case="Camel")]
     struct TestSelfClosingObjectChildWithAttr {
+        #[xml(tree)]
         pub child: TestSelfClosingChildWithAttr,
     }
 

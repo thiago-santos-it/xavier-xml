@@ -22,7 +22,7 @@ pub use xavier_internal::deserialize;
 pub use ::quick_xml;
 
 pub fn from_obj<T: XmlSerializable>(obj: &T) -> String {
-    obj.to_xml(None, false, true)
+    obj.to_xml(false, true)
 }
 
 pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
