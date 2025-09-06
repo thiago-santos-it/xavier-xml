@@ -9,7 +9,8 @@ use crate::common::naming::case::CaseFromStr;
 pub struct XmlNames;
 
 impl XmlNames {
-    pub fn root(input: &DeriveInput, meta: Option<&MetaInfo>) -> String {
+
+    pub fn root(input: &DeriveInput, meta: Option<&MetaInfo>) -> LitStr {
         let mut name = None;
         if let Some(meta) = meta {
             name = Some(XmlNames::compose_name(
@@ -22,31 +23,25 @@ impl XmlNames {
                 Case::value_from_str(&meta.get_or("case", "".to_string())),
             ));
         }
-        name.unwrap_or(input.ident.to_string())
+        LitStr::new(&name.unwrap_or(input.ident.to_string()), proc_macro2::Span::call_site())
     }
 
-    pub fn tag(field_name: &Ident, obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> LitStr {
-        let empty = MetaInfo::empty();
-        let obj_meta = obj_meta.unwrap_or(&empty);
-        let field_meta = field_meta.unwrap_or(&empty);
-
-        let ignore_case = &field_meta.get_or("ignore_case", "".to_string());
-        let case = if ignore_case == "true" {
-            None
+    pub fn obj_name(field_name: &Ident, obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> Option<LitStr> {
+        if let Some(name) = Self::inner(field_name, obj_meta, field_meta) {
+            Some(name)
+        } else if let Some(name) = Self::tag(field_name, obj_meta, field_meta) {
+            Some(name)
         } else {
-            Case::value_from_str(&obj_meta.get_or("case", "".to_string()))
-        };
+            None
+        }
+    }
 
-        let name = XmlNames::compose_name(
-            &obj_meta.get_or("ns", "".to_string()),
-            &field_meta.get_or("name", field_name.to_string()),
-            &obj_meta.get_or("prefix", "".to_string()),
-            &obj_meta.get_or("suffix", "".to_string()),
-            !field_meta.contains("no_prefix"),
-            !field_meta.contains("no_suffix"),
-            case,
-        );
-        LitStr::new(&name, proc_macro2::Span::call_site())
+    pub fn tag(field_name: &Ident, obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> Option<LitStr> {
+        Self::name_from_meta( "name", Some(field_name.to_string()), obj_meta, field_meta)
+    }
+
+    pub fn inner(field_name: &Ident, obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> Option<LitStr> {
+        Self::name_from_meta("inner", None, obj_meta, field_meta)
     }
 
     pub fn attribute(attr_name: &Ident, obj_meta: Option<&MetaInfo>, attr_meta: &MetaInfo) -> LitStr {
@@ -70,6 +65,34 @@ impl XmlNames {
             case,
         );
         LitStr::new(&name, proc_macro2::Span::call_site())
+    }
+
+    fn name_from_meta(meta_name: &str, default: Option<String>, obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> Option<LitStr> {
+        let empty = MetaInfo::empty();
+        let obj_meta = obj_meta.unwrap_or(&empty);
+        let field_meta = field_meta.unwrap_or(&empty);
+
+        if !field_meta.contains(meta_name) && default.is_none() {
+            return None;
+        };
+
+        let ignore_case = &field_meta.get_or("ignore_case", "".to_string());
+        let case = if ignore_case == "true" {
+            None
+        } else {
+            Case::value_from_str(&obj_meta.get_or("case", "".to_string()))
+        };
+
+        let name = XmlNames::compose_name(
+            &obj_meta.get_or("ns", "".to_string()),
+            &field_meta.get_or(meta_name, default.unwrap_or("".to_string())),
+            &obj_meta.get_or("prefix", "".to_string()),
+            &obj_meta.get_or("suffix", "".to_string()),
+            !field_meta.contains("no_prefix"),
+            !field_meta.contains("no_suffix"),
+            case,
+        );
+        Some(LitStr::new(&name, proc_macro2::Span::call_site()))
     }
 
     fn compose_name(ns: &str, name: &str, prefix: &str, suffix: &str, use_suffix: bool, use_prefix: bool, case: Option<Case>) -> String {

@@ -2,11 +2,11 @@
 
 ## 0.1.7
 
-More tested with broader coverage.
+- More tested with broader coverage.
 
-Added support for #[xml(skip)] on primitive fields (field must be Option<T>).
+- Added support for #[xml(skip)] on primitive fields (field must be Option<T>).
 
-Support for #[xml(inner = "tag")] to deserialize/serialize Vec<primitive> in the form:
+- Support for #[xml(inner = "tag")] to deserialize/serialize Vec<primitive> in the form:
 ```xml
 <tags>
     <tag>...</tag>
@@ -15,9 +15,14 @@ Support for #[xml(inner = "tag")] to deserialize/serialize Vec<primitive> in the
 </tags>
 ```
 
-Improved interpretation of smart pointers (Box, Rc, Arc, ...) within field chains, enabling greater flexibility.
+- Improved interpretation of smart pointers (Box, Rc, Arc, ...) within field chains, enabling greater flexibility.
 
-TODO: Test Case Prefix and Force inner error changing internal XML tag name 
+- Naming precedence:
+  - #0  #[xml(inner="")] applied to field with owner struct or direct field case and prefix
+  - #1  #[xml(name="")] applied to field with field struct or direct field case and prefix
+  - #2  #[xml(name="")] applied to structs with local case and prefix
+  - #3  field name with local case and prefix
+
 
 > This is a new lib so please report all bugs and help us!
 

@@ -23,7 +23,7 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
     let object_name = &input.ident;
 
     let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
-    let xml_tag_name = LitStr::new(&XmlNames::root(&input, obj_meta_info.as_ref()), Span::call_site());
+    //let xml_tag_name = XmlNames::root(&input, obj_meta_info.as_ref());
 
     let xml_code = match &input.data {
         Struct(obj) => match &obj.fields {

@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::{quote};
-use syn::{DeriveInput, LitBool, LitStr};
+use syn::{DeriveInput, LitBool};
 use proc_macro2::Span;
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
@@ -15,7 +15,7 @@ impl XmlComplexTag {
     pub fn parse(input: &DeriveInput) -> TokenStream {
         let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
         let elements = XmlElementDef::parse(&input, obj_meta_info.as_ref());
-        let tag = LitStr::new(&XmlNames::root(&input, obj_meta_info.as_ref()), Span::call_site());
+       // let tag = XmlNames::root(&input, obj_meta_info.as_ref());
         let dtd = XmlDTD::parse(&input, &tag);
         let pi = XmlPI::parse(&input);
         let declaration = XmlDeclaration::parse(&input, &tag);
