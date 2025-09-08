@@ -73,16 +73,20 @@ impl TokenSegments {
                         } else if field_meta.contains("value") {
                             value_setters.push(ValueSetter { field: ident.clone(), unwrapped_type: TypeParser::unwrapped_type(&field.ty) })
                         } else if is_sibling {
+                            let field_tag_name = XmlNames::tag(&ident, obj_meta_info, Some(&field_meta));
                             sibling_setters.push(SiblingSetter {
                                 name: ident.clone(),
+                                tag_name: field_tag_name,
                                 inner_type: TypeParser::ty_from_vec(&TypeParser::unbox_and_unwrap_type(&field.ty)),
                             });
                         } else {
                             if !field_meta.contains("skip") {
                                 let field_tag_name = XmlNames::tag(&ident, obj_meta_info, Some(&field_meta));
+                                let inner_tag_name = XmlNames::inner(obj_meta_info, Some(&field_meta));
                                 field_setters.push(FieldSetter {
                                     name: ident.clone(),
                                     is_flatten,
+                                    inner_tag_name,
                                     tag_name: field_tag_name,
                                     inner_type: TypeParser::unbox_and_unwrap_type(&field.ty),
                                 });

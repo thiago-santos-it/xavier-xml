@@ -196,13 +196,14 @@ fn test_collections_sibling_structures() -> Result<(), PError> {
     struct TestCollectionsSiblings {
         pub id: u32,
         pub name: String,
-        pub siblings: Vec<TestCollectionsSibling>,
+        #[xml(flatten)]
+        pub sibling: Vec<TestCollectionsSibling>
     }
 
     let test_data = TestCollectionsSiblings {
         id: 1,
         name: "Siblings Test".to_string(),
-        siblings: vec![
+        sibling: vec![
             TestCollectionsSibling { id: 1, name: "Sibling 1".to_string() },
             TestCollectionsSibling { id: 2, name: "Sibling 2".to_string() },
             TestCollectionsSibling { id: 3, name: "Sibling 3".to_string() },
@@ -215,15 +216,13 @@ fn test_collections_sibling_structures() -> Result<(), PError> {
     assert!(xml.contains("</TestCollectionsSiblings>"));
     assert!(xml.contains("<id>1</id>"));
     assert!(xml.contains("<name>Siblings Test</name>"));
-    assert!(xml.contains("<siblings>"));
-    assert!(xml.contains("</siblings>"));
-    assert!(xml.contains("<TestCollectionsSibling>"));
-    assert!(xml.contains("</TestCollectionsSibling>"));
+    assert!(xml.contains("<sibling>"));
+    assert!(xml.contains("</sibling>"));
     
     let parsed: TestCollectionsSiblings = from_xml(&xml)?;
     assert_eq!(test_data.id, parsed.id);
     assert_eq!(test_data.name, parsed.name);
-    assert_eq!(test_data.siblings.len(), parsed.siblings.len());
+    assert_eq!(test_data.sibling.len(), parsed.sibling.len());
     
     Ok(())
 }

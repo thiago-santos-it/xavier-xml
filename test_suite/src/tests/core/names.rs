@@ -201,7 +201,7 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
 fn test_name_precedence_inner_vec() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object", case="Camel")]
-    struct TestNamePrecedence {
+    struct TestNamePrecedenceInnerVec {
         #[xml(name="custom_id")]
         pub id: u32,
         #[xml(name="name")]
@@ -219,7 +219,7 @@ fn test_name_precedence_inner_vec() -> Result<(), PError> {
         pub name: String,
     }
 
-    let test_data = TestNamePrecedence {
+    let test_data = TestNamePrecedenceInnerVec {
         id: 1,
         name: "John Doe".to_string(),
         child: vec![TestNamePrecedenceChildInnerVec { id: 2, name: String::from("John Doe Jr") }],
@@ -235,7 +235,7 @@ fn test_name_precedence_inner_vec() -> Result<(), PError> {
     assert!(xml.contains("<goodChild>"));
     assert!(!xml.contains("<testObjectChild>"));
 
-    let parsed: TestNamePrecedence = from_xml(&xml)?;
+    let parsed: TestNamePrecedenceInnerVec = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
 
     Ok(())
