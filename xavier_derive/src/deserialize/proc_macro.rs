@@ -48,12 +48,12 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
         }
     };
 
-    let dbg_object = "TestNamePrecedenceInnerVec";
-    if object_name == dbg_object {
-        let syntax: File = parse2(TokenStream::from(expanded.clone()).into()).expect("Failed to parse tokens as a file");
-        let formatted = prettyplease::unparse(&syntax);
-        println!("{}", formatted);
-    }
+    // let dbg_object = "TestNamePrecedenceInnerVec";
+    // if object_name == dbg_object {
+    //     let syntax: File = parse2(TokenStream::from(expanded.clone()).into()).expect("Failed to parse tokens as a file");
+    //     let formatted = prettyplease::unparse(&syntax);
+    //     println!("{}", formatted);
+    // }
 
     TokenStream::from(expanded)
 }

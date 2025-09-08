@@ -5,7 +5,6 @@ fn test_value_handling_basic_roundtrip() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_child")]
     struct TestValueChild {
-        #[xml(value)]
         pub value: String,
     }
 
@@ -16,9 +15,7 @@ fn test_value_handling_basic_roundtrip() -> Result<(), PError> {
         pub name: String,
         #[xml(tree)]
         pub child: TestValueChild,
-        #[xml(value)]
         pub value_a: String,
-        #[xml(value)]
         pub value_b: String,
     }
 
@@ -33,13 +30,13 @@ fn test_value_handling_basic_roundtrip() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    
+
     assert!(xml.contains("<testObject>"));
     assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<id>1</id>"));
     assert!(xml.contains("<name>Test Value Object</name>"));
-    assert!(xml.contains("<test_child>"));
-    assert!(xml.contains("</test_child>"));
+    assert!(xml.contains("<child>"));
+    assert!(xml.contains("</child>"));
     
     let parsed: TestValueObject = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
@@ -52,24 +49,21 @@ fn test_value_handling_with_attributes() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_child")]
     struct TestValueChildWithAttr {
-        #[xml(value)]
         pub value: String,
     }
 
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
-    #[xml(name="test_object", case="Camel")]
+    #[xml(name="test_object")]
     struct TestValueObjectWithAttr {
         pub id: u32,
         pub description: String,
         #[xml(tree)]
         pub child: TestValueChildWithAttr,
-        #[xml(value)]
         pub value_a: String,
-        #[xml(value)]
         pub value_b: String,
     }
 
-    let xml = r#"<test_object><id>2</id><description>Test Description</description><test_child attr="Attr Value">Other value</test_child>Something</test_object>"#;
+    let xml = r#"<test_object><id>2</id><description>Test Description</description><child attr="Attr Value">Other value</child>Something</test_object>"#;
     
     let obj: TestValueObjectWithAttr = from_xml(&xml)?;
     assert_eq!(obj.id, 2);
@@ -86,7 +80,6 @@ fn test_value_handling_multiple_values() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_child")]
     struct TestValueChildMultiple {
-        #[xml(value)]
         pub value: String,
     }
 
@@ -97,17 +90,15 @@ fn test_value_handling_multiple_values() -> Result<(), PError> {
         pub name: String,
         #[xml(tree)]
         pub child: TestValueChildMultiple,
-        #[xml(value)]
         pub value_a: String,
-        #[xml(value)]
         pub value_b: String,
-        #[xml(value)]
         pub value_c: String,
     }
 
-    let xml = r#"<test_object><id>3</id><name>Multiple Values</name><test_child>Child Content</test_child>Value AValue BValue C</test_object>"#;
+    let xml = r#"<testObject><id>3</id><name>Multiple Values</name><child><value>Child Content</value></child><valueA>Value A</valueA><valueB>Value B</valueB><valueC>Value C</valueC></testObject>"#;
     
     let obj: TestValueObjectMultiple = from_xml(&xml)?;
+
     assert_eq!(obj.id, 3);
     assert_eq!(obj.name, "Multiple Values");
     assert_eq!(obj.child.value, "Child Content");

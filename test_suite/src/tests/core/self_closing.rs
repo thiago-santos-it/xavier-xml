@@ -61,6 +61,7 @@ fn test_self_closing_tags_child_roundtrip() -> Result<(), PError> {
     struct TestSelfClosingObjectX {
         pub id: u32,
         pub name: String,
+        #[xml(tree)]
         pub child: TestSelfClosingChildX,
     }
 
@@ -73,12 +74,12 @@ fn test_self_closing_tags_child_roundtrip() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    
+
     assert!(xml.contains("<testObject>"));
     assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<id>1</id>"));
     assert!(xml.contains("<name>Test Object</name>"));
-    assert!(xml.contains("<test_child"));
+    assert!(xml.contains("<child"));
     assert!(xml.contains("attr=\"Some text\""));
     
     let parsed: TestSelfClosingObjectX = from_xml(&xml)?;
@@ -103,7 +104,7 @@ fn test_self_closing_tags_child_with_attributes() -> Result<(), PError> {
         pub child: TestSelfClosingChildWithAttr,
     }
 
-    let xml = r#"<test_object><test_child attr="Some text"/></test_object>"#;
+    let xml = r#"<testObject><child attr="Some text"/></testObject>"#;
     let obj: TestSelfClosingObjectChildWithAttr = from_xml(&xml)?;
     assert_eq!(obj.child.attribute, "Some text");
     
@@ -123,12 +124,12 @@ fn test_self_closing_tags_empty_child() -> Result<(), PError> {
         pub child: Option<TestSelfClosingChildEmpty>,
     }
 
-    let xml = r#"<test_object><id>1</id><test_child/></test_object>"#;
+    let xml = r#"<testObject><id>1</id><child/></testObject>"#;
     let obj: TestSelfClosingObjectEmptyChild = from_xml(&xml)?;
     assert_eq!(obj.id, 1);
     assert_eq!(obj.child.is_some(), true);
 
-    let xml = r#"<test_object><id>2</id></test_object>"#;
+    let xml = r#"<testObject><id>2</id></testObject>"#;
     let obj: TestSelfClosingObjectEmptyChild = from_xml(&xml)?;
     assert_eq!(obj.id, 2);
     assert_eq!(obj.child.is_none(), true);
