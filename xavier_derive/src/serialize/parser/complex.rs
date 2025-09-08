@@ -15,7 +15,7 @@ impl XmlComplexTag {
     pub fn parse(input: &DeriveInput) -> TokenStream {
         let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
         let elements = XmlElementDef::parse(&input, obj_meta_info.as_ref());
-       // let tag = XmlNames::root(&input, obj_meta_info.as_ref());
+        let tag = XmlNames::root(&input, obj_meta_info.as_ref());
         let dtd = XmlDTD::parse(&input, &tag);
         let pi = XmlPI::parse(&input);
         let declaration = XmlDeclaration::parse(&input, &tag);

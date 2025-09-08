@@ -7,7 +7,7 @@ use syn::Type;
 pub struct FieldSetter {
     pub is_flatten: bool,
     pub name: Ident,
-    pub tag_name: LitStr,
+    pub tag_name: Option<LitStr>,
     pub inner_type: Type,
 }
 

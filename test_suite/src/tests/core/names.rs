@@ -115,3 +115,169 @@ fn test_name_handling_custom_names() -> Result<(), PError> {
     
     Ok(())
 }
+
+
+#[test]
+fn test_name_precedence_tag_first() -> Result<(), PError> {
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object", case="Camel")]
+    struct TestNamePrecedence {
+        #[xml(name="custom_id")]
+        pub id: u32,
+        #[xml(name="name")]
+        pub name: String,
+        #[xml(name="my_child")]
+        pub child: TestNamePrecedenceChild
+    }
+
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object_child", case="Camel")]
+    struct TestNamePrecedenceChild {
+        #[xml(name="child_id")]
+        pub id: u32,
+        #[xml(name="child_name")]
+        pub name: String,
+    }
+
+    let test_data = TestNamePrecedence {
+        id: 1,
+        name: "John Doe".to_string(),
+        child: TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") },
+    };
+
+    let xml = from_obj(&test_data);
+    println!("{:?}", xml);
+    Ok(())
+}
+
+#[test]
+fn test_name_precedence_field_second() -> Result<(), PError> {
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object", case="Camel")]
+    struct TestNamePrecedence {
+        #[xml(name="custom_id")]
+        pub id: u32,
+        #[xml(name="name")]
+        pub name: String,
+        pub child: TestNamePrecedenceChild
+    }
+
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object_child", case="Camel")]
+    struct TestNamePrecedenceChild {
+        #[xml(name="child_id")]
+        pub id: u32,
+        #[xml(name="child_name")]
+        pub name: String,
+    }
+
+    let test_data = TestNamePrecedence {
+        id: 1,
+        name: "John Doe".to_string(),
+        child: TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") },
+    };
+
+    let xml = from_obj(&test_data);
+    println!("{:?}", xml);
+    Ok(())
+}
+
+
+#[test]
+fn test_name_precedence_inner_vec() -> Result<(), PError> {
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object", case="Camel")]
+    struct TestNamePrecedence {
+        #[xml(name="custom_id")]
+        pub id: u32,
+        #[xml(name="name")]
+        pub name: String,
+        #[xml(name="my_child", inner="good_child")]
+        pub child: Vec<TestNamePrecedenceChild>
+    }
+
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object_child", case="Camel")]
+    struct TestNamePrecedenceChild {
+        #[xml(name="child_id")]
+        pub id: u32,
+        #[xml(name="child_name")]
+        pub name: String,
+    }
+
+    let test_data = TestNamePrecedence {
+        id: 1,
+        name: "John Doe".to_string(),
+        child: vec![TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") }],
+    };
+
+    let xml = from_obj(&test_data);
+    println!("{:?}", xml);
+    Ok(())
+}
+
+#[test]
+fn test_name_precedence_struct_vec() -> Result<(), PError> {
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object", case="Camel")]
+    struct TestNamePrecedence {
+        #[xml(name="custom_id")]
+        pub id: u32,
+        #[xml(name="name")]
+        pub name: String,
+        #[xml(name="my_child")]
+        pub child: Vec<TestNamePrecedenceChild>
+    }
+
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object_child", case="Camel")]
+    struct TestNamePrecedenceChild {
+        #[xml(name="child_id")]
+        pub id: u32,
+        #[xml(name="child_name")]
+        pub name: String,
+    }
+
+    let test_data = TestNamePrecedence {
+        id: 1,
+        name: "John Doe".to_string(),
+        child: vec![TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") }],
+    };
+
+    let xml = from_obj(&test_data);
+    println!("{:?}", xml);
+    Ok(())
+}
+
+
+#[test]
+fn test_name_precedence_parent_field_vec() -> Result<(), PError> {
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object", case="Camel")]
+    struct TestNamePrecedence {
+        #[xml(name="custom_id")]
+        pub id: u32,
+        #[xml(name="name")]
+        pub name: String,
+        pub child: Vec<TestNamePrecedenceChild>
+    }
+
+    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
+    #[xml(name="test_object_child", case="Camel")]
+    struct TestNamePrecedenceChild {
+        #[xml(name="child_id")]
+        pub id: u32,
+        #[xml(name="child_name")]
+        pub name: String,
+    }
+
+    let test_data = TestNamePrecedence {
+        id: 1,
+        name: "John Doe".to_string(),
+        child: vec![TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") }],
+    };
+
+    let xml = from_obj(&test_data);
+    println!("{:?}", xml);
+    Ok(())
+}

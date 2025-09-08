@@ -11,7 +11,7 @@ impl XmlComplex {
     pub fn parse(input: &DeriveInput) -> TokenStream {
 
         let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
-//        let xml_tag_name = XmlNames::obj_name(&input, obj_meta_info.as_ref());
+        let xml_tag_name = XmlNames::root(&input, obj_meta_info.as_ref());
 
         let tokens = TokenSegments::tokens_from(input, obj_meta_info.as_ref());
         let declarations = tokens.declarations;

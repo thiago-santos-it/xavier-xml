@@ -26,21 +26,11 @@ impl XmlNames {
         LitStr::new(&name.unwrap_or(input.ident.to_string()), proc_macro2::Span::call_site())
     }
 
-    pub fn obj_name(field_name: &Ident, obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> Option<LitStr> {
-        if let Some(name) = Self::inner(field_name, obj_meta, field_meta) {
-            Some(name)
-        } else if let Some(name) = Self::tag(field_name, obj_meta, field_meta) {
-            Some(name)
-        } else {
-            None
-        }
-    }
-
     pub fn tag(field_name: &Ident, obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> Option<LitStr> {
         Self::name_from_meta( "name", Some(field_name.to_string()), obj_meta, field_meta)
     }
 
-    pub fn inner(field_name: &Ident, obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> Option<LitStr> {
+    pub fn inner(obj_meta: Option<&MetaInfo>, field_meta: Option<&MetaInfo>) -> Option<LitStr> {
         Self::name_from_meta("inner", None, obj_meta, field_meta)
     }
 

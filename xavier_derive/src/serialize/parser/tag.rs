@@ -89,17 +89,17 @@ impl XmlTagElement {
                     Some(XmlTagElement::Complex(field, extension))
                 } else if meta.contains("flatten") || meta.contains("value") {
                     Some(XmlTagElement::Value(field, extension))
-                } else if meta.contains("inner") {
-                    let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
-                    let inner_name = LitStr::new(&meta.get_or("inner", "item".to_string()), proc_macro2::Span::call_site());
+                } else if meta.contains("inner") { //TODO Work on these question marks
+                    let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta))?;
+                    let inner_name = XmlNames::inner(obj_meta, Some(&meta))?;
                     Some(XmlTagElement::Collection(field, ty, tag_name, inner_name, extension))
                 } else {
-                    let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta));
+                    let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta))?;
                     Some(XmlTagElement::Simple(field, ty, tag_name, extension))
                 }
             }
         } else {
-            let tag_name = XmlNames::tag(&field, obj_meta, None);
+            let tag_name = XmlNames::tag(&field, obj_meta, None)?;
             return Some(XmlTagElement::Simple(field, ty, tag_name, extension))
         }
         None
