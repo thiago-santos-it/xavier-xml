@@ -17,12 +17,6 @@
 
 - Improved interpretation of smart pointers (Box, Rc, Arc, ...) within field chains, enabling greater flexibility.
 
-- Naming precedence:
-  - #1  #[xml(name="")] applied to field with field struct or direct field case and prefix
-  - #2  #[xml(name="")] applied to structs with local case and prefix
-  - #3  field name with local case and prefix
-
-
 > This is a new lib so please report all bugs and help us!
 
 # Who is Xavier?
@@ -323,7 +317,6 @@ Configuring nested struct as this:
 struct Child {
     #[xml(attribute, name="attr")]
     pub attribute: String,
-    #[xml(value)]  
     pub value: String,
 }
 

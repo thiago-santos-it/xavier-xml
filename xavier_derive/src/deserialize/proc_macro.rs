@@ -1,9 +1,8 @@
 
 use proc_macro::TokenStream;
-use proc_macro2::Span;
 use quote::quote;
 use syn::Data::{Enum, Struct, Union};
-use syn::{LitStr, parse_macro_input};
+use syn::parse_macro_input;
 use syn::{DataEnum, DataUnion, DeriveInput, Error, Fields, FieldsNamed, FieldsUnnamed};
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;

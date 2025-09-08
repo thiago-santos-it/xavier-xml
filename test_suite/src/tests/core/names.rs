@@ -126,7 +126,7 @@ fn test_name_precedence_tag_first() -> Result<(), PError> {
         pub id: u32,
         #[xml(name="name")]
         pub name: String,
-        #[xml(name="my_child")]
+        #[xml(tree, name="my_child")]
         pub child: TestNamePrecedenceChild
     }
 
@@ -147,6 +147,15 @@ fn test_name_precedence_tag_first() -> Result<(), PError> {
 
     let xml = from_obj(&test_data);
     println!("{:?}", xml);
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
+    assert!(xml.contains("<customId>1</customId>"));
+    assert!(xml.contains("<name>John Doe</name>"));
+    assert!(xml.contains("<myChild>"));
+    assert!(!xml.contains("<testObjectChild>"));
+
+    //let parsed: TestNamePrecedence = from_xml(&xml)?;
+    //assert_eq!(test_data, parsed);
     Ok(())
 }
 
@@ -159,6 +168,7 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
         pub id: u32,
         #[xml(name="name")]
         pub name: String,
+        #[xml(tree)]
         pub child: TestNamePrecedenceChild
     }
 
@@ -178,7 +188,13 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    println!("{:?}", xml);
+
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
+    assert!(xml.contains("<customId>1</customId>"));
+    assert!(xml.contains("<name>John Doe</name>"));
+    assert!(xml.contains("<child>"));
+    assert!(!xml.contains("<testObjectChild>"));
     Ok(())
 }
 
@@ -212,7 +228,14 @@ fn test_name_precedence_inner_vec() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    println!("{:?}", xml);
+
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
+    assert!(xml.contains("<customId>1</customId>"));
+    assert!(xml.contains("<name>John Doe</name>"));
+    assert!(xml.contains("<myChild>"));
+    assert!(xml.contains("<goodChild>"));
+    assert!(!xml.contains("<testObjectChild>"));
     Ok(())
 }
 
@@ -245,7 +268,12 @@ fn test_name_precedence_struct_vec() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    println!("{:?}", xml);
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
+    assert!(xml.contains("<customId>1</customId>"));
+    assert!(xml.contains("<name>John Doe</name>"));
+    assert!(xml.contains("<myChild>"));
+    assert!(xml.contains("<testObjectChild>"));
     Ok(())
 }
 
@@ -279,5 +307,11 @@ fn test_name_precedence_parent_field_vec() -> Result<(), PError> {
 
     let xml = from_obj(&test_data);
     println!("{:?}", xml);
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
+    assert!(xml.contains("<customId>1</customId>"));
+    assert!(xml.contains("<name>John Doe</name>"));
+    assert!(xml.contains("<child>"));
+    assert!(xml.contains("<testObjectChild>"));
     Ok(())
 }

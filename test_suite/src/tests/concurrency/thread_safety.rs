@@ -31,7 +31,7 @@ fn test_thread_safety_basic_parsing() -> Result<(), PError> {
     let results = Arc::new(Mutex::new(Vec::new()));
     let success_counter = Arc::new(AtomicUsize::new(0));
     
-    for i in 0..20 {
+    for count in 0..20 {
         let xml_clone = Arc::clone(&xml_arc);
         let results_clone = Arc::clone(&results);
         let counter_clone = Arc::clone(&success_counter);
@@ -42,7 +42,7 @@ fn test_thread_safety_basic_parsing() -> Result<(), PError> {
                 counter_clone.fetch_add(1, Ordering::Relaxed);
             }
             let mut results_guard = results_clone.lock().unwrap();
-            results_guard.push((i, result));
+            results_guard.push((count, result));
         });
         
         handles.push(handle);
@@ -114,7 +114,7 @@ fn test_thread_safety_complex_nested_structures() -> Result<(), PError> {
     let results = Arc::new(Mutex::new(Vec::new()));
     let success_counter = Arc::new(AtomicUsize::new(0));
     
-    for i in 0..15 {
+    for count in 0..15 {
         let xml_clone = Arc::clone(&xml_arc);
         let results_clone = Arc::clone(&results);
         let counter_clone = Arc::clone(&success_counter);
@@ -125,7 +125,7 @@ fn test_thread_safety_complex_nested_structures() -> Result<(), PError> {
                 counter_clone.fetch_add(1, Ordering::Relaxed);
             }
             let mut results_guard = results_clone.lock().unwrap();
-            results_guard.push((i, result));
+            results_guard.push((count, result));
         });
         
         handles.push(handle);
@@ -205,9 +205,8 @@ fn test_thread_safety_enum_handling() -> Result<(), PError> {
     let mut handles = vec![];
     let results = Arc::new(Mutex::new(Vec::new()));
     let success_counter = Arc::new(AtomicUsize::new(0));
-    
-    // Create multiple threads to test concurrent enum parsing
-    for i in 0..12 {
+
+    for count in 0..12 {
         let xml_clone = Arc::clone(&xml_arc);
         let results_clone = Arc::clone(&results);
         let counter_clone = Arc::clone(&success_counter);
@@ -218,18 +217,16 @@ fn test_thread_safety_enum_handling() -> Result<(), PError> {
                 counter_clone.fetch_add(1, Ordering::Relaxed);
             }
             let mut results_guard = results_clone.lock().unwrap();
-            results_guard.push((i, result));
+            results_guard.push((count, result));
         });
         
         handles.push(handle);
     }
-    
-    // Await all threads to complete
+
     for handle in handles {
         handle.join().unwrap();
     }
-    
-    // Verify results
+
     let results_guard = results.lock().unwrap();
     assert_eq!(results_guard.len(), 12);
     
@@ -276,17 +273,14 @@ fn test_thread_safety_mixed_operations() -> Result<(), PError> {
     let results = Arc::new(Mutex::new(Vec::new()));
     let success_counter = Arc::new(AtomicUsize::new(0));
     
-    // Create threads that perform both serialization and deserialization
-    for i in 0..10 {
+    for count in 0..10 {
         let data_clone = Arc::clone(&data_arc);
         let results_clone = Arc::clone(&results);
         let counter_clone = Arc::clone(&success_counter);
         
         let handle = thread::spawn(move || {
-            // Serialize
+
             let xml = from_obj(&*data_clone);
-            
-            // Deserialize
             let result = from_xml::<TestThreadSafetyMixed>(&xml);
             
             if result.is_ok() {
@@ -294,18 +288,16 @@ fn test_thread_safety_mixed_operations() -> Result<(), PError> {
             }
             
             let mut results_guard = results_clone.lock().unwrap();
-            results_guard.push((i, result));
+            results_guard.push((count, result));
         });
         
         handles.push(handle);
     }
-    
-    // Await all threads to complete
+
     for handle in handles {
         handle.join().unwrap();
     }
-    
-    // Verify results
+
     let results_guard = results.lock().unwrap();
     assert_eq!(results_guard.len(), 10);
     
@@ -340,9 +332,9 @@ fn test_thread_safety_stress_test() -> Result<(), PError> {
         let mut data = Vec::new();
         let mut metadata = Vec::new();
         
-        for i in 0..50 {
-            data.push(format!("data{}_{}", id, i));
-            metadata.push(format!("meta{}_{}", id, i));
+        for count in 0..50 {
+            data.push(format!("data{}_{}", id, count));
+            metadata.push(format!("meta{}_{}", id, count));
         }
         
         TestThreadSafetyStress {
@@ -359,9 +351,8 @@ fn test_thread_safety_stress_test() -> Result<(), PError> {
     let mut handles = vec![];
     let results = Arc::new(Mutex::new(Vec::new()));
     let success_counter = Arc::new(AtomicUsize::new(0));
-    
-    // Create many threads to stress test thread safety
-    for i in 0..25 {
+
+    for count in 0..25 {
         let data_clone = Arc::clone(&data_arc);
         let results_clone = Arc::clone(&results);
         let counter_clone = Arc::clone(&success_counter);
@@ -375,18 +366,16 @@ fn test_thread_safety_stress_test() -> Result<(), PError> {
             }
             
             let mut results_guard = results_clone.lock().unwrap();
-            results_guard.push((i, result));
+            results_guard.push((count, result));
         });
         
         handles.push(handle);
     }
-    
-    // Await all threads to complete
+
     for handle in handles {
         handle.join().unwrap();
     }
-    
-    // Verify results
+
     let results_guard = results.lock().unwrap();
     assert_eq!(results_guard.len(), 25);
     

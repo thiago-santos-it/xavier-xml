@@ -7,9 +7,8 @@ use crate::serialize::parser::extension::XmlExtension;
 use crate::serialize::parser::types::is_outer_option;
 
 pub enum XmlTagElement {
-    Complex(Ident, XmlExtension),
+    Complex(Ident, LitStr, XmlExtension),
     Simple(Ident, Type, LitStr, XmlExtension),
-    Value(Ident, XmlExtension),
     Collection(Ident, Type, LitStr, LitStr, XmlExtension),
 }
 
@@ -29,14 +28,9 @@ impl ToTokens for XmlTagElement {
                     quote! { format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(xa_headless, false), #name) }
                 }
             },
-            XmlTagElement::Complex(field, extensions) =>  {
+            XmlTagElement::Complex(field, name, extensions) =>  {
                 quote! {
-                    format!("{}{}", #extensions, self.#field.to_xml(xa_headless, false))
-                }
-            },
-            XmlTagElement::Value(field, extensions) =>  {
-                quote! {
-                    format!("{}{}", #extensions, self.#field.to_xml(xa_headless, false))
+                    format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(true, false), #name)
                 }
             },
             XmlTagElement::Collection(field, ty, tag_name, inner_name, extensions) => {
@@ -85,11 +79,10 @@ impl XmlTagElement {
 
                 return if meta.contains("skip") {
                     None
-                } else if meta.contains("tree") {
-                    Some(XmlTagElement::Complex(field, extension))
-                } else if meta.contains("flatten") || meta.contains("value") {
-                    Some(XmlTagElement::Value(field, extension))
-                } else if meta.contains("inner") { //TODO Work on these question marks
+                } else if meta.contains("flatten") || meta.contains("tree") {
+                    let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta))?;
+                    Some(XmlTagElement::Complex(field, tag_name,  extension))
+                }  else if meta.contains("inner") { //TODO Work on these question marks
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta))?;
                     let inner_name = XmlNames::inner(obj_meta, Some(&meta))?;
                     Some(XmlTagElement::Collection(field, ty, tag_name, inner_name, extension))

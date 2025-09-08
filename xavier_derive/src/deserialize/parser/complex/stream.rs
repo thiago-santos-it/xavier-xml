@@ -1,6 +1,6 @@
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{DeriveInput, LitStr};
+use syn::DeriveInput;
 use crate::common::meta::{MetaInfo, MetaName};
 use crate::common::naming::names::XmlNames;
 use crate::deserialize::parser::complex::tokens::segments::TokenSegments;
