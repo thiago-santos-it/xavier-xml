@@ -180,6 +180,7 @@ fn test_error_handling_validation_invalid_collection_format() -> Result<(), PErr
     struct TestErrorHandlingValidation {
         pub id: u64,
         pub name: String,
+        #[xml(inner="tag")]
         pub tags: Vec<String>,
         pub active: bool,
     }

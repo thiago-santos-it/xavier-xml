@@ -6,6 +6,7 @@ fn test_performance_benchmarks_simple_struct() -> Result<(), PError> {
     struct TestPerformanceBenchmark {
         pub id: u64,
         pub name: String,
+        #[xml(inner="value")]
         pub values: Vec<String>,
     }
 
@@ -29,6 +30,7 @@ fn test_performance_benchmarks_complex_struct() -> Result<(), PError> {
     struct TestPerformanceBenchmarkComplex {
         pub id: u64,
         pub name: String,
+        #[xml(tree)]
         pub metadata: TestPerformanceBenchmarkMetadata,
         pub items: Vec<TestPerformanceBenchmarkItem>,
     }
@@ -132,6 +134,7 @@ fn test_performance_benchmarks_mixed_types() -> Result<(), PError> {
         pub active: bool,
         pub tags: Vec<String>,
         pub metadata: Option<String>,
+        #[xml(tree)]
         pub nested: Option<TestPerformanceBenchmarkNested>,
     }
 

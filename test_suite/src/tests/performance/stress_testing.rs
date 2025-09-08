@@ -233,7 +233,9 @@ fn test_performance_stress_mixed_types() -> Result<(), PError> {
         pub active: bool,
         pub tags: Vec<String>,
         pub metadata: Option<String>,
+        #[xml(tree)]
         pub nested: Option<TestPerformanceStressNested>,
+        #[xml(tree)]
         pub attributes: TestPerformanceStressAttributes,
     }
 

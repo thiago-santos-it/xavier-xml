@@ -207,7 +207,6 @@ fn test_performance_large_data_complex_structures() -> Result<(), PError> {
 fn test_performance_large_collections_1000_items() -> Result<(), PError> {
     #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
     struct TestPerformanceLargeCollection {
-        #[xml(tree)]
         pub items: Vec<TestPerformanceCollectionItem>,
         pub metadata: String,
     }
@@ -252,7 +251,6 @@ fn test_performance_large_collections_1000_items() -> Result<(), PError> {
 fn test_performance_large_collections_10000_items() -> Result<(), PError> {
     #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
     struct TestPerformanceLargeCollection {
-        #[xml(tree)]
         pub items: Vec<TestPerformanceCollectionItem>,
         pub metadata: String,
     }
