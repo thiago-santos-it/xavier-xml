@@ -196,7 +196,6 @@ fn test_collections_sibling_structures() -> Result<(), PError> {
     struct TestCollectionsSiblings {
         pub id: u32,
         pub name: String,
-        #[xml(tree)]
         pub siblings: Vec<TestCollectionsSibling>,
     }
 
@@ -211,7 +210,7 @@ fn test_collections_sibling_structures() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    
+    println!("{:#?}", xml);
     assert!(xml.contains("<TestCollectionsSiblings>"));
     assert!(xml.contains("</TestCollectionsSiblings>"));
     assert!(xml.contains("<id>1</id>"));
