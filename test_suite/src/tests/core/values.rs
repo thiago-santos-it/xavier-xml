@@ -34,8 +34,8 @@ fn test_value_handling_basic_roundtrip() -> Result<(), PError> {
 
     let xml = from_obj(&test_data);
     
-    assert!(xml.contains("<test_object>"));
-    assert!(xml.contains("</test_object>"));
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<id>1</id>"));
     assert!(xml.contains("<name>Test Value Object</name>"));
     assert!(xml.contains("<test_child>"));
