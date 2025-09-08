@@ -1,5 +1,5 @@
 
 pub trait XmlSerializable {
-    fn to_xml(&self, headless: bool, root: bool) -> String;
+    fn to_xml(&self, tag_name: Option<&str>, root: bool) -> String;
 }
 

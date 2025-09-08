@@ -18,25 +18,21 @@ impl ToTokens for XmlTagElement {
             XmlTagElement::Simple(field, ty, name, extensions) => {
                 if is_outer_option(&ty) {
                     quote! {
-                        if self.#field.is_none()  {
-                            "".to_string()
-                        } else {
-                            format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(xa_headless, false), #name)
-                        }
-                    }
+                        if self.#field.is_none() { "".to_string() }
+                        else { format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(None, false), #name) }}
                 } else {
-                    quote! { format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(xa_headless, false), #name) }
+                    quote! {  format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(None, false), #name) }
                 }
             },
             XmlTagElement::Complex(field, name, extensions) =>  {
                 quote! {
-                    format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(true, false), #name)
+                    format!("{}{}", #extensions, self.#field.to_xml(Some(#name), false))
                 }
             },
             XmlTagElement::Collection(field, ty, tag_name, inner_name, extensions) => {
                 let items_constructor = if is_outer_option(&ty) {
                     quote!{
-                        let render = self.#field.is_some();
+                        let xa_render = self.#field.is_some();
                         let xa_items = if let Some(xa_value_item) = &self.#field {
                             xa_value_item
                         } else {
@@ -45,18 +41,18 @@ impl ToTokens for XmlTagElement {
                     }
                 } else {
                     quote!{
-                        let render = true;
+                        let xa_render = true;
                         let xa_items = &self.#field;
                     }
                 };
                 quote! {
                     {
-                        #items_constructor
+                         #items_constructor
                         let mut collection_xml = String::new();
-                        if render {
+                        if xa_render {
                             collection_xml.push_str(&format!("<{}>", #tag_name));
                             for item in xa_items {
-                                collection_xml.push_str(&format!("<{}>{}</{}>", #inner_name, item.to_xml(true, false), #inner_name));
+                                collection_xml.push_str(&item.to_xml(Some(#inner_name), false));
                             }
                             collection_xml.push_str(&format!("</{}>", #tag_name));
                             format!("{}{}", #extensions, collection_xml)

@@ -27,9 +27,9 @@ fn test_collection_handling_basic_roundtrip() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    
-    assert!(xml.contains("<test_object>"));
-    assert!(xml.contains("</test_object>"));
+    println!("{:#?}", xml);
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<id>1</id>"));
     assert!(xml.contains("<name>Test Collection Object</name>"));
     assert!(xml.contains("<children>"));
@@ -61,7 +61,7 @@ fn test_collection_handling_with_data() -> Result<(), PError> {
     }
 
     let xml = r#"
-    <test_object>
+    <testObject>
         <id>1</id>
         <name>Test Name</name>
         <children>
@@ -74,7 +74,7 @@ fn test_collection_handling_with_data() -> Result<(), PError> {
                 <name>Child B</name>
             </test_child>
         </children>
-    </test_object>"#;
+    </testObject>"#;
 
     let obj: TestCollectionObject = from_xml(&xml)?;
     assert_eq!(obj.id, 1);
@@ -115,8 +115,8 @@ fn test_collection_handling_option_roundtrip() -> Result<(), PError> {
 
     let xml = from_obj(&test_data);
     
-    assert!(xml.contains("<test_object>"));
-    assert!(xml.contains("</test_object>"));
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<id>1</id>"));
     assert!(xml.contains("<name>Test Option Collection</name>"));
     assert!(xml.contains("<children>"));
@@ -146,7 +146,7 @@ fn test_collection_handling_option_with_data() -> Result<(), PError> {
     }
 
     let xml = r#"
-    <test_object>
+    <testObject>
         <id>1</id>
         <name>Test Name</name>
         <children>
@@ -159,7 +159,7 @@ fn test_collection_handling_option_with_data() -> Result<(), PError> {
                 <name>Child B</name>
             </test_child>
         </children>
-    </test_object>"#;
+    </testObject>"#;
 
     let obj: TestCollectionObjectOption = from_xml(&xml)?;
     assert_eq!(obj.id, 1);
@@ -191,12 +191,12 @@ fn test_collection_handling_empty_collection() -> Result<(), PError> {
     }
 
     let xml = r#"
-    <test_object>
+    <testObject>
         <id>1</id>
         <name>Test Name</name>
         <children>
         </children>
-    </test_object>"#;
+    </testObject>"#;
 
     let obj: TestCollectionObject = from_xml(&xml)?;
     assert_eq!(obj.id, 1);
@@ -224,12 +224,12 @@ fn test_collection_handling_option_empty_collection() -> Result<(), PError> {
     }
 
     let xml = r#"
-    <test_object>
+    <testObject>
         <id>1</id>
         <name>Test Name</name>
         <children>
         </children>
-    </test_object>"#;
+    </testObject>"#;
 
     let obj: TestCollectionObjectOption = from_xml(&xml)?;
     assert_eq!(obj.id, 1);
@@ -258,10 +258,10 @@ fn test_collection_handling_option_missing_collection() -> Result<(), PError> {
     }
 
     let xml = r#"
-    <test_object>
+    <testObject>
         <id>1</id>
         <name>Test Name</name>
-    </test_object>"#;
+    </testObject>"#;
 
     let obj: TestCollectionObjectOption = from_xml(&xml)?;
     assert_eq!(obj.id, 1);

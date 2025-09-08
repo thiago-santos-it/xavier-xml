@@ -48,7 +48,7 @@ pub fn impl_xml_deserializable(input: TokenStream) -> TokenStream {
         }
     };
 
-    // let dbg_object = "TestSecurityResourceExhaustionDbg";
+    // let dbg_object = "TestNamePrecedenceFieldSecond";
     // if object_name == dbg_object {
     //     let syntax: File = parse2(TokenStream::from(expanded.clone()).into()).expect("Failed to parse tokens as a file");
     //     let formatted = prettyplease::unparse(&syntax);

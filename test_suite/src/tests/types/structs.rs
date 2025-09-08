@@ -65,7 +65,7 @@ fn test_structs_with_attributes() -> Result<(), PError> {
 
     
     let xml = from_obj(&test_data);
-
+    println!("{:#?}", xml);
     assert!(xml.contains("<TestStructsWithAttributes"));
     assert!(xml.contains("</TestStructsWithAttributes>"));
     assert!(xml.contains("attr=\"Attribute Value\""));

@@ -1,6 +1,6 @@
 use quote::quote;
 use syn::DeriveInput;
-use crate::serialize::parser::complex::XmlComplexTag;
+use crate::serialize::parser::main::XmlMainTag;
 use crate::serialize::parser::simple::XmlSimpleTag;
 use crate::serialize::parser::empty_tag::XmlEmptyTag;
 use crate::serialize::parser::enumeration::XmlEnumValue;
@@ -15,7 +15,7 @@ pub enum SerStreamType {
 impl XmlSerStream {
     pub(crate) fn stream(input: &DeriveInput, typed: SerStreamType) -> proc_macro2::TokenStream {
         let mut xml_stream = match typed {
-            SerStreamType::Complex => XmlComplexTag::parse(input),
+            SerStreamType::Complex => XmlMainTag::parse(input),
             SerStreamType::Simple => XmlSimpleTag::parse(input),
             SerStreamType::Empty => XmlEmptyTag::parse(input),
             SerStreamType::Enum => XmlEnumValue::parse(input)

@@ -157,7 +157,7 @@ fn test_name_precedence_tag_first() -> Result<(), PError> {
 fn test_name_precedence_field_second() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object", case="Camel")]
-    struct TestNamePrecedence {
+    struct TestNamePrecedenceFieldSecond {
         #[xml(name="custom_id")]
         pub id: u32,
         #[xml(name="name")]
@@ -175,14 +175,14 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
         pub name: String,
     }
 
-    let test_data = TestNamePrecedence {
+    let test_data = TestNamePrecedenceFieldSecond {
         id: 1,
         name: "John Doe".to_string(),
         child: TestNamePrecedenceChildFieldSecond { id: 2, name: String::from("John Doe Jr") },
     };
 
     let xml = from_obj(&test_data);
-
+    println!("{:?}", xml);
     assert!(xml.contains("<testObject>"));
     assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<customId>1</customId>"));
@@ -190,7 +190,7 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
     assert!(xml.contains("<child>"));
     assert!(!xml.contains("<testObjectChild>"));
 
-    let parsed: TestNamePrecedence = from_xml(&xml)?;
+    let parsed: TestNamePrecedenceFieldSecond = from_xml(&xml)?;
     assert_eq!(test_data, parsed);
 
     Ok(())

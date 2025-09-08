@@ -9,9 +9,9 @@ use crate::serialize::parser::declaration::XmlDeclaration;
 use crate::serialize::parser::dtd::XmlDTD;
 use crate::serialize::parser::instructions::XmlPI;
 
-pub(crate) struct XmlComplexTag;
+pub(crate) struct XmlMainTag;
 
-impl XmlComplexTag {
+impl XmlMainTag {
     pub fn parse(input: &DeriveInput) -> TokenStream {
         let obj_meta_info = MetaInfo::from_name(&input.attrs, MetaName::XML);
         let elements = XmlElementDef::parse(&input, obj_meta_info.as_ref());
@@ -35,7 +35,7 @@ impl XmlComplexTag {
                 #namespace_tokens
 
                 let mut xml = String::new();
-                let tag = #tag;
+                let tag = if let Some(name) = xa_tag_name { name} else { #tag };
 
                 xml.push_str(&#declaration);
                 xml.push_str(&#pi);
@@ -44,7 +44,7 @@ impl XmlComplexTag {
                 let mut attributes = String::new();
                 #(attributes.push_str(&#attributes);)*
 
-                if !#flatten && !xa_headless {
+                if !#flatten {
                     xml.push_str("<");
                     xml.push_str(&tag);
                     if !namespace.is_empty() {
@@ -60,7 +60,7 @@ impl XmlComplexTag {
                 #(children.push_str(&#children);)*
                 xml.push_str(&children);
 
-                if !#flatten && !xa_headless {
+                if !#flatten {
                    xml.push_str(&format!("</{}>", tag));
                 }
             }

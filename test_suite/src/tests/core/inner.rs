@@ -17,7 +17,7 @@ fn test_inner_handling_vec_roundtrip() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    
+
     assert!(xml.contains("<TestInnerHandlingVec>"));
     assert!(xml.contains("</TestInnerHandlingVec>"));
     assert!(xml.contains("<id>1</id>"));

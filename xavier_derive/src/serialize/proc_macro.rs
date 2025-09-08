@@ -7,6 +7,12 @@ use syn::Data::{Enum, Struct, Union};
 use syn::parse_macro_input;
 use crate::serialize::parser::streams::{SerStreamType, XmlSerStream};
 
+//Debug imports
+#[allow(unused_imports)]
+use syn::{File, parse2};
+#[allow(unused_imports)]
+use log::debug;
+
 pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let (impl_generics, ty_generics, where_clause) = &input.generics.split_for_impl();
@@ -27,18 +33,22 @@ pub fn impl_xml_serializable(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         impl #impl_generics xavier::serialize::macro_trait::XmlSerializable for #object_name #ty_generics #where_clause {
-            fn to_xml(&self, xa_headless: bool, xa_root: bool) -> String {
+            fn to_xml(&self, xa_tag_name: Option<&str>, xa_root: bool) -> String {
                 #xml_code
             }
         }
         impl xavier::serialize::macro_trait::XmlSerializable for Box<#object_name> {
-            fn to_xml(&self, xa_headless: bool, xa_root: bool) -> String {
+            fn to_xml(&self, xa_tag_name: Option<&str>, xa_root: bool) -> String {
                 #xml_code
             }
         }
     };
-    //  if object_name == "TestOptionVecInner" {
-    //      println!("{:?}", expanded.to_string());
-    //  }
+
+    let dbg_object = "TestCollectionInner";
+    if object_name == dbg_object {
+        let syntax: File = parse2(TokenStream::from(expanded.clone()).into()).expect("Failed to parse tokens as a file");
+        let formatted = prettyplease::unparse(&syntax);
+        println!("{}", formatted);
+    }
     TokenStream::from(expanded)
 }
