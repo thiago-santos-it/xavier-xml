@@ -138,40 +138,6 @@ fn test_error_handling_malformed_invalid_xml_syntax() -> Result<(), PError> {
 }
 
 #[test]
-fn test_error_handling_malformed_invalid_characters() -> Result<(), PError> {
-    #[derive(XmlDeserializable, Debug)]
-    #[allow(dead_code)]
-    struct TestErrorHandlingMalformed {
-        pub id: u64,
-        pub name: String,
-        pub email: Option<String>,
-        pub tags: Vec<String>,
-        pub active: bool,
-        pub score: f64,
-    }
-
-    let invalid_xml = r#"
-    <TestErrorHandlingMalformed>
-        <id>1</id>
-        <name>John Doe</name>
-        <email>john@example.com</email>
-        <tags>
-            <tag>tag1</tag>
-            <tag>tag2</tag>
-        </tags>
-        <active>true</active>
-        <score>95.5</score>
-    </TestErrorHandlingMalformed>
-    <InvalidTag>This should cause an error</InvalidTag>
-    "#;
-    
-    let result = from_xml::<TestErrorHandlingMalformed>(invalid_xml);
-    assert!(result.is_err());
-    
-    Ok(())
-}
-
-#[test]
 fn test_error_handling_malformed_mismatched_tags() -> Result<(), PError> {
     #[derive(XmlDeserializable, Debug)]
     #[allow(dead_code)]

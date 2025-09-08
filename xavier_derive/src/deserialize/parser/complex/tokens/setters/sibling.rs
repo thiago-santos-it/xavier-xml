@@ -22,7 +22,7 @@ impl ToTokens for SiblingSetter {
                 false
             };
             if should_parse {
-                match #ty::from_xml(&mut reader, Some(&event)) {
+                match #ty::from_xml(&mut reader, Some(&event), None) {
                     Ok(t_value) => {
                         #field.get_or_insert_with(Vec::new).push(t_value.unwrap());
                         continue;

@@ -17,6 +17,6 @@ where
 }
 
 pub trait XmlDeserializable {
-    fn from_xml(reader: &mut Reader<&[u8]>, event: Option<&BytesStart>) -> Result<Option<Self>, PError> where Self: Sized;
+    fn from_xml(reader: &mut Reader<&[u8]>, event: Option<&BytesStart>, tag_name: Option<&str>) -> Result<Option<Self>, PError> where Self: Sized;
     fn inner_name() -> Option<String> { None }
 }

@@ -17,24 +17,18 @@ impl ToTokens for FieldSetter {
         let tag_name = &self.tag_name;
         let field = &self.name;
         let ty = &self.inner_type;
+
         if self.is_flatten {
-            tokens.extend(quote! {
-                let should_parse = if let Some(inner_name) = #ty::inner_name() {
-                    xa_tag_name == inner_name && #field.is_none()
-                } else {
-                    false
-                };
-            });
+            tokens.extend(quote! { let xa_stop_on_tag = Some(#tag_name); });
         } else {
-            tokens.extend(quote! {
-                let should_parse = xa_tag_name == #tag_name;
-            });
-        }
+            tokens.extend(quote! { let xa_stop_on_tag: Option<&str> = None;});
+       }
 
         tokens.extend(quote! {
             let _dbg = "Field";
+            let should_parse = xa_tag_name == #tag_name;
             if should_parse {
-                match #ty::from_xml(&mut reader, Some(&event)) {
+                match #ty::from_xml(&mut reader, Some(&event), xa_stop_on_tag) {
                     Ok(t_value) => { #field = t_value; continue; },
                     Err(err) => {
                         let msg = "Error parsing XML field";

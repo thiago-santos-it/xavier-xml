@@ -51,7 +51,7 @@ fn contains_malicious_entities(input: &str) -> bool {
 }
 
 impl XmlDeserializable for String {
-    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Option<Self>, PError> {
+    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>, _tag_name: Option<&str>) -> Result<Option<Self>, PError> {
         loop {
             match reader.read_event() {
                 Err(error) => { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
@@ -98,7 +98,7 @@ impl XmlDeserializable for String {
 }
 
 impl XmlDeserializable for char {
-    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>) -> Result<Option<Self>, PError> {
+    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>, _tag_name: Option<&str>) -> Result<Option<Self>, PError> {
         loop {
             match reader.read_event() {
                 Err(error) => { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
@@ -136,7 +136,7 @@ impl XmlDeserializable for char {
 
 impl <T: FromStr + Number> XmlDeserializable for T
     where PError: From<<T as FromStr>::Err> {
-    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>)  -> Result<Option<Self>, PError> {
+    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>, _tag_name: Option<&str>)  -> Result<Option<Self>, PError> {
 
         loop {
               match reader.read_event() {
@@ -164,7 +164,7 @@ impl <T: FromStr + Number> XmlDeserializable for T
 
 
 impl XmlDeserializable for bool {
-    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>)  -> Result<Option<Self>, PError> {
+    fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>, _tag_name: Option<&str>)  -> Result<Option<Self>, PError> {
         loop {
             match reader.read_event() {
                 Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },

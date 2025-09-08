@@ -49,7 +49,7 @@ fn test_collection_handling_with_data() -> Result<(), PError> {
     #[xml(name="test_child")]
     struct TestCollectionChild {
         pub id: u32,
-        pub name: String,
+        pub name: String
     }
 
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
@@ -57,7 +57,7 @@ fn test_collection_handling_with_data() -> Result<(), PError> {
     struct TestCollectionObject {
         pub id: u32,
         pub name: String,
-        pub children: Vec<TestCollectionChild>,
+        pub children: Vec<TestCollectionChild>
     }
 
     let xml = r#"

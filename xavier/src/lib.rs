@@ -33,7 +33,7 @@ pub fn from_xml<T: XmlDeserializable>(xml: &str) -> Result<T, PError> {
 pub fn from_xml_using_builder<T, B>(xml: &str, builder: B) -> Result<Option<T>, PError>
 where
     T: XmlDeserializable,
-    B: Fn(&mut quick_xml::Reader<&[u8]>, Option<&quick_xml::events::BytesStart<'_>>) -> Result<Option<T>, PError>,
+    B: Fn(&mut quick_xml::Reader<&[u8]>, Option<&quick_xml::events::BytesStart<'_>>, Option<&str>) -> Result<Option<T>, PError>,
 {
     if xml.trim().is_empty() {
         return Err(PError::new("Empty XML or whitespace-only content"));
@@ -70,11 +70,11 @@ where
                     break;
                 },
                 Ok(Event::Start(event)) => {
-                    return Ok::<Option<T>, PError>(builder(&mut reader, Some(&event))?)
+                    return Ok::<Option<T>, PError>(builder(&mut reader, Some(&event), None)?)
                 },
                 Ok(Event::End(_)) => {},
                 Ok(Event::Empty(_)) => {
-                    return Ok::<Option<T>, PError>(builder(&mut reader, None)?)
+                    return Ok::<Option<T>, PError>(builder(&mut reader, None, None)?)
                 },
                 Ok(Event::Comment(_)) => {},
                 Ok(Event::Text(_)) => {},

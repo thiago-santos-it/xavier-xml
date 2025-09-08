@@ -58,7 +58,12 @@ impl XmlComplex {
                         #(#value_setters)*
                     },
                     Ok(::xavier::quick_xml::events::Event::End(event)) => {
-                        if String::from_utf8(event.name().0.to_vec())? == #xml_tag_name {
+                        let end_tag_name = if let Some(outer_tag_name) = outer_tag_name {
+                            outer_tag_name
+                        } else {
+                            #xml_tag_name
+                        };
+                        if String::from_utf8(event.name().0.to_vec())? == end_tag_name {
                             #constructor
                         }
                     },

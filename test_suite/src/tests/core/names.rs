@@ -162,7 +162,7 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
         pub id: u32,
         #[xml(name="name")]
         pub name: String,
-        #[xml(tree)]
+        #[xml(flatten)]
         pub child: TestNamePrecedenceChildFieldSecond
     }
 
