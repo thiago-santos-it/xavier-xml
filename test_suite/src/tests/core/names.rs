@@ -18,9 +18,9 @@ fn test_name_handling_basic_roundtrip() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    
-    assert!(xml.contains("<test_object>"));
-    assert!(xml.contains("</test_object>"));
+
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<xmlJustStringItem>Test Text</xmlJustStringItem>"));
     assert!(xml.contains("<xmlSomeIntItem>42</xmlSomeIntItem>"));
     assert!(xml.contains("<xmlSomeFloatItem>3.14</xmlSomeFloatItem>"));
@@ -41,14 +41,10 @@ fn test_name_handling_with_prefix_suffix() -> Result<(), PError> {
         pub some_int: i32,
         pub some_float: f32,
     }
+    let test_data = TestNameHandlingWithPrefixSuffix {  some_string: "Some Text".to_string(),   some_int: 10,   some_float: 11.0 };
+    let xml = from_obj(&test_data);
+    assert!(xml.contains("<xmlJustStringItem>"));
 
-    let xml = r#"
-    <test_object>
-        <xmlJustStringItem>Some Text</xmlJustStringItem>
-        <xmlSomeIntItem>10</xmlSomeIntItem>
-        <xmlSomeFloatItem>11</xmlSomeFloatItem>
-    </test_object>"#;
-    
     let obj: TestNameHandlingWithPrefixSuffix = from_xml(&xml)?;
     assert_eq!(obj.some_string, "Some Text");
     assert_eq!(obj.some_int, 10);
@@ -60,7 +56,7 @@ fn test_name_handling_with_prefix_suffix() -> Result<(), PError> {
 #[test]
 fn test_name_handling_ignore_case() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
-    #[xml(name="test_object", case="Camel", prefix="xml_", suffix="Item", no_suffix, no_prefix)]
+    #[xml(name="test_object", case="Camel", prefix="xml_", suffix="_item", no_suffix, no_prefix)]
     struct TestNameHandlingIgnoreCase {
         #[xml(name="just_string", ignore_case)]
         pub some_string: String,
@@ -68,12 +64,10 @@ fn test_name_handling_ignore_case() -> Result<(), PError> {
         pub some_float: f32,
     }
 
-    let xml = r#"
-    <test_object>
-        <xml_just_stringItem>Some Text</xml_just_stringItem>
-        <xmlSomeIntItem>10</xmlSomeIntItem>
-        <xmlSomeFloatItem>11</xmlSomeFloatItem>
-    </test_object>"#;
+    let test_data = TestNameHandlingIgnoreCase {  some_string: "Some Text".to_string(),   some_int: 10,   some_float: 11.0 };
+    let xml = from_obj(&test_data);
+
+    assert!(xml.contains("<xml_just_string_item>"));
 
     let obj: TestNameHandlingIgnoreCase = from_xml(&xml)?;
     assert_eq!(obj.some_string, "Some Text");
@@ -104,8 +98,8 @@ fn test_name_handling_custom_names() -> Result<(), PError> {
 
     let xml = from_obj(&test_data);
     
-    assert!(xml.contains("<test_object>"));
-    assert!(xml.contains("</test_object>"));
+    assert!(xml.contains("<testObject>"));
+    assert!(xml.contains("</testObject>"));
     assert!(xml.contains("<customId>1</customId>"));
     assert!(xml.contains("<userName>John Doe</userName>"));
     assert!(xml.contains("<userAge>30</userAge>"));
@@ -127,12 +121,12 @@ fn test_name_precedence_tag_first() -> Result<(), PError> {
         #[xml(name="name")]
         pub name: String,
         #[xml(tree, name="my_child")]
-        pub child: TestNamePrecedenceChild
+        pub child: TestNamePrecedenceChildTagFirst
     }
 
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object_child", case="Camel")]
-    struct TestNamePrecedenceChild {
+    struct TestNamePrecedenceChildTagFirst {
         #[xml(name="child_id")]
         pub id: u32,
         #[xml(name="child_name")]
@@ -142,7 +136,7 @@ fn test_name_precedence_tag_first() -> Result<(), PError> {
     let test_data = TestNamePrecedence {
         id: 1,
         name: "John Doe".to_string(),
-        child: TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") },
+        child: TestNamePrecedenceChildTagFirst { id: 2, name: String::from("John Doe Jr") },
     };
 
     let xml = from_obj(&test_data);
@@ -154,8 +148,8 @@ fn test_name_precedence_tag_first() -> Result<(), PError> {
     assert!(xml.contains("<myChild>"));
     assert!(!xml.contains("<testObjectChild>"));
 
-    //let parsed: TestNamePrecedence = from_xml(&xml)?;
-    //assert_eq!(test_data, parsed);
+    let parsed: TestNamePrecedence = from_xml(&xml)?;
+    assert_eq!(test_data, parsed);
     Ok(())
 }
 
@@ -169,12 +163,12 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
         #[xml(name="name")]
         pub name: String,
         #[xml(tree)]
-        pub child: TestNamePrecedenceChild
+        pub child: TestNamePrecedenceChildFieldSecond
     }
 
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object_child", case="Camel")]
-    struct TestNamePrecedenceChild {
+    struct TestNamePrecedenceChildFieldSecond {
         #[xml(name="child_id")]
         pub id: u32,
         #[xml(name="child_name")]
@@ -184,7 +178,7 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
     let test_data = TestNamePrecedence {
         id: 1,
         name: "John Doe".to_string(),
-        child: TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") },
+        child: TestNamePrecedenceChildFieldSecond { id: 2, name: String::from("John Doe Jr") },
     };
 
     let xml = from_obj(&test_data);
@@ -195,6 +189,10 @@ fn test_name_precedence_field_second() -> Result<(), PError> {
     assert!(xml.contains("<name>John Doe</name>"));
     assert!(xml.contains("<child>"));
     assert!(!xml.contains("<testObjectChild>"));
+
+    let parsed: TestNamePrecedence = from_xml(&xml)?;
+    assert_eq!(test_data, parsed);
+
     Ok(())
 }
 
@@ -209,12 +207,12 @@ fn test_name_precedence_inner_vec() -> Result<(), PError> {
         #[xml(name="name")]
         pub name: String,
         #[xml(name="my_child", inner="good_child")]
-        pub child: Vec<TestNamePrecedenceChild>
+        pub child: Vec<TestNamePrecedenceChildInnerVec>
     }
 
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object_child", case="Camel")]
-    struct TestNamePrecedenceChild {
+    struct TestNamePrecedenceChildInnerVec {
         #[xml(name="child_id")]
         pub id: u32,
         #[xml(name="child_name")]
@@ -224,7 +222,7 @@ fn test_name_precedence_inner_vec() -> Result<(), PError> {
     let test_data = TestNamePrecedence {
         id: 1,
         name: "John Doe".to_string(),
-        child: vec![TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") }],
+        child: vec![TestNamePrecedenceChildInnerVec { id: 2, name: String::from("John Doe Jr") }],
     };
 
     let xml = from_obj(&test_data);
@@ -236,6 +234,10 @@ fn test_name_precedence_inner_vec() -> Result<(), PError> {
     assert!(xml.contains("<myChild>"));
     assert!(xml.contains("<goodChild>"));
     assert!(!xml.contains("<testObjectChild>"));
+
+    let parsed: TestNamePrecedence = from_xml(&xml)?;
+    assert_eq!(test_data, parsed);
+
     Ok(())
 }
 
@@ -249,12 +251,12 @@ fn test_name_precedence_struct_vec() -> Result<(), PError> {
         #[xml(name="name")]
         pub name: String,
         #[xml(name="my_child")]
-        pub child: Vec<TestNamePrecedenceChild>
+        pub child: Vec<TestNamePrecedenceChildStructVec>
     }
 
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object_child", case="Camel")]
-    struct TestNamePrecedenceChild {
+    struct TestNamePrecedenceChildStructVec {
         #[xml(name="child_id")]
         pub id: u32,
         #[xml(name="child_name")]
@@ -264,7 +266,7 @@ fn test_name_precedence_struct_vec() -> Result<(), PError> {
     let test_data = TestNamePrecedence {
         id: 1,
         name: "John Doe".to_string(),
-        child: vec![TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") }],
+        child: vec![TestNamePrecedenceChildStructVec { id: 2, name: String::from("John Doe Jr") }],
     };
 
     let xml = from_obj(&test_data);
@@ -274,6 +276,10 @@ fn test_name_precedence_struct_vec() -> Result<(), PError> {
     assert!(xml.contains("<name>John Doe</name>"));
     assert!(xml.contains("<myChild>"));
     assert!(xml.contains("<testObjectChild>"));
+
+    let parsed: TestNamePrecedence = from_xml(&xml)?;
+    assert_eq!(test_data, parsed);
+
     Ok(())
 }
 
@@ -287,12 +293,12 @@ fn test_name_precedence_parent_field_vec() -> Result<(), PError> {
         pub id: u32,
         #[xml(name="name")]
         pub name: String,
-        pub child: Vec<TestNamePrecedenceChild>
+        pub child: Vec<TestNamePrecedenceChildFieldVec>
     }
 
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_object_child", case="Camel")]
-    struct TestNamePrecedenceChild {
+    struct TestNamePrecedenceChildFieldVec {
         #[xml(name="child_id")]
         pub id: u32,
         #[xml(name="child_name")]
@@ -302,7 +308,7 @@ fn test_name_precedence_parent_field_vec() -> Result<(), PError> {
     let test_data = TestNamePrecedence {
         id: 1,
         name: "John Doe".to_string(),
-        child: vec![TestNamePrecedenceChild { id: 2, name: String::from("John Doe Jr") }],
+        child: vec![TestNamePrecedenceChildFieldVec { id: 2, name: String::from("John Doe Jr") }],
     };
 
     let xml = from_obj(&test_data);
@@ -313,5 +319,9 @@ fn test_name_precedence_parent_field_vec() -> Result<(), PError> {
     assert!(xml.contains("<name>John Doe</name>"));
     assert!(xml.contains("<child>"));
     assert!(xml.contains("<testObjectChild>"));
+
+    let parsed: TestNamePrecedence = from_xml(&xml)?;
+    assert_eq!(test_data, parsed);
+
     Ok(())
 }
