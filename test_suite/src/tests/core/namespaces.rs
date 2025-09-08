@@ -138,7 +138,7 @@ fn test_namespace_handling_nested_structures() -> Result<(), PError> {
 #[test]
 fn test_namespace_handling_attributes() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable)]
-    #[xml(ns="app", name="test_namespace_attributes", case="Camel")]
+    #[xml(ns="app", name="test_namespace_attributes")]
     struct TestNamespaceAttributes {
         #[xml(attribute, name="id")]
         pub id: u32,

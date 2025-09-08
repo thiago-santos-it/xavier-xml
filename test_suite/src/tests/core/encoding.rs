@@ -2,6 +2,7 @@ use xavier::{cdata, decode, encode, from_obj, from_xml, XmlSerializable, XmlDese
 
 #[test]
 fn test_encoding_cases_basic_roundtrip() -> Result<(), PError> {
+
     #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
     struct TestEncodingBasic {
         pub id: u32,
@@ -30,7 +31,7 @@ fn test_encoding_cases_basic_roundtrip() -> Result<(), PError> {
     let parsed: TestEncodingBasic = from_xml(&xml)?;
     assert_eq!(test_data.id, parsed.id);
     assert_eq!(test_data.name, parsed.name);
-    assert_eq!(test_data.description, parsed.description);
+    assert_eq!(test_data.description, encode!(&parsed.description));
     
     Ok(())
 }
@@ -124,7 +125,7 @@ fn test_encoding_cases_mixed_encoding() -> Result<(), PError> {
     let parsed: TestEncodingMixed = from_xml(&xml)?;
     assert_eq!(test_data.id, parsed.id);
     assert_eq!(test_data.normal_text, parsed.normal_text);
-    assert_eq!(test_data.encoded_text, parsed.encoded_text);
+    assert_eq!(test_data.encoded_text, encode!(&parsed.encoded_text));
     assert_eq!(test_data.cdata_text, cdata!(parsed.cdata_text));
     
     Ok(())

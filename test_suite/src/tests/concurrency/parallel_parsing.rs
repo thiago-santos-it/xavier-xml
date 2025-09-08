@@ -265,8 +265,7 @@ fn test_large_data_processing() -> Result<(), PError> {
     for handle in handles {
         handle.join().unwrap();
     }
-    
-    
+
     let results_guard = results.lock().unwrap();
     assert_eq!(results_guard.len(), 8);
     
