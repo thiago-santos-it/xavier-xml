@@ -35,7 +35,7 @@ fn test_tag_with_attributes() -> Result<(), PError> {
         value_c: None
     };
 
-    let xml = from_obj(&data); //r#"<test_object><id>2</id><description>Test Description</description><child attr=\"Attr Value\">Other value</child>Something</test_object>"#;
+    let xml = from_obj(&data);
     println!("{:#?}", xml);
     let obj: TestValueObjectWithAttr = from_xml(&xml)?;
     assert_eq!(obj.id, 2);
@@ -74,7 +74,7 @@ fn test_sibling_tags() -> Result<(), PError> {
         children: vec![TestValueChildWithAttr { attr: "Attr1".to_string(), value: "One value".to_string() }, TestValueChildWithAttr { attr: "Attr2".to_string(), value: "Other value".to_string() }],
     };
 
-    let xml = from_obj(&data); //r#"<test_object><id>2</id><description>Test Description</description><child attr=\"Attr Value\">Other value</child>Something</test_object>"#;
+    let xml = from_obj(&data);
     println!("{:#?}", xml);
     let obj: TestValueObjectWithAttr = from_xml(&xml)?;
     assert_eq!(obj.id, 2);

@@ -8,18 +8,20 @@ use crate::serialize::parser::types::is_outer_option;
 
 pub enum XmlTagElement {
     Complex(Ident, LitStr, XmlExtension),
-    Simple(Ident, Type, LitStr, XmlExtension),
+    Simple(Ident, Type, LitStr, bool, XmlExtension),
     Collection(Ident, Type, LitStr, LitStr, XmlExtension),
 }
 
 impl ToTokens for XmlTagElement {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let tag_tokens = match self {
-            XmlTagElement::Simple(field, ty, name, extensions) => {
+            XmlTagElement::Simple(field, ty, name, is_content, extensions) => {
                 if is_outer_option(&ty) {
                     quote! {
                         if self.#field.is_none() { "".to_string() }
                         else { format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(None, false), #name) }}
+                } else if *is_content {
+                    quote! {  format!("{}", self.#field.to_xml(None, false)) }
                 } else {
                     quote! {  format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(None, false), #name) }
                 }
@@ -84,12 +86,12 @@ impl XmlTagElement {
                     Some(XmlTagElement::Collection(field, ty, tag_name, inner_name, extension))
                 } else {
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta))?;
-                    Some(XmlTagElement::Simple(field, ty, tag_name, extension))
+                    Some(XmlTagElement::Simple(field, ty, tag_name, meta.contains("content") , extension))
                 }
             }
         } else {
             let tag_name = XmlNames::tag(&field, obj_meta, None)?;
-            return Some(XmlTagElement::Simple(field, ty, tag_name, extension))
+            return Some(XmlTagElement::Simple(field, ty, tag_name, false, extension))
         }
         None
     }
