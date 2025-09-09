@@ -52,12 +52,13 @@ fn contains_malicious_entities(input: &str) -> bool {
 
 impl XmlDeserializable for String {
     fn from_xml(reader: &mut Reader<&[u8]>, _: Option<&BytesStart>, _tag_name: Option<&str>) -> Result<Option<Self>, PError> {
+        let mut current_value = String::new();
         loop {
             match reader.read_event() {
                 Err(error) => { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                 Ok(Event::Eof) => { },
                 Ok(Event::Start(_)) => {},
-                Ok(Event::End(_)) => { return Ok(Some("".to_string())); },
+                Ok(Event::End(_)) => { return Ok(Some(current_value)); },
                 Ok(Event::Empty(_)) => { return Ok(None); },
                 Ok(Event::Comment(_)) => {},
                 Ok(Event::Text(event)) => { 
@@ -71,8 +72,8 @@ impl XmlDeserializable for String {
                     if contains_malicious_characters(&decoded) {
                         return Err(PError::new("Malicious characters detected in XML content"));
                     }
-                    
-                    return Ok(Some(decoded));
+
+                    current_value.push_str(decoded.as_str());
                 },
                 Ok(Event::CData(event)) => { 
                     let raw_string = String::from_utf8(event.to_vec())?;
@@ -86,8 +87,8 @@ impl XmlDeserializable for String {
                     if contains_malicious_characters(&decoded) {
                         return Err(PError::new("Malicious characters detected in XML content"));
                     }
-                    
-                    return Ok(Some(decoded));
+
+                    current_value.push_str(decoded.as_str());
                 },
                 Ok(Event::Decl(_)) => {},
                 Ok(Event::PI(_)) => {},
