@@ -19,10 +19,17 @@ impl <T: XmlDeserializable> XmlDeserializable for Vec<T>  {
                 Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                 Ok(Event::Eof) => { },
                 Ok(Event::Start(event)) => {
-                    children.push(
-                        T::from_xml(reader, Some(&event), outer_tag_name)?
-                            .ok_or_else(|| PError::new("Expected child element but got None"))?
-                    );
+                    let should_parse = if let Some(start_event) = outer_tag_name {
+                        if String::from_utf8(event.name().0.to_vec())? == start_event { true } else { false }
+                    } else {
+                        true
+                    };
+                    if should_parse {
+                        children.push(
+                            T::from_xml(reader, Some(&event), outer_tag_name)?
+                                .ok_or_else(|| PError::new("Expected child element but got None"))?
+                        );
+                    }
                 },
                 Ok(Event::End(event)) => {
                     if String::from_utf8(event.name().0.to_vec())? == tag_name {
