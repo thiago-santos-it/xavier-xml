@@ -12,3 +12,4 @@ pub mod objects;
 pub mod self_closing;
 pub mod values;
 pub mod xmlns;
+mod tag;

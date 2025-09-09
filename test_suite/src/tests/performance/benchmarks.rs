@@ -47,6 +47,7 @@ fn test_performance_benchmarks_complex_struct() -> Result<(), PError> {
         pub id: u32,
         pub name: String,
         pub value: f64,
+        #[xml(inner="value")]
         pub tags: Vec<String>,
     }
 
@@ -132,6 +133,7 @@ fn test_performance_benchmarks_mixed_types() -> Result<(), PError> {
         pub count: i32,
         pub price: f64,
         pub active: bool,
+        #[xml(inner="tag")]
         pub tags: Vec<String>,
         pub metadata: Option<String>,
         #[xml(tree)]

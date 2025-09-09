@@ -325,6 +325,7 @@ fn test_thread_safety_stress_test() -> Result<(), PError> {
         pub name: String,
         #[xml(inner="item")]
         pub data: Vec<String>,
+        #[xml(inner="item")]
         pub metadata: Vec<String>,
     }
 

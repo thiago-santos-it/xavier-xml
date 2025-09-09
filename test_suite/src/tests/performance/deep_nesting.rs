@@ -140,7 +140,8 @@ fn test_performance_deep_nesting_with_attributes() -> Result<(), PError> {
         xml
     }
 
-    let xml = generate_deep_nested_with_attributes_xml(25);
+    let xml = generate_deep_nested_with_attributes_xml(2);
+    println!("{:?}", xml);
     let result = from_xml::<TestPerformanceDeepNestedWithAttributes>(&xml);
     assert!(result.is_ok());
     

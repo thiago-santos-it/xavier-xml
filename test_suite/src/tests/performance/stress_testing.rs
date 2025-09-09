@@ -231,6 +231,7 @@ fn test_performance_stress_mixed_types() -> Result<(), PError> {
         pub count: i32,
         pub price: f64,
         pub active: bool,
+        #[xml(inner="item")]
         pub tags: Vec<String>,
         pub metadata: Option<String>,
         #[xml(tree)]

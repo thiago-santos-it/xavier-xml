@@ -213,6 +213,7 @@ fn test_large_data_processing() -> Result<(), PError> {
         pub name: String,
         #[xml(inner="item")]
         pub data: Vec<String>,
+        #[xml(inner="item")]
         pub metadata: Vec<String>,
     }
 
@@ -239,7 +240,6 @@ fn test_large_data_processing() -> Result<(), PError> {
     let mut handles = vec![];
     let results = Arc::new(Mutex::new(Vec::new()));
     let success_counter = Arc::new(AtomicUsize::new(0));
-    
     
     for i in 0..8 {
         let data_clone = Arc::clone(&data_arc);

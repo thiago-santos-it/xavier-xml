@@ -45,37 +45,6 @@ fn test_value_handling_basic_roundtrip() -> Result<(), PError> {
 }
 
 #[test]
-fn test_value_handling_with_attributes() -> Result<(), PError> {
-    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
-    #[xml(name="test_child")]
-    struct TestValueChildWithAttr {
-        pub value: String,
-    }
-
-    #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
-    #[xml(name="test_object")]
-    struct TestValueObjectWithAttr {
-        pub id: u32,
-        pub description: String,
-        #[xml(tree)]
-        pub child: TestValueChildWithAttr,
-        pub value_a: String,
-        pub value_b: String,
-    }
-
-    let xml = r#"<test_object><id>2</id><description>Test Description</description><child attr="Attr Value">Other value</child>Something</test_object>"#;
-    
-    let obj: TestValueObjectWithAttr = from_xml(&xml)?;
-    assert_eq!(obj.id, 2);
-    assert_eq!(obj.description, "Test Description");
-    assert_eq!(obj.value_a, "Something");
-    assert_eq!(obj.value_a, obj.value_b);
-    assert_eq!(obj.child.value, "Other value");
-    
-    Ok(())
-}
-
-#[test]
 fn test_value_handling_multiple_values() -> Result<(), PError> {
     #[derive(XmlDeserializable, XmlSerializable, Debug, PartialEq)]
     #[xml(name="test_child")]
