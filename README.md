@@ -1,12 +1,29 @@
+# Who is Xavier?
+
+Introducing Xavier: A Simplified XML Parsing Library **Inspired** by Serde. Why Xavier? Well... it starts with X, and it's the first name that came out of my mind, nothing else.
+
+Xavier is a lightweight and versatile XML parsing library designed to streamline the process of handling XML data with ease and efficiency.
+
+While speed is a consideration in Xavier's design, it's important to emphasize that raw speed isn't its primary goal. Instead, Xavier prioritizes ease of use and ergonomic design, aiming to simplify XML parsing tasks within Rust applications without sacrificing reliability or developer experience.
+
+**It must be used in relatively small xml because it stores all data in memory.**
+
+> **Note 1:** UTF-16 is not supported yet. Hard work! PR's are welcome. .
+
+# Why not extend Serde?
+
+Someone already did that, but I prefer to start from scratch. Besides, since Xavier focuses specifically on XML parsing, I believe it should be simpler and more tailored to that purpose.
+
 # What's new?
 
 ## 0.1.7
 
-- More tested with broader coverage.
+- Significantly expanded test coverage.
 
 - Added support for #[xml(skip)] on primitive fields (field must be Option<T>).
 
-- Support for #[xml(inner = "tag")] to deserialize/serialize Vec<primitive> in the form:
+- Added support for #[xml(inner = "tag")] to deserialize/serialize Vec<...> in the form:
+- 
 ```xml
 <tags>
     <tag>...</tag>
@@ -15,27 +32,10 @@
 </tags>
 ```
 
-- Improved interpretation of smart pointers (Box, Rc, Arc, ...) within field chains, enabling greater flexibility.
+- Enhanced handling of smart pointers (Box, Rc, Arc, ...) within field chains, providing greater flexibility.
+- Changes in element naming for a more conventional approach.
 
-> This is a new lib so please report all bugs and help us!
-
-# Who is Xavier?
-
-Introducing Xavier: A Simplified XML Parsing Library **Inspired** by Serde. Why Xavier? Well... it starts with X, and it's the first name that came out of my mind, nothing else.
-
-Xavier is a lightweight and versatile XML parsing library designed to streamline the process of handling XML data with ease and efficiency. 
-
-While speed is a consideration in Xavier's design, it's important to emphasize that raw speed isn't its primary goal. Instead, Xavier prioritizes ease of use and ergonomic design, aiming to simplify XML parsing tasks within Rust applications without sacrificing reliability or developer experience.
-
-**It must be used in relatively small xml because it stores all data in memory.**
-
-> **Note 1:** UTF-16 is not supported yet. Hard work! PR's are welcome.
-
-> **Note 2:** Our DOM implementation (WIP) aims to stick closely to the original specs, but achieving a perfect match is tough because of differences in how concepts are handled between the specs and Rust.
-
-# Why not extend Serde?
-
-Someone already did that, but I prefer to start from scratch. Besides, since Xavier focuses specifically on XML parsing, I believe it should be simpler and more tailored to that purpose.  
+> This still new lib so please report all bugs and help us!
 
 # Examples
 
@@ -255,7 +255,7 @@ struct Child {
 #[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
-    #[xml(tree)] //Same as #[xml(flatten)] 
+    #[xml(tree)] 
     pub child: Child
 }
 ```
@@ -264,13 +264,16 @@ Should produce:
 ``` xml
 <object>
     <fieldA>Some value</fieldA>
-    <my_child>
+    <child>
         <child_field_a>Other value</child_field_a>
-    </my_child>    
+    </child>    
 </object>
 ```
 > Note: Case has the scope of the element. Same for namespaces.
 
+> Note: Attention to the fact that the name of child in this case is dictated by the field name. More about this in ```test_suite/src/tests/core/names.rs```.
+
+> Note: ```#[xml(tree)]``` is obligated in cases where you have a reference to nested struct.
 
 ### Collections
 
@@ -278,7 +281,7 @@ Composing structs like this:
 
 ```Rust
 #[derive(XmlSerializable)]
-#[xml(name="my_child")]
+#[xml(name="child")]
 struct Child {
     pub child_field_a: String,
 }
@@ -287,6 +290,7 @@ struct Child {
 #[xml(name="object", case="Camel")]
 struct XMLObject {
     pub field_a: String,
+    #[inner="my_child"]
     pub children: Vec<Child>
 }
 ```
@@ -308,6 +312,8 @@ Should produce:
 
 > Note: ```HashMap<String, T: XmlSerializable>``` is also supported but with no naming effect.
 
+> Note: Please note that ```#[inner="my_child"]``` has the name of subitems.
+
 ### Structs as tags
 
 Configuring nested struct as this:
@@ -317,6 +323,7 @@ Configuring nested struct as this:
 struct Child {
     #[xml(attribute, name="attr")]
     pub attribute: String,
+    #[xml(value)]
     pub value: String,
 }
 
@@ -540,24 +547,8 @@ Will be available as a normal tag attribute.
 
 Xavier DOM (WIP) implementation use ```DOMException``` due to spec, but *"Xavier DeSer tiene un PError"* ```ʕ•ᴥ•ʔ```  
 
+###  
 
-Document --- 
-Subistituir Tag
-
-
-
-#[derive(XmlDeserializable, XmlSerializable)]
-#[xml(ns="app", name="test_namespace_child", case="Camel")]
-struct TestNamespaceChild {
-pub id: u32,
-pub name: String,
-}
-
-    #[derive(XmlDeserializable, XmlSerializable)]
-    #[xml(ns="xml", name="test_namespace_parent")]
-    struct TestNamespaceParent {
-        pub id: u32,
-        pub name: String,
-        #[xml(ns="app", inner="test_namespace_child")]
-        pub children: Vec<TestNamespaceChild>,
-    }
+>Final Tip:
+> 
+> Most common cases are already covered in ```test_suite/src/test/core/*```, which you can use as a more complete reference. If you have any doubts, feel free to ask here or on GitHub — you’re more than welcome!
