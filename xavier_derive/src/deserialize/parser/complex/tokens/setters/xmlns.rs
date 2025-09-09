@@ -11,9 +11,9 @@ impl ToTokens for FieldXmlnsSetter {
         tokens.extend(quote! {
             if xa_attr_name.starts_with("xmlns") {
                 if let Some(value) = #field {
-                    #field = Some(format!("{} {}={}", value, xa_attr_name.clone(), xa_attr_value.clone()));
+                    #field = Some(format!("{} {}=\"{}\"", value, xa_attr_name.clone(), xa_attr_value.clone()));
                 } else {
-                    #field = Some(format!("{}={}", xa_attr_name.clone(), xa_attr_value.clone()));
+                    #field = Some(format!("{}=\"{}\"", xa_attr_name.clone(), xa_attr_value.clone()));
                 }
             }
         })

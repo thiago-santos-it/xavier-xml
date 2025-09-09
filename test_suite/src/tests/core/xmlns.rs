@@ -1,4 +1,4 @@
-use xavier::{from_xml, from_obj, PError, XmlDeserializable, XmlSerializable};
+use xavier::{from_xml, from_obj, PError, XmlDeserializable, XmlSerializable, namespaces};
 use xavier::serialize::namespaces::Namespaces;
 
 #[test]
@@ -14,17 +14,21 @@ fn test_xmlns_attributes_basic_roundtrip() -> Result<(), PError> {
         pub some_float: f32,
     }
 
+    let ns = namespaces!(xml = "http://www.w3.org/XML/1998/namespace", xhtml = "http://www.w3.org/1999/xhtml");
+
     let test_data = TestXmlnsBasic {
-        namespaces: Namespaces::new(),
+        namespaces: ns,
         some_string: "Test String".to_string(),
         some_int: 42,
         some_float: 3.14,
     };
 
     let xml = from_obj(&test_data);
-    println!("{:#?}", xml);
-    assert!(xml.contains("<TestXmlnsBasic>"));
+
+    assert!(xml.contains("<TestXmlnsBasic"));
     assert!(xml.contains("</TestXmlnsBasic>"));
+    assert!(xml.contains("xmlns:xml=\"http://www.w3.org/XML/1998/namespace\""));
+    assert!(xml.contains("xmlns:xhtml=\"http://www.w3.org/1999/xhtml\""));
     assert!(xml.contains("some_string=\"Test String\""));
     assert!(xml.contains("some_int=\"42\""));
     assert!(xml.contains("<some_float>3.14</some_float>"));
@@ -33,7 +37,8 @@ fn test_xmlns_attributes_basic_roundtrip() -> Result<(), PError> {
     assert_eq!(test_data.some_string, parsed.some_string);
     assert_eq!(test_data.some_int, parsed.some_int);
     assert_eq!(test_data.some_float, parsed.some_float);
-    
+    assert!(parsed.namespaces.contains("xmlns:xml=\"http://www.w3.org/XML/1998/namespace\""));
+    assert!(parsed.namespaces.contains("xmlns:xhtml=\"http://www.w3.org/1999/xhtml\""));
     Ok(())
 }
 
@@ -63,7 +68,7 @@ fn test_xmlns_attributes_with_namespaces() -> Result<(), PError> {
     assert_eq!(obj.some_string, "Some text");
     assert_eq!(obj.some_int, 11);
     assert_eq!(obj.some_float, 10.0);
-    assert_eq!("xmlns:xhtml=http://www.w3.org/1999/xhtml", obj.namespaces);
+    assert!(obj.namespaces.contains("xmlns:xhtml=\"http://www.w3.org/1999/xhtml\""));
     
     Ok(())
 }
