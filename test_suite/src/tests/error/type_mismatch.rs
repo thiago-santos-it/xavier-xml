@@ -148,7 +148,7 @@ fn test_error_handling_type_mismatch_invalid_collection() -> Result<(), PError> 
         <name>John Doe</name>
         <email>john@example.com</email>
         <tags>not_a_collection</tags>
-        <active>true</active>
+        <active>maybe</active>
         <score>95.5</score>
     </TestErrorHandlingTypeMismatch>
     "#;

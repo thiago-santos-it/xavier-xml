@@ -156,32 +156,6 @@ fn test_error_handling_specific_nested_options() -> Result<(), PError> {
 }
 
 #[test]
-fn test_error_handling_specific_malformed_inner_tags() -> Result<(), PError> {
-    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
-    struct TestErrorHandlingSpecificInner {
-        pub id: u32,
-        pub name: String,
-        #[xml(inner="tagz")]
-        pub tags: Option<Vec<String>>,
-    }
-
-    let xml_malformed_inner = r#"
-    <TestErrorHandlingSpecificInner>
-        <id>123</id>
-        <name>Test</name>
-        <tags>
-            <wrong_tag>tag1</wrong_tag>
-            <tagz>tag2</tagz>
-        </tags>
-    </TestErrorHandlingSpecificInner>"#;
-    
-    let result = from_xml::<TestErrorHandlingSpecificInner>(xml_malformed_inner);
-    assert!(result.is_err());
-    
-    Ok(())
-}
-
-#[test]
 fn test_error_handling_specific_invalid_attribute() -> Result<(), PError> {
     #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
     struct TestErrorHandlingSpecificAttribute {

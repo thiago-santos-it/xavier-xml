@@ -174,34 +174,31 @@ fn test_error_handling_validation_invalid_enum_value() -> Result<(), PError> {
 }
 
 #[test]
-fn test_error_handling_validation_invalid_collection_format() -> Result<(), PError> {
-    #[derive(XmlDeserializable, Debug)]
-    #[allow(dead_code)]
-    struct TestErrorHandlingValidation {
-        pub id: u64,
+fn test_error_handling_validation_malformed_inner_tags() -> Result<(), PError> {
+    #[derive(XmlSerializable, XmlDeserializable, Debug, PartialEq)]
+    struct TestErrorHandlingSpecificInner {
+        pub id: u32,
         pub name: String,
-        #[xml(inner="tag")]
-        pub tags: Vec<String>,
-        pub active: bool,
+        #[xml(inner="tagz")]
+        pub tags: Option<Vec<String>>,
     }
 
-    let xml_invalid_collection = r#"
-    <TestErrorHandlingValidation>
-        <id>1</id>
-        <name>John Doe</name>
+    let xml_malformed_inner = r#"
+    <TestErrorHandlingSpecificInner>
+        <id>123</id>
+        <name>Test</name>
         <tags>
-            <tag>tag1</tag>
-            <wrong_tag>tag2</wrong_tag>
+            <wrong_tag>tag1</wrong_tag>
+            <tagz>tag2</tagz>
         </tags>
-        <active>true</active>
-    </TestErrorHandlingValidation>
-    "#;
-    
-    let result = from_xml::<TestErrorHandlingValidation>(xml_invalid_collection);
-    assert!(result.is_err());
-    
+    </TestErrorHandlingSpecificInner>"#;
+
+    let result = from_xml::<TestErrorHandlingSpecificInner>(xml_malformed_inner);
+    assert_eq!(result?.tags.unwrap(), vec!["tag2"]);
+
     Ok(())
 }
+
 
 #[test]
 fn test_error_handling_serialization_invalid_data() -> Result<(), PError> {

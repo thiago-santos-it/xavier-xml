@@ -19,8 +19,9 @@ impl <T: XmlDeserializable> XmlDeserializable for Vec<T>  {
                 Err(error) =>  { return Err(PError::new(&format!("Error at position {}: {:?}", reader.buffer_position(), error))) },
                 Ok(Event::Eof) => { },
                 Ok(Event::Start(event)) => {
-                    let should_parse = if let Some(start_event) = outer_tag_name {
-                        if String::from_utf8(event.name().0.to_vec())? == start_event { true } else { false }
+                    let should_parse = if let Some(outer_tag_name) = outer_tag_name {
+                        let event_tag = &String::from_utf8(event.name().0.to_vec())?;
+                        if  outer_tag_name.eq(event_tag) { true } else { false }
                     } else {
                         true
                     };
