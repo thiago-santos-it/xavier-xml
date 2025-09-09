@@ -15,17 +15,17 @@ pub enum XmlTagElement {
 impl ToTokens for XmlTagElement {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let tag_tokens = match self {
-            XmlTagElement::Simple(field, ty, name, is_content, extensions) => {
+            XmlTagElement::Simple(field, ty, name, is_value, extensions) => {
                 if is_outer_option(&ty) {
                     quote! {
                         if self.#field.is_none() { "".to_string() }
                         else { format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(None, false), #name) }}
-                } else if *is_content {
+                } else if *is_value {
                     quote! {  format!("{}", self.#field.to_xml(None, false)) }
                 } else {
                     quote! {  format!("{}<{}>{}</{}>", #extensions, #name, self.#field.to_xml(None, false), #name) }
                 }
-            },
+            }
             XmlTagElement::Complex(field, name, extensions) =>  {
                 quote! {
                     format!("{}{}", #extensions, self.#field.to_xml(Some(#name), false))
@@ -86,7 +86,7 @@ impl XmlTagElement {
                     Some(XmlTagElement::Collection(field, ty, tag_name, inner_name, extension))
                 } else {
                     let tag_name = XmlNames::tag(&field, obj_meta, Some(&meta))?;
-                    Some(XmlTagElement::Simple(field, ty, tag_name, meta.contains("content") , extension))
+                    Some(XmlTagElement::Simple(field, ty, tag_name, meta.contains("value") , extension))
                 }
             }
         } else {

@@ -7,7 +7,7 @@ fn test_tag_with_attributes() -> Result<(), PError> {
     struct TestValueChildWithAttr {
         #[xml(attribute, name="attr")]
         pub attr: String,
-        #[xml(content)]
+        #[xml(value)]
         pub value: String
     }
 
@@ -18,9 +18,9 @@ fn test_tag_with_attributes() -> Result<(), PError> {
         pub description: String,
         #[xml(tree)]
         pub child: TestValueChildWithAttr,
-        #[xml(content)]
+        #[xml(value)]
         pub value_a: String,
-        #[xml(content)]
+        #[xml(value)]
         pub value_b: String,
         #[xml(skip)]
         pub value_c: Option<String>
