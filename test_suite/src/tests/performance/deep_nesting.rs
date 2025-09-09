@@ -124,30 +124,35 @@ fn test_performance_deep_nesting_with_attributes() -> Result<(), PError> {
         pub child_deep: Option<Box<TestPerformanceDeepNestedWithAttributes>>,
     }
 
-    fn generate_deep_nested_with_attributes_xml(depth: u32) -> String {
+    fn generate_deep_nested_with_attributes_xml(depth: u32, head: bool) -> String {
         let mut xml = String::new();
-        xml.push_str(&format!("<TestPerformanceDeepNestedWithAttributes level=\"{}\">", depth));
+        if head {
+            xml.push_str(&format!("<child_deep level=\"{}\">", depth));
+        }
         xml.push_str(&format!("<content>Level {}</content>", depth));
         xml.push_str(&format!("<metadata>Metadata for level {}</metadata>", depth));
         
         if depth > 1 {
-            xml.push_str("<child_deep>");
-            xml.push_str(&generate_deep_nested_with_attributes_xml(depth - 1));
+            xml.push_str(&generate_deep_nested_with_attributes_xml(depth - 1, true));
+        }
+        if head {
             xml.push_str("</child_deep>");
         }
-        
-        xml.push_str("</TestPerformanceDeepNestedWithAttributes>");
         xml
     }
+    let depth = 25;
+    let mut xml = String::new();
+    xml.push_str(&format!("<TestPerformanceDeepNestedWithAttributes level=\"{}\">", depth));
+    xml.push_str(&generate_deep_nested_with_attributes_xml(depth, false));
+    xml.push_str("</TestPerformanceDeepNestedWithAttributes>");
 
-    let xml = generate_deep_nested_with_attributes_xml(2);
     println!("{:?}", xml);
     let result = from_xml::<TestPerformanceDeepNestedWithAttributes>(&xml);
     assert!(result.is_ok());
     
     let parsed: TestPerformanceDeepNestedWithAttributes = result.unwrap();
-    assert_eq!(parsed.level, 25);
-    assert_eq!(parsed.content, "Level 25");
+    assert_eq!(parsed.level, depth);
+    assert_eq!(parsed.content, format!("Level {}", depth));
     
     Ok(())
 }
