@@ -18,12 +18,12 @@ fn test_namespace_handling_basic_roundtrip() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    
-    assert!(xml.contains("<test_namespace>"));
-    assert!(xml.contains("</test_namespace>"));
-    assert!(xml.contains("<justString>Test String</justString>"));
-    assert!(xml.contains("<someInt>42</someInt>"));
-    assert!(xml.contains("<someFloat>3.14</someFloat>"));
+    println!("{:#?}", xml);
+    assert!(xml.contains("<xml:testNamespace>"));
+    assert!(xml.contains("</xml:testNamespace>"));
+    assert!(xml.contains("<xml:justString>Test String</xml:justString>"));
+    assert!(xml.contains("<xml:someInt>42</xml:someInt>"));
+    assert!(xml.contains("<xml:someFloat>3.14</xml:someFloat>"));
     
     let parsed: TestNamespaceBasic = from_xml(&xml)?;
     assert_eq!(test_data.some_string, parsed.some_string);
@@ -45,13 +45,13 @@ fn test_namespace_handling_with_namespaces() -> Result<(), PError> {
     }
 
     let xml = r#"
-    <xml:test_namespace_complex
+    <xml:testNamespaceComplex
             xmlns:xml="http://www.w3.org/1999/xml"
             xmlns:xhtml="http://www.w3.org/1999/xhtml">
         <xml:justString>Some Text</xml:justString>
         <xml:someInt>10</xml:someInt>
         <xml:someFloat>11.0</xml:someFloat>
-    </xml:test_namespace_complex>"#;
+    </xml:testNamespaceComplex>"#;
 
     let obj: TestNamespaceComplex = from_xml(&xml)?;
     assert_eq!(obj.some_string, "Some Text");
@@ -72,14 +72,14 @@ fn test_namespace_handling_multiple_namespaces() -> Result<(), PError> {
     }
 
     let xml = r#"
-    <app:test_namespace_multiple
+    <app:testNamespaceMultiple
             xmlns:app="http://example.com/app"
             xmlns:data="http://example.com/data"
             xmlns:meta="http://example.com/meta">
         <app:id>1</app:id>
         <app:name>Test Name</app:name>
         <app:description>Test Description</app:description>
-    </app:test_namespace_multiple>"#;
+    </app:testNamespaceMultiple>"#;
 
     let obj: TestNamespaceMultiple = from_xml(&xml)?;
     assert_eq!(obj.id, 1);
@@ -99,18 +99,19 @@ fn test_namespace_handling_nested_structures() -> Result<(), PError> {
     }
 
     #[derive(XmlDeserializable, XmlSerializable)]
-    #[xml(ns="app", name="test_namespace_parent", case="Camel")]
+    #[xml(ns="xml", name="test_namespace_parent")]
     struct TestNamespaceParent {
         pub id: u32,
         pub name: String,
+        #[xml(ns="app", inner="test_namespace_child")]
         pub children: Vec<TestNamespaceChild>,
     }
 
     let xml = r#"
-    <app:test_namespace_parent
+    <xml:test_namespace_parent
             xmlns:app="http://example.com/app">
-        <app:id>1</app:id>
-        <app:name>Parent</app:name>
+        <xml:id>1</xml:id>
+        <xml:name>Parent</xml:name>
         <app:children>
             <app:test_namespace_child>
                 <app:id>1</app:id>
@@ -121,7 +122,7 @@ fn test_namespace_handling_nested_structures() -> Result<(), PError> {
                 <app:name>Child 2</app:name>
             </app:test_namespace_child>
         </app:children>
-    </app:test_namespace_parent>"#;
+    </xml:test_namespace_parent>"#;
 
     let obj: TestNamespaceParent = from_xml(&xml)?;
     assert_eq!(obj.id, 1);

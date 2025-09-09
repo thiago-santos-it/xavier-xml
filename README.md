@@ -551,5 +551,22 @@ The functions within TypeParser from ```deserialize::parser::complex::tokens::ty
 
 If necessary, you can modify the object creation process in ```constructors.rs``` or adjust the structure field assignments in ```setters/```.
 
-Document name order
-Document sibling
+
+
+Document --- 
+
+#[derive(XmlDeserializable, XmlSerializable)]
+#[xml(ns="app", name="test_namespace_child", case="Camel")]
+struct TestNamespaceChild {
+pub id: u32,
+pub name: String,
+}
+
+    #[derive(XmlDeserializable, XmlSerializable)]
+    #[xml(ns="xml", name="test_namespace_parent")]
+    struct TestNamespaceParent {
+        pub id: u32,
+        pub name: String,
+        #[xml(ns="app", inner="test_namespace_child")]
+        pub children: Vec<TestNamespaceChild>,
+    }

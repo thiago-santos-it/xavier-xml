@@ -46,7 +46,7 @@ impl XmlNames {
         };
 
         let name = XmlNames::compose_name(
-            "",
+            &attr_meta.get_or("ns", obj_meta_info.get_or("ns", "".to_string())),
             &attr_meta.get_or("name", attr_name.to_string()),
             &obj_meta_info.get_or("prefix", "".to_string()),
             &obj_meta_info.get_or("suffix", "".to_string()),
@@ -74,7 +74,7 @@ impl XmlNames {
         };
 
         let name = XmlNames::compose_name(
-            &obj_meta.get_or("ns", "".to_string()),
+            &field_meta.get_or("ns", obj_meta.get_or("ns", "".to_string())),
             &field_meta.get_or(meta_name, default.unwrap_or("".to_string())),
             &obj_meta.get_or("prefix", "".to_string()),
             &obj_meta.get_or("suffix", "".to_string()),
