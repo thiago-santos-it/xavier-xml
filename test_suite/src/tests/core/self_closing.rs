@@ -124,12 +124,12 @@ fn test_self_closing_tags_empty_child() -> Result<(), PError> {
         pub child: Option<TestSelfClosingChildEmpty>,
     }
 
-    let xml = r#"<testObject><id>1</id><child/></testObject>"#;
+    let xml = r#"<test_object><id>1</id><child/></test_object>"#;
     let obj: TestSelfClosingObjectEmptyChild = from_xml(&xml)?;
     assert_eq!(obj.id, 1);
     assert_eq!(obj.child.is_some(), true);
 
-    let xml = r#"<testObject><id>2</id></testObject>"#;
+    let xml = r#"<test_object><id>2</id></test_object>"#;
     let obj: TestSelfClosingObjectEmptyChild = from_xml(&xml)?;
     assert_eq!(obj.id, 2);
     assert_eq!(obj.child.is_none(), true);
