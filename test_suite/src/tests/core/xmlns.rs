@@ -22,7 +22,7 @@ fn test_xmlns_attributes_basic_roundtrip() -> Result<(), PError> {
     };
 
     let xml = from_obj(&test_data);
-    
+    println!("{:#?}", xml);
     assert!(xml.contains("<TestXmlnsBasic>"));
     assert!(xml.contains("</TestXmlnsBasic>"));
     assert!(xml.contains("some_string=\"Test String\""));
